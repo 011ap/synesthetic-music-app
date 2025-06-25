@@ -1454,16 +1454,29 @@ function createTrainSoulUI() {
     const modal = document.createElement('div');
     modal.id = 'trainSoulModal';
     modal.style = `position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:3000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);`;
+    // Dynamically get all emotion keys and display names/colors
+    const emotionEngine = window.emotionEngine;
+    const emotionKeys = emotionEngine && emotionEngine.emotionKeys ? emotionEngine.emotionKeys : [
+      'joy','sadness','anger','fear','surprise','disgust','nostalgia','awe','determination','serenity','passion','melancholy'
+    ];
+    // Get emotion info for display
+    const getEmotionInfo = (key) => {
+      if (!emotionEngine) return { name: key, colors: ['#FFD700'] };
+      return emotionEngine.emotionCategories.primary[key] || emotionEngine.emotionCategories.complex[key] || { name: key, colors: ['#FFD700'] };
+    };
+    // Build buttons for all emotions
+    let btnGrid = '';
+    for (const key of emotionKeys) {
+      const info = getEmotionInfo(key);
+      const color = (info.colors && info.colors[0]) || '#FFD700';
+      btnGrid += `<button class="train-emotion-btn" data-emotion="${key}" style="background:${color};color:#222;margin-bottom:0.2rem;">${info.name || key}</button>`;
+    }
     modal.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:2.5rem 2rem;max-width:400px;width:90%;box-shadow:0 8px 40px #000;display:flex;flex-direction:column;align-items:center;">
+      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:2.5rem 2rem;max-width:440px;width:90%;box-shadow:0 8px 40px #000;display:flex;flex-direction:column;align-items:center;">
         <h2 style="color:#4ECDC4;margin-bottom:1rem;">Train My Soul</h2>
         <p style="color:#fff;margin-bottom:1.2rem;text-align:center;">Listen. Feel. Click the emotion you feel most. <br><span style='color:#4ECDC4'>Repeat for different music/moods!</span></p>
-        <div id="emotionBtnGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:1.5rem;width:100%;">
-          <button class="train-emotion-btn" data-emotion="joy" style="background:#FFD700;color:#222;">😊 Joy</button>
-          <button class="train-emotion-btn" data-emotion="sadness" style="background:#4169E1;color:#fff;">😢 Sadness</button>
-          <button class="train-emotion-btn" data-emotion="anger" style="background:#DC143C;color:#fff;">😡 Anger</button>
-          <button class="train-emotion-btn" data-emotion="calm" style="background:#4ECDC4;color:#222;">🧘 Calm</button>
-          <button class="train-emotion-btn" data-emotion="mystery" style="background:#9370DB;color:#fff;">🌀 Mystery</button>
+        <div id="emotionBtnGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:1.5rem;width:100%;max-height:260px;overflow-y:auto;">
+          ${btnGrid}
         </div>
         <button id="trainSoulTrainBtn" style="margin-bottom:0.7rem;background:linear-gradient(135deg,#4ECDC4,#45B7D1);color:#fff;padding:0.7rem 1.5rem;border:none;border-radius:10px;font-size:1rem;cursor:pointer;">Train Neural Net</button>
         <button onclick="document.getElementById('trainSoulModal').remove()" style="background:none;border:none;color:#aaa;font-size:1.2rem;margin-top:0.5rem;">Close</button>
@@ -1492,16 +1505,17 @@ function createTrainSoulUI() {
           features.tempo || 0,
           features.energy || features.totalEnergy || 0
         ]);
-        // One-hot label
-        const emotions = ['joy','sadness','anger','calm','mystery'];
-        const label = emotions.map(e => e === btn.dataset.emotion ? 1 : 0);
+        // One-hot label for dynamic emotions
+        const idx = emotionKeys.indexOf(btn.dataset.emotion);
+        const label = Array(emotionKeys.length).fill(0);
+        if (idx >= 0) label[idx] = 1;
         labelSamples.push(label);
         document.getElementById('trainSoulStatus').textContent = `Captured: ${featureSamples.length} samples. Click Train when ready!`;
       };
     });
     document.getElementById('trainSoulTrainBtn').onclick = async () => {
-      if (featureSamples.length < 5) {
-        document.getElementById('trainSoulStatus').textContent = 'Add at least 5 samples!';
+      if (featureSamples.length < Math.max(5, emotionKeys.length)) {
+        document.getElementById('trainSoulStatus').textContent = `Add at least ${Math.max(5, emotionKeys.length)} samples!`;
         return;
       }
       document.getElementById('trainSoulStatus').textContent = 'Training neural net...';
@@ -1509,123 +1523,12 @@ function createTrainSoulUI() {
       document.getElementById('trainSoulStatus').textContent = 'Neural net trained! Your soul is now smarter.';
     };
 }
-
-// Add a button to open the training UI
-function addTrainSoulButton() {
-    if (document.getElementById('trainSoulBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'trainSoulBtn';
-    btn.textContent = '🧠 Train My Soul';
-    btn.style = 'position:fixed;bottom:2rem;left:2rem;z-index:2000;background:linear-gradient(135deg,#FFD700,#4ECDC4);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = createTrainSoulUI;
-    document.body.appendChild(btn);
-}
-
-document.addEventListener('DOMContentLoaded', addTrainSoulButton);
-
-// === SOUL MANAGEMENT UI ===
-function createSoulManagementUI() {
-    if (document.getElementById('soulMgmtModal')) return;
-    const modal = document.createElement('div');
-    modal.id = 'soulMgmtModal';
-    modal.style = `position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:4000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);`;
-    modal.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:22px;padding:2.5rem 2rem;max-width:440px;width:95%;box-shadow:0 8px 40px #000;display:flex;flex-direction:column;align-items:center;">
-        <h2 style="color:#FFD700;margin-bottom:1rem;">Soul Management</h2>
-        <div id="soulStats" style="color:#fff;font-size:1rem;margin-bottom:1.2rem;text-align:center;"></div>
-        <div style="display:flex;gap:0.7rem;margin-bottom:1.2rem;flex-wrap:wrap;justify-content:center;">
-          <button id="soulSaveBtn" style="background:#4ECDC4;color:#222;padding:0.6rem 1.2rem;border:none;border-radius:10px;font-size:1rem;cursor:pointer;">Download Soul</button>
-          <button id="soulLoadBtn" style="background:#FFD700;color:#222;padding:0.6rem 1.2rem;border:none;border-radius:10px;font-size:1rem;cursor:pointer;">Upload Soul</button>
-          <button id="soulResetBtn" style="background:#DC143C;color:#fff;padding:0.6rem 1.2rem;border:none;border-radius:10px;font-size:1rem;cursor:pointer;">Reset Soul</button>
-        </div>
-        <input type="file" id="soulFileInput" accept="application/json" style="display:none;" />
-        <button onclick="document.getElementById('soulMgmtModal').remove()" style="background:none;border:none;color:#aaa;font-size:1.2rem;margin-top:0.5rem;">Close</button>
-        <div id="soulMgmtStatus" style="margin-top:0.7rem;color:#FFD700;font-size:0.95rem;"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    // Stats
-    updateSoulStats();
-    // Download
-    document.getElementById('soulSaveBtn').onclick = async () => {
-      if (!window.emotionEngine || !window.emotionEngine.model) return;
-      const data = await window.emotionEngine.model.saveWeights('downloads://soul-weights');
-      document.getElementById('soulMgmtStatus').textContent = 'Soul weights downloaded!';
-    };
-    // Upload
-    document.getElementById('soulLoadBtn').onclick = () => {
-      document.getElementById('soulFileInput').click();
-    };
-    document.getElementById('soulFileInput').onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      try {
-        await window.emotionEngine.model.loadWeights(tf.io.browserFiles([file]));
-        window.emotionEngine.isModelTrained = true;
-        document.getElementById('soulMgmtStatus').textContent = 'Soul weights loaded!';
-        updateSoulStats();
-      } catch (err) {
-        document.getElementById('soulMgmtStatus').textContent = 'Failed to load soul weights.';
-      }
-    };
-    // Reset
-    document.getElementById('soulResetBtn').onclick = async () => {
-      await window.emotionEngine.initializeAIModel();
-      window.emotionEngine.isModelTrained = false;
-      document.getElementById('soulMgmtStatus').textContent = 'Soul reset to blank.';
-      updateSoulStats();
-    };
-}
-
-function updateSoulStats() {
-    if (!window.emotionEngine) return;
-    const stats = window.emotionEngine.getAnalysisStatistics ? window.emotionEngine.getAnalysisStatistics() : {};
-    document.getElementById('soulStats').innerHTML = `
-      <b>Samples:</b> ${stats.totalAnalyses || 0}<br>
-      <b>Unique Emotions:</b> ${stats.uniqueEmotions || 0}<br>
-      <b>Avg Confidence:</b> ${Math.round(stats.averageConfidence || 0)}%<br>
-      <b>Most Frequent:</b> ${stats.mostFrequentEmotion || 'None'}<br>
-      <b>Learning Progress:</b> ${Math.round(stats.learningProgress || 0)}%
-    `;
-}
-
-// Add a button to open the soul management UI
-function addSoulMgmtButton() {
-    if (document.getElementById('soulMgmtBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'soulMgmtBtn';
-    btn.textContent = '🪞 Soul Management';
-    btn.style = 'position:fixed;bottom:5.5rem;left:2rem;z-index:2000;background:linear-gradient(135deg,#FFD700,#DC143C);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = createSoulManagementUI;
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addSoulMgmtButton);
-
-// === SONG RECOGNITION PLACEHOLDER ===
-function createSongRecognitionUI() {
-    if (document.getElementById('songRecModal')) return;
-    const modal = document.createElement('div');
-    modal.id = 'songRecModal';
-    modal.style = `position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:4000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);`;
-    modal.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:22px;padding:2.5rem 2rem;max-width:440px;width:95%;box-shadow:0 8px 40px #000;display:flex;flex-direction:column;align-items:center;">
-        <h2 style="color:#4ECDC4;margin-bottom:1rem;">Song Recognition (Coming Soon)</h2>
-        <p style="color:#fff;margin-bottom:1.2rem;text-align:center;">This feature will let you identify songs and auto-label emotions using public APIs.<br><span style='color:#FFD700'>Stay tuned!</span></p>
-        <button onclick="document.getElementById('songRecModal').remove()" style="background:none;border:none;color:#aaa;font-size:1.2rem;margin-top:0.5rem;">Close</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
-}
-function addSongRecButton() {
-    if (document.getElementById('songRecBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'songRecBtn';
-    btn.textContent = '🔎 Song Recognition';
-    btn.style = 'position:fixed;bottom:9rem;left:2rem;z-index:2000;background:linear-gradient(135deg,#45B7D1,#FFD700);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = createSongRecognitionUI;
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addSongRecButton);
+// Trigger the Train My Soul UI on a special key combo
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+        createTrainSoulUI();
+    }
+});
     </script>
 </body>
 </html>
