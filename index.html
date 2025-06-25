@@ -1487,7 +1487,7 @@ function createTrainSoulUI() {
     // Add listeners
     const featureSamples = [];
     const labelSamples = [];
-    modal.querySelectorAll('.train-emotion-btn').forEach(btn => {
+    modal.querySelectorAll('.train-emotion-btn').forEach((btn) => {
       btn.onclick = async () => {
         const features = window.lastAudioFeatures || null;
         if (!features) {
@@ -1574,7 +1574,7 @@ function addContributeSoulButton() {
 }
 document.addEventListener('DOMContentLoaded', addContributeSoulButton);
 
-        // === GOD REVIEW UI FOR CROWDSOURCED DATA ===
+// === GOD REVIEW UI FOR CROWDSOURCED DATA ===
 function createGodReviewUI() {
     if (document.getElementById('godReviewModal')) return;
     // Only show if god/creator (simple check: localStorage.godMode or window.isGod)
@@ -1656,6 +1656,137 @@ function addGodReviewButton() {
     document.body.appendChild(btn);
 }
 document.addEventListener('DOMContentLoaded', addGodReviewButton);
+
+        // === SONG RECOGNITION & AUTO-LABELING PLACEHOLDER ===
+function addSongRecognitionPlaceholder() {
+    if (document.getElementById('songRecogBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'songRecogBtn';
+    btn.textContent = '🎵 Song Recognition (Coming Soon)';
+    btn.style = 'position:fixed;bottom:2rem;left:48rem;z-index:2000;background:linear-gradient(135deg,#4ECDC4,#4169E1);color:#fff;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;opacity:0.7;';
+    btn.onclick = () => {
+        alert('Song recognition and auto-labeling will let you auto-tag emotions for known tracks. Stay tuned!');
+    };
+    document.body.appendChild(btn);
+}
+document.addEventListener('DOMContentLoaded', addSongRecognitionPlaceholder);
+
+        // === GOD MODE TOGGLE ===
+function addGodModeToggle() {
+    if (document.getElementById('godModeToggle')) return;
+    const btn = document.createElement('button');
+    btn.id = 'godModeToggle';
+    btn.textContent = '⚡ God Mode';
+    btn.title = 'Toggle God Mode (creator tools)';
+    btn.style = 'position:fixed;top:2rem;right:2rem;z-index:6000;background:linear-gradient(135deg,#FFD700,#DC143C);color:#222;padding:0.7rem 1.3rem;border:none;border-radius:14px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
+    btn.onclick = () => {
+        const god = !(window.isGod || localStorage.getItem('godMode'));
+        window.isGod = god;
+        if (god) {
+            localStorage.setItem('godMode', 'true');
+            btn.textContent = '⚡ God Mode: ON';
+            btn.style.opacity = '1';
+        } else {
+            localStorage.removeItem('godMode');
+            btn.textContent = '⚡ God Mode';
+            btn.style.opacity = '0.7';
+        }
+        location.reload();
+    };
+    if (window.isGod || localStorage.getItem('godMode')) {
+        btn.textContent = '⚡ God Mode: ON';
+        btn.style.opacity = '1';
+    } else {
+        btn.style.opacity = '0.7';
+    }
+    document.body.appendChild(btn);
+}
+document.addEventListener('DOMContentLoaded', addGodModeToggle);
+
+// === POLISH FLOATING TOOL UIs ===
+function polishFloatingToolUIs() {
+    // Add tooltips and consistent stacking for all floating buttons
+    const btns = [
+        { id: 'trainSoulBtn', tip: 'Train your neural net soul with your own emotions' },
+        { id: 'contributeSoulBtn', tip: 'Contribute your labeled data to the god/creator' },
+        { id: 'godReviewBtn', tip: 'God: Review and approve crowdsourced soul data' },
+        { id: 'soulMgmtBtn', tip: 'God: Manage, backup, or reset the soul/brain' },
+        { id: 'songRecogBtn', tip: 'Song recognition and auto-labeling (coming soon)' }
+    ];
+    btns.forEach((b, i) => {
+        const el = document.getElementById(b.id);
+        if (el) {
+            el.title = b.tip;
+            el.style.zIndex = 2000 + i * 10;
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', polishFloatingToolUIs);
+
+        // === DOWNLOAD MY SOUL DATA BUTTON (USER) ===
+function addDownloadSoulDataButton() {
+    if (document.getElementById('downloadSoulDataBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'downloadSoulDataBtn';
+    btn.textContent = '💾 Download My Soul Data';
+    btn.title = 'Export your labeled emotion data for backup or sharing';
+    btn.style = 'position:fixed;bottom:2rem;left:64rem;z-index:2000;background:linear-gradient(135deg,#4ECDC4,#FFD700);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
+    btn.onclick = () => {
+        const data = (window.emotionEngine && window.emotionEngine.personalModel && window.emotionEngine.personalModel.emotionHistory) || [];
+        if (!data.length) {
+            alert('No labeled data to export. Train your soul first!');
+            return;
+        }
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'my-soul-data.json';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+    document.body.appendChild(btn);
+}
+document.addEventListener('DOMContentLoaded', addDownloadSoulDataButton);
+
+// === MERGE APPROVED DATA BUTTON (GOD) ===
+function addMergeApprovedDataButton() {
+    if ((!window.isGod && !localStorage.getItem('godMode')) || document.getElementById('mergeApprovedBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'mergeApprovedBtn';
+    btn.textContent = '🔀 Merge Approved Data';
+    btn.title = 'Download all approved crowdsourced data for factory soul training';
+    btn.style = 'position:fixed;bottom:2rem;left:80rem;z-index:2000;background:linear-gradient(135deg,#FFD700,#4ECDC4);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
+    btn.onclick = async () => {
+        if (!window.supabaseClient || !window.supabaseClient.isInitialized) {
+            alert('Database not available. Try again later.');
+            return;
+        }
+        btn.disabled = true;
+        btn.textContent = 'Downloading...';
+        const { data, error } = await window.supabaseClient.supabase
+            .from('approved_emotions')
+            .select('*')
+            .order('timestamp', { ascending: false });
+        if (error || !data || !data.length) {
+            alert('No approved data found.');
+            btn.textContent = '🔀 Merge Approved Data';
+            btn.disabled = false;
+            return;
+        }
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'approved-soul-data.json';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        btn.textContent = '🔀 Merge Approved Data';
+        btn.disabled = false;
+    };
+    document.body.appendChild(btn);
+}
+document.addEventListener('DOMContentLoaded', addMergeApprovedDataButton);
     </script>
 </body>
 </html>
