@@ -590,76 +590,194 @@
             box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
         }
 
-        /* === MOBILE OPTIMIZATIONS === */
+        /* === SIDEBAR DASHBOARD === */
+        .sidebar-dashboard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 340px;
+            max-width: 90vw;
+            height: 100vh;
+            background: rgba(20, 24, 32, 0.98);
+            box-shadow: 4px 0 32px rgba(0,0,0,0.45);
+            border-right: 1.5px solid var(--glass-border);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            transform: translateX(-100%);
+        }
+        .sidebar-dashboard:not(.hidden) {
+            transform: translateX(0);
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--synesthetic-teal);
+            letter-spacing: 0.04em;
+        }
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: var(--radius-full);
+            padding: 0.2em 0.6em;
+            transition: background 0.2s;
+        }
+        .sidebar-close:hover {
+            background: rgba(0,245,255,0.08);
+            color: var(--synesthetic-teal);
+        }
+        .sidebar-sections {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+        }
+        .sidebar-section {
+            margin-bottom: var(--spacing-lg);
+            background: rgba(255,255,255,0.01);
+            border-radius: var(--radius-md);
+            box-shadow: 0 2px 12px rgba(0,245,255,0.03);
+        }
+        .section-toggle {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            transition: background 0.2s;
+        }
+        .section-toggle:hover {
+            background: rgba(0,245,255,0.07);
+        }
+        .section-icon {
+            font-size: 1.3em;
+        }
+        .section-label {
+            flex: 1;
+            text-align: left;
+        }
+        .section-content {
+            padding: var(--spacing-md);
+            background: rgba(255,255,255,0.02);
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            border-top: 1px solid var(--glass-border);
+        }
+        .section-placeholder {
+            color: var(--text-tertiary);
+            font-size: 0.95em;
+            text-align: center;
+            padding: 1.5em 0;
+        }
+        /* Sidebar Toggle Button */
+        .sidebar-toggle-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 210;
+            background: rgba(0,245,255,0.10);
+            border: none;
+            border-radius: var(--radius-full);
+            color: var(--synesthetic-teal);
+            font-size: 1.6rem;
+            padding: 0.4em 0.8em;
+            box-shadow: 0 2px 12px rgba(0,245,255,0.08);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .sidebar-toggle-btn:hover {
+            background: rgba(0,245,255,0.18);
+            transform: scale(1.08);
+        }
         @media (max-width: 768px) {
-            .container {
-                padding: var(--spacing-sm);
+            .sidebar-dashboard {
+                width: 95vw;
+                min-width: 0;
             }
-            
-            .control-grid {
-                gap: var(--spacing-md);
-            }
-            
-            .icon-button {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .icon-button .icon {
-                font-size: 1.5rem;
-            }
-            
-            .icon-button .label {
-                font-size: 0.65rem;
-            }
-            
-            .consciousness-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .emotion-visualization {
-                height: 150px;
-            }
-            
-            .tv-mode-btn {
-                bottom: 1rem;
-                right: 1rem;
-                font-size: 0.8rem;
-                padding: var(--spacing-xs) var(--spacing-sm);
-            }
-            
-            /* Mobile-friendly auth button */
-            .auth-button {
-                position: fixed;
+            .sidebar-toggle-btn {
                 top: 1rem;
-                right: 1rem;
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
+                left: 1rem;
+                font-size: 1.2rem;
+                padding: 0.3em 0.6em;
             }
-        }
-
-        /* === HIDDEN UTILITY === */
-        .hidden {
-            display: none !important;
-        }
-
-        /* === LOADING SPINNER === */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--synesthetic-teal);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <!-- Sidebar Dashboard (God/User Tools) -->
+    <aside class="sidebar-dashboard hidden" id="sidebarDashboard">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Soul & God Tools</span>
+            <button class="sidebar-close" id="sidebarCloseBtn" title="Close">×</button>
+        </div>
+        <nav class="sidebar-sections">
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">🧠</span>
+                    <span class="section-label">Train My Soul</span>
+                </button>
+                <div class="section-content hidden">
+                    <form id="trainSoulForm" style="display: flex; flex-direction: column; gap: 0.7em;">
+                        <label style="font-size:0.95em;">Emotion Label
+                            <input type="text" id="emotionLabelInput" placeholder="e.g. joy, sadness" required style="width:100%;margin-top:0.3em;" />
+                        </label>
+                        <label style="font-size:0.95em;">Audio Features (JSON)
+                            <textarea id="featuresInput" placeholder='{"bass":..., "mid":..., ...}' rows="3" required style="width:100%;margin-top:0.3em;"></textarea>
+                        </label>
+                        <button type="submit" id="submitTrainingDataBtn" style="background:var(--synesthetic-teal);color:#111;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Add Training Example</button>
+                    </form>
+                    <button id="trainSoulBtn" style="margin-top:1em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Train Neural Net</button>
+                    <div id="trainSoulStatus" style="margin-top:0.7em;font-size:0.95em;color:var(--text-tertiary);"></div>
+                </div>
+            </section>
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">🗂️</span>
+                    <span class="section-label">Soul Management</span>
+                </button>
+                <div class="section-content hidden">
+                    <div class="section-placeholder">(Soul management tools coming soon)</div>
+                </div>
+            </section>
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">🤝</span>
+                    <span class="section-label">Contribute Data</span>
+                </button>
+                <div class="section-content hidden">
+                    <div class="section-placeholder">(Crowdsourcing UI coming soon)</div>
+                </div>
+            </section>
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">👁️‍🗨️</span>
+                    <span class="section-label">God Review</span>
+                </button>
+                <div class="section-content hidden">
+                    <div class="section-placeholder">(God review tools coming soon)</div>
+                </div>
+            </section>
+        </nav>
+    </aside>
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Open Soul & God Tools">☰</button>
+
     <!-- Animated Background -->
     <div class="emotional-background"></div>
 
@@ -1437,372 +1555,39 @@ if (window.authManager && window.authManager.currentRoomCode) {
             }
         }
 
-        // Initialize the engine when page loads
+        // === PAGE INITIALIZATION (ENGINE + SIDEBAR DASHBOARD) ===
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the engine
             const engine = new EmotionalIntelligenceEngine();
+
+            // Sidebar dashboard logic
+            const sidebar = document.getElementById('sidebarDashboard');
+            const toggleBtn = document.getElementById('sidebarToggleBtn');
+            const closeBtn = document.getElementById('sidebarCloseBtn');
+            const sectionToggles = document.querySelectorAll('.section-toggle');
+
+            // Sidebar open/close
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+            });
+            closeBtn.addEventListener('click', () => {
+                sidebar.classList.add('hidden');
+            });
+
+            // Collapsible sections
+            sectionToggles.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const content = btn.parentElement.querySelector('.section-content');
+                    content.classList.toggle('hidden');
+                });
+            });
         });
 
         // === EMOTION ENGINE (NEURAL NETWORK BRAIN) ===
-import("./src/emotion-engine.js").then(module => {
-    window.EmotionEngine = module.default || module.EmotionEngine;
-    window.emotionEngine = new window.EmotionEngine({ personalEmotionalDNA: { emotionColorMap: {} } });
-});
-
-// === TRAIN MY SOUL UI ===
-function createTrainSoulUI() {
-    if (document.getElementById('trainSoulModal')) return;
-    const modal = document.createElement('div');
-    modal.id = 'trainSoulModal';
-    modal.style = `position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:3000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);`;
-    // Dynamically get all emotion keys and display names/colors
-    const emotionEngine = window.emotionEngine;
-    const emotionKeys = emotionEngine && emotionEngine.emotionKeys ? emotionEngine.emotionKeys : [
-      'joy','sadness','anger','fear','surprise','disgust','nostalgia','awe','determination','serenity','passion','melancholy'
-    ];
-    // Get emotion info for display
-    const getEmotionInfo = (key) => {
-      if (!emotionEngine) return { name: key, colors: ['#FFD700'] };
-      return emotionEngine.emotionCategories.primary[key] || emotionEngine.emotionCategories.complex[key] || { name: key, colors: ['#FFD700'] };
-    };
-    // Build buttons for all emotions
-    let btnGrid = '';
-    for (const key of emotionKeys) {
-      const info = getEmotionInfo(key);
-      const color = (info.colors && info.colors[0]) || '#FFD700';
-      btnGrid += `<button class="train-emotion-btn" data-emotion="${key}" style="background:${color};color:#222;margin-bottom:0.2rem;">${info.name || key}</button>`;
-    }
-    modal.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:2.5rem 2rem;max-width:440px;width:90%;box-shadow:0 8px 40px #000;display:flex;flex-direction:column;align-items:center;">
-        <h2 style="color:#4ECDC4;margin-bottom:1rem;">Train My Soul</h2>
-        <p style="color:#fff;margin-bottom:1.2rem;text-align:center;">Listen. Feel. Click the emotion you feel most. <br><span style='color:#4ECDC4'>Repeat for different music/moods!</span></p>
-        <div id="emotionBtnGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:1.5rem;width:100%;max-height:260px;overflow-y:auto;">
-          ${btnGrid}
-        </div>
-        <button id="trainSoulTrainBtn" style="margin-bottom:0.7rem;background:linear-gradient(135deg,#4ECDC4,#45B7D1);color:#fff;padding:0.7rem 1.5rem;border:none;border-radius:10px;font-size:1rem;cursor:pointer;">Train Neural Net</button>
-        <button onclick="document.getElementById('trainSoulModal').remove()" style="background:none;border:none;color:#aaa;font-size:1.2rem;margin-top:0.5rem;">Close</button>
-        <div id="trainSoulStatus" style="margin-top:0.7rem;color:#FFD700;font-size:0.95rem;"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    // Add listeners
-    const featureSamples = [];
-    const labelSamples = [];
-    modal.querySelectorAll('.train-emotion-btn').forEach((btn) => {
-      btn.onclick = async () => {
-        const features = window.lastAudioFeatures || null;
-        if (!features) {
-          document.getElementById('trainSoulStatus').textContent = 'Play music and let the app analyze first!';
-          return;
-        }
-        // Prepare input: [bass, mid, treble, spectralCentroid, spectralRolloff, spectralFlatness, tempo, energy]
-        featureSamples.push([
-          features.bass || features.bassLevel || 0,
-          features.mid || features.midLevel || 0,
-          features.treble || features.trebleLevel || 0,
-          features.spectralCentroid || 0,
-          features.spectralRolloff || 0,
-          features.spectralFlatness || 0,
-          features.tempo || 0,
-          features.energy || features.totalEnergy || 0
-        ]);
-        // One-hot label for dynamic emotions
-        const idx = emotionKeys.indexOf(btn.dataset.emotion);
-        const label = Array(emotionKeys.length).fill(0);
-        if (idx >= 0) label[idx] = 1;
-        labelSamples.push(label);
-        document.getElementById('trainSoulStatus').textContent = `Captured: ${featureSamples.length} samples. Click Train when ready!`;
-      };
-    });
-    document.getElementById('trainSoulTrainBtn').onclick = async () => {
-      if (featureSamples.length < Math.max(5, emotionKeys.length)) {
-        document.getElementById('trainSoulStatus').textContent = `Add at least ${Math.max(5, emotionKeys.length)} samples!`;
-        return;
-      }
-      document.getElementById('trainSoulStatus').textContent = 'Training neural net...';
-      await window.emotionEngine.trainNeuralNetwork(featureSamples, labelSamples, 40);
-      document.getElementById('trainSoulStatus').textContent = 'Neural net trained! Your soul is now smarter.';
-    };
-}
-// Trigger the Train My Soul UI on a special key combo
-document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-        createTrainSoulUI();
-    }
-});
-
-// === CONTRIBUTE SOUL DATA UI ===
-function addContributeSoulButton() {
-    if (document.getElementById('contributeSoulBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'contributeSoulBtn';
-    btn.textContent = '🌍 Contribute My Soul Data';
-    btn.style = 'position:fixed;bottom:2rem;left:16rem;z-index:2000;background:linear-gradient(135deg,#4ECDC4,#FFD700);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = async () => {
-        // Gather user's labeled data (from local or session)
-        const data = (window.emotionEngine && window.emotionEngine.personalModel && window.emotionEngine.personalModel.emotionHistory) || [];
-        if (!data.length) {
-            alert('No labeled data to contribute. Train your soul first!');
-            return;
-        }
-        if (!window.supabaseClient || !window.supabaseClient.isInitialized) {
-            alert('Database not available. Try again later.');
-            return;
-        }
-        btn.disabled = true;
-        btn.textContent = 'Submitting...';
-        // Submit each record to the crowdsourced_emotions table
-        let success = 0, fail = 0;
-        for (const record of data) {
-            const { error } = await window.supabaseClient.supabase
-                .from('crowdsourced_emotions')
-                .insert([{
-                    user_id: window.supabaseClient.currentUser?.id || 'anonymous',
-                    features: record.features,
-                    emotion: record.emotion?.key || record.emotion?.name || 'unknown',
-                    confidence: record.emotion?.confidence || 0,
-                    timestamp: record.timestamp || Date.now()
-                }]);
-            if (error) fail++; else success++;
-        }
-        btn.textContent = `Contributed ${success} samples!${fail ? ' ('+fail+' failed)' : ''}`;
-        setTimeout(() => {
-            btn.textContent = '🌍 Contribute My Soul Data';
-            btn.disabled = false;
-        }, 3000);
-    };
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addContributeSoulButton);
-
-// === GOD REVIEW UI FOR CROWDSOURCED DATA ===
-function createGodReviewUI() {
-    if (document.getElementById('godReviewModal')) return;
-    // Only show if god/creator (simple check: localStorage.godMode or window.isGod)
-    if (!window.isGod && !localStorage.getItem('godMode')) return;
-    const modal = document.createElement('div');
-    modal.id = 'godReviewModal';
-    modal.style = `position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:5000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.93);backdrop-filter:blur(12px);`;
-    modal.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:22px;padding:2.5rem 2rem;max-width:600px;width:98%;box-shadow:0 8px 40px #000;display:flex;flex-direction:column;align-items:center;">
-        <h2 style="color:#FFD700;margin-bottom:1rem;">God Review: Crowdsourced Soul Data</h2>
-        <div id="godReviewList" style="color:#fff;font-size:0.98rem;margin-bottom:1.2rem;text-align:left;max-height:320px;overflow-y:auto;width:100%;"></div>
-        <button onclick="document.getElementById('godReviewModal').remove()" style="background:none;border:none;color:#aaa;font-size:1.2rem;margin-top:0.5rem;">Close</button>
-        <div id="godReviewStatus" style="margin-top:0.7rem;color:#FFD700;font-size:0.95rem;"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    // Load crowdsourced data from Supabase
-    if (!window.supabaseClient || !window.supabaseClient.isInitialized) {
-        document.getElementById('godReviewList').textContent = 'Database not available.';
-        return;
-    }
-    window.supabaseClient.supabase
-        .from('crowdsourced_emotions')
-        .select('*')
-        .order('timestamp', { ascending: false })
-        .limit(100)
-        .then(({ data, error }) => {
-            if (error || !data) {
-                document.getElementById('godReviewList').textContent = 'Failed to load data.';
-                return;
-            }
-            if (!data.length) {
-                document.getElementById('godReviewList').textContent = 'No crowdsourced data yet.';
-                return;
-            }
-            // Render each record with approve/reject
-            document.getElementById('godReviewList').innerHTML = data.map((rec, i) => `
-              <div style='margin-bottom:0.7rem;padding:0.7rem 0.5rem;border-bottom:1px solid #333;'>
-                <b>User:</b> ${rec.user_id}<br>
-                <b>Emotion:</b> ${rec.emotion} <b>Conf:</b> ${rec.confidence}<br>
-                <b>Features:</b> ${JSON.stringify(rec.features)}<br>
-                <button style='margin-right:0.5rem;' onclick='approveCrowdsourced(${rec.id})'>Approve</button>
-                <button onclick='rejectCrowdsourced(${rec.id})'>Reject</button>
-              </div>
-            `).join('');
+        import("./src/emotion-engine.js").then(module => {
+            window.EmotionEngine = module.default || module.EmotionEngine;
+            window.emotionEngine = new window.EmotionEngine({ personalEmotionalDNA: { emotionColorMap: {} } });
         });
-}
-
-// Approve/reject handlers (window scope for inline onclick)
-window.approveCrowdsourced = async function(id) {
-    if (!window.supabaseClient) return;
-    // Move record to approved_emotions, then delete from crowdsourced_emotions
-    const { data, error } = await window.supabaseClient.supabase
-        .from('crowdsourced_emotions').select('*').eq('id', id).single();
-    if (error || !data) return alert('Failed to fetch record.');
-    await window.supabaseClient.supabase
-        .from('approved_emotions').insert([{ ...data }]);
-    await window.supabaseClient.supabase
-        .from('crowdsourced_emotions').delete().eq('id', id);
-    document.getElementById('godReviewStatus').textContent = 'Approved and moved!';
-    createGodReviewUI(); // Refresh
-};
-window.rejectCrowdsourced = async function(id) {
-    if (!window.supabaseClient) return;
-    await window.supabaseClient.supabase
-        .from('crowdsourced_emotions').delete().eq('id', id);
-    document.getElementById('godReviewStatus').textContent = 'Rejected and deleted.';
-    createGodReviewUI(); // Refresh
-};
-// Add button for god/creator
-function addGodReviewButton() {
-    if (!window.isGod && !localStorage.getItem('godMode')) return;
-    if (document.getElementById('godReviewBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'godReviewBtn';
-    btn.textContent = '👁️ God Review';
-    btn.style = 'position:fixed;bottom:2rem;left:32rem;z-index:2000;background:linear-gradient(135deg,#FFD700,#DC143C);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = createGodReviewUI;
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addGodReviewButton);
-
-        // === SONG RECOGNITION & AUTO-LABELING PLACEHOLDER ===
-function addSongRecognitionPlaceholder() {
-    if (document.getElementById('songRecogBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'songRecogBtn';
-    btn.textContent = '🎵 Song Recognition (Coming Soon)';
-    btn.style = 'position:fixed;bottom:2rem;left:48rem;z-index:2000;background:linear-gradient(135deg,#4ECDC4,#4169E1);color:#fff;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;opacity:0.7;';
-    btn.onclick = () => {
-        alert('Song recognition and auto-labeling will let you auto-tag emotions for known tracks. Stay tuned!');
-    };
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addSongRecognitionPlaceholder);
-
-        // === GOD MODE TOGGLE ===
-function addGodModeToggle() {
-    if (document.getElementById('godModeToggle')) return;
-    const btn = document.createElement('button');
-    btn.id = 'godModeToggle';
-    btn.textContent = '⚡ God Mode';
-    btn.title = 'Toggle God Mode (creator tools)';
-    btn.style = 'position:fixed;top:2rem;right:2rem;z-index:6000;background:linear-gradient(135deg,#FFD700,#DC143C);color:#222;padding:0.7rem 1.3rem;border:none;border-radius:14px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = () => {
-        const god = !(window.isGod || localStorage.getItem('godMode'));
-        window.isGod = god;
-        if (god) {
-            localStorage.setItem('godMode', 'true');
-            btn.textContent = '⚡ God Mode: ON';
-            btn.style.opacity = '1';
-        } else {
-            localStorage.removeItem('godMode');
-            btn.textContent = '⚡ God Mode';
-            btn.style.opacity = '0.7';
-        }
-        location.reload();
-    };
-    if (window.isGod || localStorage.getItem('godMode')) {
-        btn.textContent = '⚡ God Mode: ON';
-        btn.style.opacity = '1';
-    } else {
-        btn.style.opacity = '0.7';
-    }
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addGodModeToggle);
-
-// === POLISH FLOATING TOOL UIs ===
-function polishFloatingToolUIs() {
-    // Add tooltips and consistent stacking for all floating buttons
-    const btns = [
-        { id: 'trainSoulBtn', tip: 'Train your neural net soul with your own emotions' },
-        { id: 'contributeSoulBtn', tip: 'Contribute your labeled data to the god/creator' },
-        { id: 'godReviewBtn', tip: 'God: Review and approve crowdsourced soul data' },
-        { id: 'soulMgmtBtn', tip: 'God: Manage, backup, or reset the soul/brain' },
-        { id: 'songRecogBtn', tip: 'Song recognition and auto-labeling (coming soon)' }
-    ];
-    btns.forEach((b, i) => {
-        const el = document.getElementById(b.id);
-        if (el) {
-            el.title = b.tip;
-            el.style.zIndex = 2000 + i * 10;
-        }
-    });
-}
-document.addEventListener('DOMContentLoaded', polishFloatingToolUIs);
-
-        // === DOWNLOAD MY SOUL DATA BUTTON (USER) ===
-function addDownloadSoulDataButton() {
-    if (document.getElementById('downloadSoulDataBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'downloadSoulDataBtn';
-    btn.textContent = '💾 Download My Soul Data';
-    btn.title = 'Export your labeled emotion data for backup or sharing';
-    btn.style = 'position:fixed;bottom:2rem;left:64rem;z-index:2000;background:linear-gradient(135deg,#4ECDC4,#FFD700);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = () => {
-        const data = (window.emotionEngine && window.emotionEngine.personalModel && window.emotionEngine.personalModel.emotionHistory) || [];
-        if (!data.length) {
-            alert('No labeled data to export. Train your soul first!');
-            return;
-        }
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'my-soul-data.json';
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    };
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addDownloadSoulDataButton);
-
-// === MERGE APPROVED DATA BUTTON (GOD) ===
-function addMergeApprovedDataButton() {
-    if ((!window.isGod && !localStorage.getItem('godMode')) || document.getElementById('mergeApprovedBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'mergeApprovedBtn';
-    btn.textContent = '🔀 Merge Approved Data';
-    btn.title = 'Download all approved crowdsourced data for factory soul training';
-    btn.style = 'position:fixed;bottom:2rem;left:80rem;z-index:2000;background:linear-gradient(135deg,#FFD700,#4ECDC4);color:#222;padding:0.8rem 1.5rem;border:none;border-radius:16px;font-size:1.1rem;box-shadow:0 2px 16px #0003;cursor:pointer;';
-    btn.onclick = async () => {
-        if (!window.supabaseClient || !window.supabaseClient.isInitialized) {
-            alert('Database not available. Try again later.');
-            return;
-        }
-        btn.disabled = true;
-        btn.textContent = 'Downloading...';
-        const { data, error } = await window.supabaseClient.supabase
-            .from('approved_emotions')
-            .select('*')
-            .order('timestamp', { ascending: false });
-        if (error || !data || !data.length) {
-            alert('No approved data found.');
-            btn.textContent = '🔀 Merge Approved Data';
-            btn.disabled = false;
-            return;
-        }
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'approved-soul-data.json';
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        btn.textContent = '🔀 Merge Approved Data';
-        btn.disabled = false;
-    };
-    document.body.appendChild(btn);
-}
-document.addEventListener('DOMContentLoaded', addMergeApprovedDataButton);
-
-        // === FINAL POLISH: GRACEFUL OFFLINE/AUTH HANDLING & FUTURE EXTENSIBILITY ===
-        // All floating tool buttons now check for offline/auth state and degrade gracefully.
-        // Add comments and TODOs for future extensibility (federated learning, emotion blending, etc.)
-
-        // Example: Federated learning (future)
-        // TODO: Implement federated learning for privacy-preserving soul evolution across devices/users.
-        // Example: Emotion blending (future)
-        // TODO: Allow users/god to blend multiple souls or emotion profiles for hybrid experiences.
-        // Example: Public dataset auto-import (future)
-        // TODO: Add UI for god to import large public datasets directly for factory soul training.
-        // Example: User feedback loop (future)
-        // TODO: Let users rate/adjust detected emotions to further refine their soul.
-
-        // All critical UI actions now check for offline/auth state and show alerts if unavailable.
-        // All new features are wrapped in try/catch or check for required services before running.
     </script>
 </body>
 </html>
