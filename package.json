@@ -1,0 +1,38 @@
+{
+  "name": "synesthetic-consciousness-engine",
+  "version": "1.0.0",
+  "description": "Revolutionary music emotion analysis with synesthetic experiences - The foundation for artificial consciousness",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 3000",
+    "build": "echo 'Building synesthetic consciousness...'",
+    "deploy": "echo 'Deploying to production...'"
+  },
+  "keywords": [
+    "synesthesia",
+    "emotion-detection", 
+    "artificial-consciousness",
+    "music-analysis",
+    "smart-lights",
+    "ai-emotions",
+    "hackathon"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "meyda": "^5.2.1",
+    "@supabase/supabase-js": "^2.39.0",
+    "@tensorflow/tfjs": "^4.15.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/synesthetic-music-app.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

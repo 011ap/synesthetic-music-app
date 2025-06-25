@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synesthetic - Digital Consciousness Engine</title>
+    <meta name="description" content="Revolutionary music emotion analysis with synesthetic experiences. Feel music, share souls.">
+    <meta name="keywords" content="synesthesia, emotion detection, AI, music analysis, consciousness">
+    
+    <!-- Progressive Web App -->
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- External Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/meyda/5.2.1/meyda.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    
+    <!-- Application Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+    <!-- Revolutionary Emotion Canvas -->
+    <div class="emotion-canvas" id="emotionCanvas">
+        <div class="consciousness-particles" id="consciousnessParticles"></div>
+    </div>
+
+    <!-- Main Application Interface -->
+    <div class="consciousness-interface" id="consciousnessInterface">
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">
+                <span class="title-icon">🧠</span>
+                Synesthetic
+            </h1>
+            <p class="app-subtitle">Digital Consciousness Engine</p>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator"></span>
+                <span class="status-text">Initializing consciousness...</span>
+            </div>
+        </header>
+
+        <!-- Primary Controls -->
+        <section class="primary-controls">
+            <div class="control-grid">
+                <button class="primary-button" id="startDetection">
+                    <span class="button-icon">🎤</span>
+                    <span class="button-text">Start Emotional Detection</span>
+                    <span class="button-status">Ready</span>
+                </button>
+                
+                <button class="primary-button" id="trainConsciousness">
+                    <span class="button-icon">🧠</span>
+                    <span class="button-text">Train Digital Twin</span>
+                    <span class="button-status">Personal AI</span>
+                </button>
+                
+                <button class="primary-button" id="createRoom">
+                    <span class="button-icon">🌐</span>
+                    <span class="button-text">Create Synesthetic Room</span>
+                    <span class="button-status">Social Experience</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Emotional Intelligence Display -->
+        <section class="emotional-intelligence" id="emotionalIntelligence">
+            <h2 class="section-title">🎭 Emotional Consciousness Analysis</h2>
+            
+            <div class="consciousness-grid">
+                <!-- Primary Emotion -->
+                <div class="consciousness-layer primary-emotion">
+                    <div class="layer-header">
+                        <h3 class="layer-title">Primary Emotion</h3>
+                        <div class="layer-confidence" id="primaryConfidence">0%</div>
+                    </div>
+                    <div class="emotion-display">
+                        <div class="emotion-name" id="primaryEmotionName">Awakening</div>
+                        <div class="emotion-description" id="primaryEmotionDesc">Consciousness initializing...</div>
+                    </div>
+                    <div class="emotion-visualization">
+                        <div class="emotion-wave" id="primaryWave"></div>
+                        <div class="intensity-meter">
+                            <div class="intensity-fill" id="primaryIntensity"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emotional Depth -->
+                <div class="consciousness-layer emotional-depth">
+                    <div class="layer-header">
+                        <h3 class="layer-title">Emotional Depth</h3>
+                        <div class="layer-confidence" id="depthConfidence">0%</div>
+                    </div>
+                    <div class="depth-analysis">
+                        <div class="depth-value" id="depthValue">Surface</div>
+                        <div class="depth-layers" id="depthLayers">
+                            <div class="depth-layer surface"></div>
+                            <div class="depth-layer middle"></div>
+                            <div class="depth-layer deep"></div>
+                            <div class="depth-layer core"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Resonance -->
+                <div class="consciousness-layer memory-resonance">
+                    <div class="layer-header">
+                        <h3 class="layer-title">Memory Resonance</h3>
+                        <div class="layer-confidence" id="memoryConfidence">0%</div>
+                    </div>
+                    <div class="memory-analysis">
+                        <div class="memory-strength" id="memoryStrength">Forming...</div>
+                        <div class="memory-associations" id="memoryAssociations">
+                            <!-- Memory triggers will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Synesthetic Colors -->
+                <div class="consciousness-layer synesthetic-colors">
+                    <div class="layer-header">
+                        <h3 class="layer-title">Synesthetic Palette</h3>
+                        <div class="layer-confidence" id="colorConfidence">0%</div>
+                    </div>
+                    <div class="color-analysis">
+                        <div class="color-palette" id="currentColorPalette">
+                            <!-- Colors will be populated here -->
+                        </div>
+                        <div class="color-description" id="colorDescription">Sensing chromesthesia...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personal Training Interface -->
+        <section class="personal-training" id="personalTraining">
+            <h2 class="section-title">🎨 Personal Synesthetic Training</h2>
+            
+            <div class="training-interface">
+                <div class="training-prompt">
+                    <p class="prompt-text">What colors do you feel in your chest when you experience this emotion?</p>
+                    <div class="current-emotion-context" id="currentEmotionContext">
+                        Play music to begin training your digital consciousness...
+                    </div>
+                </div>
+                
+                <div class="color-selection-grid" id="colorSelectionGrid">
+                    <!-- Color options will be dynamically populated -->
+                </div>
+                
+                <div class="training-controls">
+                    <button class="training-button" id="saveEmotionalDNA">
+                        <span class="button-icon">💾</span>
+                        Save Emotional DNA
+                    </button>
+                    <button class="training-button" id="clearTraining">
+                        <span class="button-icon">🔄</span>
+                        Reset Training
+                    </button>
+                    <button class="training-button" id="exportProfile">
+                        <span class="button-icon">📤</span>
+                        Export Profile
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Consciousness Network -->
+        <section class="social-consciousness" id="socialConsciousness">
+            <h2 class="section-title">🌐 Social Emotional Network</h2>
+            
+            <div class="social-interface">
+                <div class="room-management">
+                    <div class="room-status" id="roomStatus">
+                        <span class="status-icon">🏠</span>
+                        <span class="status-text">Not connected to any emotional room</span>
+                    </div>
+                    
+                    <div class="room-controls">
+                        <button class="social-button" id="hostRoom">
+                            <span class="button-icon">🎭</span>
+                            Host Emotional Experience
+                        </button>
+                        <button class="social-button" id="joinRoom">
+                            <span class="button-icon">🤝</span>
+                            Join Friend's Emotions
+                        </button>
+                        <button class="social-button" id="discoverRooms">
+                            <span class="button-icon">🔍</span>
+                            Discover Nearby Emotions
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="connected-consciousness" id="connectedConsciousness">
+                    <!-- Connected users will be shown here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Environmental Controls -->
+        <section class="environmental-controls" id="environmentalControls">
+            <h2 class="section-title">💡 Environmental Integration</h2>
+            
+            <div class="environment-grid">
+                <div class="environment-option" id="screenControl">
+                    <div class="option-icon">📱</div>
+                    <div class="option-title">Screen Colors</div>
+                    <div class="option-status">Active</div>
+                    <button class="option-toggle active" id="toggleScreen">ON</button>
+                </div>
+                
+                <div class="environment-option" id="smartLights">
+                    <div class="option-icon">💡</div>
+                    <div class="option-title">Smart Lights</div>
+                    <div class="option-status">Detecting...</div>
+                    <button class="option-toggle" id="toggleLights">OFF</button>
+                </div>
+                
+                <div class="environment-option" id="hapticFeedback">
+                    <div class="option-icon">📳</div>
+                    <div class="option-title">Haptic Feedback</div>
+                    <div class="option-status">Available</div>
+                    <button class="option-toggle" id="toggleHaptic">OFF</button>
+                </div>
+                
+                <div class="environment-option" id="audioVisualization">
+                    <div class="option-icon">🎵</div>
+                    <div class="option-title">Audio Visualization</div>
+                    <div class="option-status">Ready</div>
+                    <button class="option-toggle" id="toggleVisualization">OFF</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Global Status Display -->
+    <div class="global-status" id="globalStatus">
+        <div class="status-content">
+            <span class="status-icon">🧠</span>
+            <span class="status-message">Digital consciousness initialized. Ready to experience your synesthetic soul.</span>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <button class="nav-item active" data-section="emotional-intelligence">
+            <span class="nav-icon">🎭</span>
+            <span class="nav-label">Emotions</span>
+        </button>
+        <button class="nav-item" data-section="personal-training">
+            <span class="nav-icon">🎨</span>
+            <span class="nav-label">Training</span>
+        </button>
+        <button class="nav-item" data-section="social-consciousness">
+            <span class="nav-icon">🌐</span>
+            <span class="nav-label">Social</span>
+        </button>
+        <button class="nav-item" data-section="environmental-controls">
+            <span class="nav-icon">💡</span>
+            <span class="nav-label">Environment</span>
+        </button>
+    </nav>
+
+    <!-- Application Scripts -->
+    <script src="src/synesthetic-core.js"></script>
+    <script src="src/emotion-engine.js"></script>
+    <script src="src/consciousness-interface.js"></script>
+    <script src="components/audio-analyzer.js"></script>
+    <script src="components/color-visualizer.js"></script>
+    <script src="components/social-consciousness.js"></script>
+    <script src="services/supabase-client.js"></script>
+    <script src="services/smart-lights.js"></script>
+
+    <!-- Initialize Application -->
+    <script>
+        // Initialize the Synesthetic Consciousness Engine
+        document.addEventListener('DOMContentLoaded', () => {
+            window.synestheticApp = new SynestheticCore();
+            console.log('🧠 Synesthetic Consciousness Engine initialized');
+        });
+    </script>
+</body>
+</html>
