@@ -1,7 +1,7 @@
 // === SUPABASE CONFIGURATION ===
 // Replace these with your actual Supabase credentials
-const SUPABASE_URL = 'https://fwuwuofgwvyacmpppect.supabase.co'; // From Supabase dashboard
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3dXd1b2Znd3Z5YWNtcHBwZWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDgzMzEsImV4cCI6MjA2NjQyNDMzMX0.9FdGAMI6YnnKwqXGJp4EvkoEiylhGoLHEGgYJQ5r7mY'; // From Supabase dashboard
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // From Supabase dashboard
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // From Supabase dashboard
 
 // Initialize Supabase client
 let supabase = null;
@@ -33,38 +33,64 @@ class AuthManager {
         this.emotionalProfile = null;
     }
     
-    // Sign up new user
+    // Sign up new user - Updated to work with automatic profile creation
     async signUp(email, password, username) {
         try {
-            // Create auth user
+            // Create auth user with username in metadata
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: email,
-                password: password
+                password: password,
+                options: {
+                    data: {
+                        username: username
+                    }
+                }
             });
             
             if (authError) throw authError;
             
-            // Create user profile
+            // Wait for profile to be created by trigger
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Fetch the automatically created profile
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
-                .insert([{
-                    id: authData.user.id,
-                    email: email,
-                    username: username,
-                    emotional_dna: {
-                        dominant_emotions: [],
-                        color_preferences: {},
-                        sensitivity_level: 0.5
-                    }
-                }])
-                .select()
+                .select('*')
+                .eq('id', authData.user.id)
                 .single();
                 
-            if (profileError) throw profileError;
+            if (profileError || !profile) {
+                console.error('Profile fetch error:', profileError);
+                // If profile doesn't exist yet, create it manually as fallback
+                const { data: newProfile, error: createError } = await supabase
+                    .from('profiles')
+                    .insert({
+                        id: authData.user.id,
+                        email: email,
+                        username: username,
+                        emotional_dna: {
+                            dominant_emotions: [],
+                            color_preferences: {},
+                            sensitivity_level: 0.5
+                        },
+                        total_songs_analyzed: 0,
+                        subscription_tier: 'free'
+                    })
+                    .select()
+                    .single();
+                    
+                if (createError) {
+                    console.error('Manual profile creation failed:', createError);
+                    return { success: true, user: authData.user }; // Still return success for auth
+                }
+                
+                this.currentUser = newProfile;
+            } else {
+                this.currentUser = profile;
+            }
             
-            this.currentUser = profile;
             this.showUserDashboard();
-            return { success: true, user: profile };
+            return { success: true, user: this.currentUser || authData.user };
             
         } catch (error) {
             console.error('Signup error:', error);
@@ -263,28 +289,38 @@ class AuthManager {
         }
     }
     
-    // Join emotion sharing room
+    // Join emotion sharing room - Fixed version
     async joinEmotionRoom(roomCode) {
         try {
-            const { data, error } = await supabase
+            // First check if room exists
+            const { data: room, error } = await supabase
                 .from('emotion_rooms')
                 .select('*')
-                .eq('room_code', roomCode)
+                .eq('room_code', roomCode.toUpperCase())
                 .eq('is_active', true)
                 .single();
                 
-            if (error) throw error;
+            if (error || !room) {
+                throw new Error('Room not found or inactive');
+            }
             
             // Update participant count
-            await supabase
+            const { error: updateError } = await supabase
                 .from('emotion_rooms')
-                .update({ participants: data.participants + 1 })
-                .eq('room_code', roomCode);
+                .update({ 
+                    participants: room.participants + 1,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('room_code', roomCode.toUpperCase());
+            
+            if (updateError) throw updateError;
             
             // Subscribe to room updates
-            this.subscribeToRoom(roomCode);
+            this.subscribeToRoom(roomCode.toUpperCase());
             
-            return { success: true, room: data };
+            // Return updated room data
+            room.participants += 1;
+            return { success: true, room: room };
             
         } catch (error) {
             console.error('Error joining room:', error);
@@ -292,42 +328,138 @@ class AuthManager {
         }
     }
     
-    // Subscribe to real-time room updates
+    // Subscribe to real-time room updates - Enhanced version
     subscribeToRoom(roomCode) {
-        const channel = supabase
-            .channel(`room:${roomCode}`)
-            .on('postgres_changes', 
-                { 
-                    event: 'UPDATE', 
-                    schema: 'public', 
+        // Unsubscribe from any existing room
+        if (this.currentRoomChannel) {
+            supabase.removeChannel(this.currentRoomChannel);
+        }
+        
+        // Store current room code
+        this.currentRoomCode = roomCode;
+        
+        // Create new subscription with presence tracking
+        this.currentRoomChannel = supabase
+            .channel(`room-${roomCode}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
                     table: 'emotion_rooms',
                     filter: `room_code=eq.${roomCode}`
-                }, 
+                },
                 (payload) => {
-                    // Update UI with new emotion/colors
+                    console.log('Room update received:', payload);
                     this.handleRoomUpdate(payload.new);
                 }
             )
-            .subscribe();
-            
-        // Store channel reference for cleanup
-        this.currentRoomChannel = channel;
+            .on('presence', { event: 'sync' }, () => {
+                const state = this.currentRoomChannel.presenceState();
+                const participantCount = Object.keys(state).length;
+                console.log('Participants in room:', participantCount);
+                
+                // Update participant count in UI
+                const participantsElement = document.getElementById('roomParticipants');
+                if (participantsElement) {
+                    participantsElement.textContent = participantCount || 1;
+                }
+            })
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    console.log('Subscribed to room:', roomCode);
+                    // Track presence
+                    this.currentRoomChannel.track({
+                        user: this.currentUser?.id || 'anonymous',
+                        username: this.currentUser?.username || 'Guest',
+                        online_at: new Date().toISOString()
+                    });
+                }
+            });
     }
     
-    // Handle room emotion updates
+    // Handle room emotion updates - Enhanced version
     handleRoomUpdate(roomData) {
-        // Update background colors
-        const bg = document.querySelector('.emotional-background');
+        if (!roomData) return;
+        
+        console.log('Handling room update:', roomData);
+        
+        // Update participant count
+        const participantsElement = document.getElementById('roomParticipants');
+        if (participantsElement) {
+            participantsElement.textContent = roomData.participants || 1;
+        }
+        
+        // Update room name
+        const roomNameElement = document.getElementById('activeRoomName');
+        if (roomNameElement) {
+            roomNameElement.textContent = roomData.room_name;
+        }
+        
+        // Update room emotion and colors with smooth transition
         if (roomData.current_colors && roomData.current_colors.length >= 3) {
+            // Animate background change
+            const bg = document.querySelector('.emotional-background');
+            bg.style.transition = 'all 1s ease';
             bg.style.background = `
-                radial-gradient(circle at 20% 50%, ${roomData.current_colors[0]}40, transparent 50%),
-                radial-gradient(circle at 80% 80%, ${roomData.current_colors[1]}40, transparent 50%),
-                radial-gradient(circle at 40% 20%, ${roomData.current_colors[2]}40, transparent 50%)
+                radial-gradient(circle at 20% 50%, ${roomData.current_colors[0]}, transparent 40%),
+                radial-gradient(circle at 80% 80%, ${roomData.current_colors[1]}, transparent 40%),
+                radial-gradient(circle at 40% 20%, ${roomData.current_colors[2]}, transparent 40%)
             `;
+            
+            // Update particles if engine exists
+            if (window.emotionEngine && window.emotionEngine.updateParticles) {
+                const mockEmotion = {
+                    colors: roomData.current_colors,
+                    colorsVibrant: roomData.current_colors,
+                    name: roomData.current_emotion
+                };
+                window.emotionEngine.currentEmotion = mockEmotion;
+                window.emotionEngine.updateParticles(mockEmotion, { energy: 0.7 });
+            }
         }
         
         // Show notification
-        this.showNotification(`Room emotion: ${roomData.current_emotion}`);
+        if (roomData.current_emotion && roomData.current_emotion !== 'waiting') {
+            this.showNotification(`Room emotion: ${roomData.current_emotion}`);
+        }
+    }
+    
+    // Broadcast emotion changes to room
+    async broadcastEmotionToRoom(emotion, colors) {
+        if (!this.currentRoomCode || !this.currentUser) return;
+        
+        console.log('Broadcasting emotion to room:', emotion);
+        
+        try {
+            const { error } = await supabase
+                .from('emotion_rooms')
+                .update({
+                    current_emotion: emotion,
+                    current_colors: colors,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('room_code', this.currentRoomCode)
+                .eq('host_id', this.currentUser.id); // Only host can update
+                
+            if (error) {
+                // If not host, try participant update
+                const { error: participantError } = await supabase
+                    .from('emotion_rooms')
+                    .update({
+                        current_emotion: emotion,
+                        current_colors: colors,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('room_code', this.currentRoomCode);
+                    
+                if (participantError) {
+                    console.error('Error broadcasting emotion:', participantError);
+                }
+            }
+        } catch (error) {
+            console.error('Error in broadcastEmotionToRoom:', error);
+        }
     }
     
     // Update room with current emotion

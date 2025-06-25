@@ -2,27 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Synesthetic - Digital Consciousness Engine</title>
     <meta name="description" content="Revolutionary music emotion analysis with synesthetic experiences. Feel music, share souls.">
+    
+    <!-- Add our custom styles -->
+    <link rel="stylesheet" href="auth-styles.css">
+    
     <style>
         /* === CSS VARIABLES FOR EMOTIONAL THEMES === */
         :root {
-            --bg-dark: #0a0a0f;
-            --bg-darker: #050507;
-            --glass-overlay: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            /* Dark theme - matching your screenshot */
+            --bg-dark: #0f0f14;
+            --bg-darker: #08080c;
+            --glass-overlay: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.8);
-            --text-tertiary: rgba(255, 255, 255, 0.6);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
             
-            /* Synesthetic Color Palette */
-            --synesthetic-red: #ff6b6b;
-            --synesthetic-blue: #45b7d1;
-            --synesthetic-teal: #4ecdc4;
-            --synesthetic-green: #96ceb4;
-            --synesthetic-purple: #dda0dd;
+            /* Synesthetic Color Palette - Vibrant for contrast */
+            --synesthetic-red: #ff006e;
+            --synesthetic-blue: #0096ff;
+            --synesthetic-teal: #00f5ff;
+            --synesthetic-green: #00ff88;
+            --synesthetic-purple: #ff00ff;
             --synesthetic-gold: #ffd700;
+            --synesthetic-orange: #ff6b00;
             
             /* Spacing */
             --spacing-xs: 0.25rem;
@@ -37,8 +43,8 @@
             --transition-quick: all 0.2s ease;
             
             /* Glass Effect */
-            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 30px rgba(78, 205, 196, 0.3);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 40px rgba(0, 245, 255, 0.5);
             
             /* Border Radius */
             --radius-sm: 0.5rem;
@@ -52,6 +58,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -62,67 +69,78 @@
             overflow-x: hidden;
             min-height: 100vh;
             position: relative;
+            touch-action: manipulation;
         }
 
-        /* === ANIMATED BACKGROUND === */
+        /* === ANIMATED BACKGROUND - SUBTLE FOR DARK THEME === */
         .emotional-background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
             z-index: -1;
-            opacity: 0.15;
-            background: radial-gradient(circle at 20% 50%, var(--synesthetic-red), transparent 50%),
-                        radial-gradient(circle at 80% 80%, var(--synesthetic-blue), transparent 50%),
-                        radial-gradient(circle at 40% 20%, var(--synesthetic-teal), transparent 50%);
-            filter: blur(100px);
+            opacity: 0.3;
+            background: radial-gradient(circle at 20% 50%, var(--synesthetic-red), transparent 40%),
+                        radial-gradient(circle at 80% 80%, var(--synesthetic-blue), transparent 40%),
+                        radial-gradient(circle at 40% 20%, var(--synesthetic-teal), transparent 40%);
+            filter: blur(120px);
             animation: emotionalShift 20s ease-in-out infinite;
+            transform: scale(1.5);
+        }
+
+        /* TV Mode - Extra bright for living rooms */
+        body.tv-mode .emotional-background {
+            opacity: 0.8;
+            filter: blur(80px) saturate(2);
+            transform: scale(2);
         }
 
         @keyframes emotionalShift {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            33% { transform: scale(1.1) rotate(120deg); }
-            66% { transform: scale(0.9) rotate(240deg); }
+            0%, 100% { transform: scale(1.5) rotate(0deg); }
+            33% { transform: scale(2) rotate(120deg); }
+            66% { transform: scale(1.3) rotate(240deg); }
         }
 
         /* === CONTAINER === */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: var(--spacing-xl);
+            padding: var(--spacing-md);
             position: relative;
             z-index: 1;
         }
 
-        /* === HEADER === */
+        /* === HEADER - ELEGANT DARK === */
         .header {
             text-align: center;
-            margin-bottom: var(--spacing-xxl);
-            padding: var(--spacing-xxl) 0;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xxl) 0 var(--spacing-xl);
+            position: relative;
         }
 
         .logo {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 300;
-            letter-spacing: -0.02em;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 200;
+            letter-spacing: 0.05em;
             margin-bottom: var(--spacing-sm);
-            background: linear-gradient(135deg, var(--synesthetic-red), var(--synesthetic-teal), var(--synesthetic-blue));
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: logoShift 10s ease-in-out infinite;
+            animation: logoShift 15s ease-in-out infinite;
         }
 
         @keyframes logoShift {
-            0%, 100% { filter: hue-rotate(0deg); }
-            50% { filter: hue-rotate(30deg); }
+            0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+            50% { filter: hue-rotate(20deg) brightness(1.1); }
         }
 
         .tagline {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--text-tertiary);
             font-weight: 300;
+            letter-spacing: 0.02em;
         }
 
         /* === STATUS INDICATOR === */
@@ -130,9 +148,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: var(--spacing-md);
+            gap: var(--spacing-sm);
             margin-bottom: var(--spacing-xl);
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: var(--spacing-xs) var(--spacing-lg);
             background: var(--glass-overlay);
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
@@ -143,84 +161,236 @@
         }
 
         .status-indicator {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--synesthetic-red);
             animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--synesthetic-red);
         }
 
         .status-indicator.active {
             background: var(--synesthetic-green);
+            box-shadow: 0 0 15px var(--synesthetic-green);
             animation: pulse 1s infinite;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
+            50% { opacity: 0.5; transform: scale(1.3); }
         }
 
-        /* === PRIMARY CONTROLS === */
+        /* === PRIMARY CONTROLS - MINIMAL ICON STYLE === */
         .primary-controls {
-            margin-bottom: var(--spacing-xxl);
+            margin-bottom: var(--spacing-xl);
         }
 
         .control-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: flex;
+            justify-content: center;
+            align-items: center;
             gap: var(--spacing-lg);
+            flex-wrap: wrap;
         }
 
-        .primary-button {
-            background: linear-gradient(135deg, var(--glass-overlay), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+        .icon-button {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: var(--radius-lg);
-            padding: var(--spacing-xl);
-            color: var(--text-primary);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
             cursor: pointer;
             transition: all var(--transition-smooth);
             position: relative;
             overflow: hidden;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-            min-height: 120px;
         }
 
-        .primary-button:hover {
+        .icon-button:hover {
             transform: translateY(-4px);
-            box-shadow: var(--shadow-glow);
+            background: rgba(255, 255, 255, 0.06);
             border-color: var(--synesthetic-teal);
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), var(--glass-overlay));
+            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.2);
         }
 
-        .primary-button.active {
-            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
-            animation: activeGlow 2s ease-in-out infinite;
+        .icon-button.active {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 150, 255, 0.15));
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 25px rgba(0, 245, 255, 0.3);
         }
 
-        @keyframes activeGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(78, 205, 196, 0.6); }
+        .icon-button .icon {
+            font-size: 1.8rem;
+            transition: transform var(--transition-quick);
         }
 
-        .button-icon {
-            font-size: 2.5rem;
-            margin-bottom: var(--spacing-sm);
+        .icon-button:hover .icon {
+            transform: scale(1.1);
         }
 
-        .button-text {
-            font-size: 1.2rem;
-            font-weight: 600;
+        .icon-button .label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Tooltip */
+        .icon-button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--transition-quick);
+        }
+
+        .icon-button:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        /* === AUDIO PLAYER - DARK ELEGANT === */
+        .audio-player {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            display: none;
+            position: relative;
+        }
+
+        .audio-player.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .track-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
             margin-bottom: var(--spacing-xs);
         }
 
-        .button-status {
-            font-size: 0.9rem;
+        .close-player {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: var(--radius-full);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-quick);
             color: var(--text-tertiary);
-            font-weight: 400;
+            font-size: 1rem;
+        }
+
+        .close-player:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--text-primary);
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-full);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-quick);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: scale(1.1);
+        }
+
+        .control-btn.play-pause {
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+            background: rgba(0, 245, 255, 0.08);
+        }
+
+        .control-btn.loop.active {
+            color: var(--synesthetic-teal);
+            background: rgba(0, 245, 255, 0.1);
+        }
+
+        .progress-container {
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px var(--synesthetic-teal);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
         }
 
         /* === EMOTIONAL INTELLIGENCE DISPLAY === */
@@ -229,66 +399,24 @@
         }
 
         .section-title {
-            font-size: 1.8rem;
-            font-weight: 300;
+            font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+            font-weight: 200;
             margin-bottom: var(--spacing-xl);
             text-align: center;
-            color: var(--synesthetic-teal);
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
         }
 
-        .consciousness-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--spacing-lg);
-        }
-
-        .consciousness-layer {
-            background: var(--glass-overlay);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            transition: all var(--transition-smooth);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .consciousness-layer:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glass);
-            border-color: var(--synesthetic-teal);
-        }
-
-        .layer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .layer-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--synesthetic-teal);
-        }
-
-        .layer-confidence {
-            font-size: 0.9rem;
-            color: var(--text-tertiary);
-            background: rgba(78, 205, 196, 0.1);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
-        }
-
-        /* === EMOTION VISUALIZATION === */
+        /* === EMOTION VISUALIZATION - DARK ELEGANT === */
         .emotion-visualization {
             position: relative;
-            height: 300px;
-            background: var(--glass-overlay);
+            height: 200px;
+            background: rgba(255, 255, 255, 0.01);
             border-radius: var(--radius-lg);
             overflow: hidden;
             margin-bottom: var(--spacing-xl);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
         }
 
         .emotion-particles {
@@ -305,13 +433,83 @@
             border-radius: 50%;
             opacity: 0.6;
             animation: float 10s infinite ease-in-out;
+            box-shadow: 0 0 6px currentColor;
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; }
+            0%, 100% { 
+                transform: translate(0, 0) scale(1); 
+                opacity: 0;
+            }
             10% { opacity: 0.6; }
             90% { opacity: 0.6; }
-            50% { transform: translate(100px, -100px) scale(1.5); }
+            50% { 
+                transform: translate(100px, -100px) scale(1.5);
+                filter: blur(1px);
+            }
+        }
+
+        /* === CONSCIOUSNESS GRID === */
+        .consciousness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .consciousness-layer {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .consciousness-layer:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glass);
+            border-color: rgba(0, 245, 255, 0.2);
+        }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .layer-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .layer-confidence {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            background: rgba(0, 245, 255, 0.08);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        .emotion-name {
+            font-size: 1.3rem;
+            font-weight: 300;
+            margin-bottom: var(--spacing-xs);
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .emotion-description {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            line-height: 1.4;
         }
 
         /* === UPLOAD AREA === */
@@ -320,11 +518,11 @@
         }
 
         .upload-area {
-            background: var(--glass-overlay);
-            backdrop-filter: blur(20px);
-            border: 2px dashed var(--glass-border);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 2px dashed rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-lg);
-            padding: var(--spacing-xxl);
+            padding: var(--spacing-xl);
             text-align: center;
             transition: all var(--transition-smooth);
             cursor: pointer;
@@ -333,30 +531,30 @@
         }
 
         .upload-area:hover {
-            border-color: var(--synesthetic-teal);
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.05), var(--glass-overlay));
+            border-color: rgba(0, 245, 255, 0.3);
+            background: rgba(0, 245, 255, 0.02);
         }
 
         .upload-area.dragover {
             border-color: var(--synesthetic-blue);
-            background: linear-gradient(135deg, rgba(69, 183, 209, 0.1), var(--glass-overlay));
-            transform: scale(1.02);
+            background: rgba(0, 150, 255, 0.05);
+            transform: scale(1.01);
         }
 
         .upload-icon {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: var(--spacing-md);
-            color: var(--synesthetic-teal);
+            opacity: 0.7;
         }
 
         .upload-text {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: var(--text-secondary);
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
         }
 
         .upload-subtext {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-tertiary);
         }
 
@@ -364,85 +562,83 @@
             display: none;
         }
 
-        /* === AUDIO PLAYER === */
-        .audio-player {
-            background: var(--glass-overlay);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-            display: none;
-        }
-
-        .audio-player.active {
-            display: block;
-        }
-
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .track-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .player-controls {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .control-btn {
-            background: var(--glass-overlay);
-            border: 1px solid var(--glass-border);
+        /* === TV MODE BUTTON === */
+        .tv-mode-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-full);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: var(--spacing-xs) var(--spacing-md);
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: all var(--transition-quick);
-            color: var(--text-primary);
-            font-size: 1.2rem;
+            transition: all var(--transition-smooth);
+            z-index: 100;
+            font-size: 0.85rem;
         }
 
-        .control-btn:hover {
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), var(--glass-overlay));
-            border-color: var(--synesthetic-teal);
-            transform: scale(1.1);
-        }
-
-        .control-btn.play-pause {
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
+        .tv-mode-btn:hover {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            cursor: pointer;
+            transform: scale(1.05);
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--synesthetic-teal), var(--synesthetic-blue));
-            width: 0%;
-            transition: width 0.1s linear;
+        .tv-mode-btn.active {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(0, 150, 255, 0.2));
+            color: var(--synesthetic-teal);
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
         }
 
-        /* === HIDDEN ELEMENTS === */
+        /* === MOBILE OPTIMIZATIONS === */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-sm);
+            }
+            
+            .control-grid {
+                gap: var(--spacing-md);
+            }
+            
+            .icon-button {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .icon-button .icon {
+                font-size: 1.5rem;
+            }
+            
+            .icon-button .label {
+                font-size: 0.65rem;
+            }
+            
+            .consciousness-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .emotion-visualization {
+                height: 150px;
+            }
+            
+            .tv-mode-btn {
+                bottom: 1rem;
+                right: 1rem;
+                font-size: 0.8rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+            
+            /* Mobile-friendly auth button */
+            .auth-button {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* === HIDDEN UTILITY === */
         .hidden {
             display: none !important;
         }
@@ -461,28 +657,7 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* === RESPONSIVE === */
-        @media (max-width: 768px) {
-            .container {
-                padding: var(--spacing-md);
-            }
-            
-            .control-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .consciousness-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
-    <!-- Add our authentication styles -->
-    <link rel="stylesheet" href="auth-styles.css">
-    
-    <!-- Add our authentication scripts -->
-    <script src="auth.js"></script>
-    <script src="login.js"></script>
 </head>
 <body>
     <!-- Animated Background -->
@@ -502,25 +677,22 @@
             <span id="statusText">Ready to Feel Music</span>
         </div>
 
-        <!-- Primary Controls -->
+        <!-- Primary Controls - Minimal Icon Style -->
         <section class="primary-controls">
             <div class="control-grid">
-                <button class="primary-button" id="micButton">
-                    <div class="button-icon">🎤</div>
-                    <div class="button-text">Live Detection</div>
-                    <div class="button-status">Analyze room audio</div>
+                <button class="icon-button" id="micButton" data-tooltip="Analyze room audio in real-time">
+                    <span class="icon">🎤</span>
+                    <span class="label">Live</span>
                 </button>
                 
-                <button class="primary-button" id="uploadButton">
-                    <div class="button-icon">📁</div>
-                    <div class="button-text">Upload Music</div>
-                    <div class="button-status">Analyze your files</div>
+                <button class="icon-button" id="uploadButton" data-tooltip="Upload and analyze your music files">
+                    <span class="icon">📁</span>
+                    <span class="label">Upload</span>
                 </button>
                 
-                <button class="primary-button" id="spotifyButton">
-                    <div class="button-icon">🎵</div>
-                    <div class="button-text">Spotify Connect</div>
-                    <div class="button-status">Coming soon</div>
+                <button class="icon-button" id="spotifyButton" data-tooltip="Connect to Spotify (Coming Soon)">
+                    <span class="icon">🎵</span>
+                    <span class="label">Spotify</span>
                 </button>
             </div>
         </section>
@@ -535,18 +707,28 @@
             </div>
         </section>
 
-        <!-- Audio Player -->
+        <!-- Enhanced Audio Player -->
         <div class="audio-player" id="audioPlayer">
-            <div class="player-info">
-                <span class="track-name" id="trackName">No track loaded</span>
+            <div class="player-header">
+                <div class="player-info">
+                    <div class="track-name" id="trackName">No track loaded</div>
+                </div>
+                <button class="close-player" id="closePlayer">×</button>
             </div>
             <div class="player-controls">
                 <button class="control-btn" id="prevBtn">⏮</button>
                 <button class="control-btn play-pause" id="playPauseBtn">▶</button>
                 <button class="control-btn" id="nextBtn">⏭</button>
+                <button class="control-btn loop" id="loopBtn">🔁</button>
             </div>
-            <div class="progress-bar" id="progressBar">
-                <div class="progress-fill" id="progressFill"></div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
             </div>
         </div>
 
@@ -597,9 +779,19 @@
         </section>
     </div>
 
+    <!-- TV Mode Button -->
+    <button class="tv-mode-btn" id="tvModeBtn">📺 TV Mode</button>
+
     <!-- Audio element -->
     <audio id="audioElement" crossorigin="anonymous"></audio>
 
+    <!-- Load our scripts in correct order -->
+    <script src="auth.js"></script>
+    <script src="login.js"></script>
+    <script src="premium.js"></script>
+    <script src="lights.js"></script>
+    <script src="app.js"></script>
+    
     <script>
         // === EMOTIONAL INTELLIGENCE ENGINE ===
         class EmotionalIntelligenceEngine {
@@ -611,12 +803,14 @@
                 this.currentEmotion = null;
                 this.emotionalHistory = [];
                 this.emotionMap = this.initializeEmotionMap();
+                this.isLooping = false;
                 this.init();
             }
 
             init() {
                 this.setupEventListeners();
                 this.createParticles();
+                this.loadTVMode();
             }
 
             initializeEmotionMap() {
@@ -624,6 +818,7 @@
                     joy: {
                         name: 'Euphoric Joy',
                         colors: ['#FFD700', '#FFA500', '#FF69B4'],
+                        colorsVibrant: ['#FFFF00', '#FF6B00', '#FF00FF'],
                         characteristics: {
                             tempo: [120, 180],
                             frequency: [2000, 8000],
@@ -635,6 +830,7 @@
                     sadness: {
                         name: 'Melancholic Depth',
                         colors: ['#4169E1', '#483D8B', '#191970'],
+                        colorsVibrant: ['#0096FF', '#0048FF', '#000080'],
                         characteristics: {
                             tempo: [40, 80],
                             frequency: [200, 1000],
@@ -646,6 +842,7 @@
                     energy: {
                         name: 'Dynamic Power',
                         colors: ['#FF0000', '#FF4500', '#DC143C'],
+                        colorsVibrant: ['#FF0040', '#FF6B00', '#FF006E'],
                         characteristics: {
                             tempo: [140, 200],
                             frequency: [100, 500],
@@ -657,6 +854,7 @@
                     calm: {
                         name: 'Serene Peace',
                         colors: ['#4ECDC4', '#45B7D1', '#96CEB4'],
+                        colorsVibrant: ['#00F5FF', '#00C8FF', '#00FF88'],
                         characteristics: {
                             tempo: [60, 100],
                             frequency: [500, 2000],
@@ -668,6 +866,7 @@
                     mystery: {
                         name: 'Enigmatic Wonder',
                         colors: ['#9370DB', '#8A2BE2', '#4B0082'],
+                        colorsVibrant: ['#FF00FF', '#C800FF', '#8000FF'],
                         characteristics: {
                             tempo: [80, 120],
                             frequency: [300, 3000],
@@ -712,31 +911,58 @@
                 // Audio player controls
                 document.getElementById('playPauseBtn').addEventListener('click', () => this.togglePlayPause());
                 document.getElementById('progressBar').addEventListener('click', (e) => this.seekTo(e));
+                document.getElementById('loopBtn').addEventListener('click', () => this.toggleLoop());
+                document.getElementById('closePlayer').addEventListener('click', () => this.closePlayer());
+                
+                // TV Mode button
+                document.getElementById('tvModeBtn').addEventListener('click', () => this.toggleTVMode());
+                
+                // Time update for audio
+                const audioElement = document.getElementById('audioElement');
+                audioElement.addEventListener('timeupdate', () => this.updateTimeDisplay());
+                audioElement.addEventListener('ended', () => {
+                    if (this.isLooping) {
+                        audioElement.currentTime = 0;
+                        audioElement.play();
+                    } else {
+                        document.getElementById('playPauseBtn').textContent = '▶';
+                    }
+                });
             }
 
             async toggleMicrophone() {
-                const button = document.getElementById('micButton');
-                
-                if (this.isAnalyzing && this.source?.mediaStream) {
-                    this.stopAnalysis();
-                    button.classList.remove('active');
-                    button.querySelector('.button-status').textContent = 'Analyze room audio';
-                } else {
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        this.startMicrophoneAnalysis(stream);
-                        button.classList.add('active');
-                        button.querySelector('.button-status').textContent = 'Listening...';
-                    } catch (error) {
-                        console.error('Microphone access denied:', error);
-                        this.updateStatus('Microphone access denied', false);
-                    }
-                }
+            const button = document.getElementById('micButton');
+    
+            if (this.isAnalyzing && this.source && this.source.mediaStream) {
+                // Properly stop the microphone
+                this.stopAnalysis();
+                button.classList.remove('active');
+                this.source = null; // Clear the source
+                return;
             }
+    
+            // Check premium limits
+            if (window.premiumManager && !await window.premiumManager.analyzeSongWithLimits()) {
+                return;
+            }
+    
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                await this.startMicrophoneAnalysis(stream);
+                button.classList.add('active');
+            } catch (error) {
+                console.error('Microphone access denied:', error);
+                this.updateStatus('Microphone access denied', false);
+            }
+        }
 
-            handleFileUpload(event) {
+            async handleFileUpload(event) {
                 const file = event.target.files[0];
                 if (file) {
+                    // Check premium limits
+                    if (window.premiumManager && !await window.premiumManager.analyzeSongWithLimits()) {
+                        return;
+                    }
                     this.processAudioFile(file);
                 }
             }
@@ -758,7 +984,8 @@
                 // Start analysis when audio loads
                 audioElement.addEventListener('loadedmetadata', () => {
                     this.startFileAnalysis(audioElement);
-                });
+                    document.getElementById('totalTime').textContent = this.formatTime(audioElement.duration);
+                }, { once: true });
             }
 
             async startMicrophoneAnalysis(stream) {
@@ -768,6 +995,7 @@
                 
                 // Create audio nodes
                 this.source = this.audioContext.createMediaStreamSource(stream);
+                this.source.mediaStream = stream; // Store reference
                 this.analyser = this.audioContext.createAnalyser();
                 this.analyser.fftSize = 2048;
                 
@@ -785,25 +1013,21 @@
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
                 
-                // Create audio nodes
-                this.source = this.audioContext.createMediaElementSource(audioElement);
-                this.analyser = this.audioContext.createAnalyser();
-                this.analyser.fftSize = 2048;
-                
-                // Connect nodes
-                this.source.connect(this.analyser);
-                this.source.connect(this.audioContext.destination);
+                // Create audio nodes if not already created
+                if (!this.source || !this.source.mediaElement) {
+                    this.source = this.audioContext.createMediaElementSource(audioElement);
+                    this.analyser = this.audioContext.createAnalyser();
+                    this.analyser.fftSize = 2048;
+                    
+                    // Connect nodes
+                    this.source.connect(this.analyser);
+                    this.source.connect(this.audioContext.destination);
+                }
                 
                 // Start analysis
                 this.isAnalyzing = true;
                 this.updateStatus('Analyzing music file...', true);
                 this.analyzeAudio();
-                
-                // Update progress bar
-                audioElement.addEventListener('timeupdate', () => {
-                    const progress = (audioElement.currentTime / audioElement.duration) * 100;
-                    document.getElementById('progressFill').style.width = progress + '%';
-                });
             }
 
             analyzeAudio() {
@@ -876,7 +1100,6 @@
 
             estimateTempo(dataArray) {
                 // Simplified tempo estimation based on energy peaks
-                // In a real implementation, this would use onset detection
                 const energy = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
                 return 60 + (energy / 255) * 140; // Maps to 60-200 BPM range
             }
@@ -896,7 +1119,7 @@
                     }
                     
                     // Frequency matching (using spectral centroid as proxy)
-                    const normalizedCentroid = (features.spectralCentroid / 1024) * 8000; // Approximate Hz
+                    const normalizedCentroid = (features.spectralCentroid / 1024) * 8000;
                     if (normalizedCentroid >= emotion.characteristics.frequency[0] && 
                         normalizedCentroid <= emotion.characteristics.frequency[1]) {
                         score += 0.3;
@@ -922,6 +1145,7 @@
                     }
                 }
                 
+                this.currentEmotion = bestMatch; // Store current emotion
                 return bestMatch;
             }
 
@@ -936,26 +1160,31 @@
                 // Update emotional depth
                 const depth = this.calculateEmotionalDepth(features);
                 document.getElementById('emotionalDepth').innerHTML = `
-                    <div style="font-size: 1.2rem; margin-bottom: 8px;">Depth: ${depth.level}</div>
-                    <div style="font-size: 0.9rem; opacity: 0.8;">${depth.description}</div>
+                    <div style="font-size: 1.1rem; margin-bottom: 6px; color: var(--text-secondary);">Depth: ${depth.level}</div>
+                    <div style="font-size: 0.8rem; opacity: 0.7;">${depth.description}</div>
                 `;
                 
                 // Update synesthetic display
                 this.updateSynestheticDisplay(emotion, features);
                 
-                // Update background colors
-                this.updateBackgroundColors(emotion.colors);
+                // Update background colors - use vibrant colors if TV mode
+                const isTVMode = document.body.classList.contains('tv-mode');
+                const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
+                this.updateBackgroundColors(colors);
                 
                 // Update particles
                 this.updateParticles(emotion, features);
                 
                 // Store in history
                 this.emotionalHistory.push({ emotion, features, timestamp: Date.now() });
+                if (this.emotionalHistory.length > 100) {
+                    this.emotionalHistory.shift();
+                }
+                
                 // Save to Supabase if user is logged in
                 if (window.authManager && window.authManager.currentUser) {
-                    const audioElement = document.getElementById('audioElement');
                     const trackName = document.getElementById('trackName').textContent;
-    
+                    
                     window.authManager.saveEmotionalMapping({
                         name: trackName !== 'No track loaded' ? trackName : 'Live Audio',
                         detectedEmotion: emotion.name,
@@ -964,9 +1193,10 @@
                         features: features
                     });
                 }
-                if (this.emotionalHistory.length > 100) {
-                    this.emotionalHistory.shift();
-                }
+ // Broadcast to room if in one
+if (window.authManager && window.authManager.currentRoomCode) {
+    window.authManager.broadcastEmotionToRoom(emotion.name, emotion.colors);
+}
             }
 
             calculateEmotionalDepth(features) {
@@ -987,16 +1217,19 @@
             updateSynestheticDisplay(emotion, features) {
                 const display = document.getElementById('synestheticDisplay');
                 const colorIntensity = Math.round(features.energy * 100);
+                const isTVMode = document.body.classList.contains('tv-mode');
+                const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
                 
                 display.innerHTML = `
-                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                        ${emotion.colors.map(color => `
-                            <div style="width: 40px; height: 40px; background: ${color}; 
-                                       border-radius: 8px; opacity: ${features.energy};"></div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center;">
+                        ${colors.map(color => `
+                            <div style="width: 35px; height: 35px; background: ${color}; 
+                                       border-radius: 8px; opacity: ${0.3 + features.energy * 0.7};
+                                       box-shadow: 0 0 15px ${color}; transition: all 0.3s;"></div>
                         `).join('')}
                     </div>
-                    <div style="font-size: 0.9rem;">
-                        <div>Primary: ${emotion.colors[0]}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-tertiary);">
+                        <div>Primary: ${colors[0]}</div>
                         <div>Intensity: ${colorIntensity}%</div>
                         <div>Resonance: ${emotion.key}</div>
                     </div>
@@ -1005,15 +1238,18 @@
 
             updateBackgroundColors(colors) {
                 const bg = document.querySelector('.emotional-background');
+                const opacity = document.body.classList.contains('tv-mode') ? '0.8' : '0.3';
                 bg.style.background = `
-                    radial-gradient(circle at 20% 50%, ${colors[0]}40, transparent 50%),
-                    radial-gradient(circle at 80% 80%, ${colors[1]}40, transparent 50%),
-                    radial-gradient(circle at 40% 20%, ${colors[2]}40, transparent 50%)
+                    radial-gradient(circle at 20% 50%, ${colors[0]}, transparent 40%),
+                    radial-gradient(circle at 80% 80%, ${colors[1]}, transparent 40%),
+                    radial-gradient(circle at 40% 20%, ${colors[2]}, transparent 40%)
                 `;
+                bg.style.opacity = opacity;
             }
 
             createParticles() {
                 const container = document.getElementById('emotionParticles');
+                container.innerHTML = ''; // Clear existing
                 for (let i = 0; i < 50; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
@@ -1027,11 +1263,15 @@
 
             updateParticles(emotion, features) {
                 const particles = document.querySelectorAll('.particle');
+                const isTVMode = document.body.classList.contains('tv-mode');
+                const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
+                
                 particles.forEach((particle, index) => {
-                    const colorIndex = index % emotion.colors.length;
-                    particle.style.background = emotion.colors[colorIndex];
-                    particle.style.opacity = features.energy * 0.8;
-                    particle.style.transform = `scale(${0.5 + features.energy})`;
+                    const colorIndex = index % colors.length;
+                    particle.style.background = colors[colorIndex];
+                    particle.style.opacity = features.energy * (isTVMode ? 0.8 : 0.6);
+                    particle.style.transform = `scale(${0.5 + features.energy * (isTVMode ? 1.5 : 1)})`;
+                    particle.style.boxShadow = `0 0 ${6 + features.energy * 15}px ${colors[colorIndex]}`;
                 });
             }
 
@@ -1055,19 +1295,113 @@
                 const width = progressBar.offsetWidth;
                 const duration = audio.duration;
                 
-                audio.currentTime = (clickX / width) * duration;
+                if (duration) {
+                    audio.currentTime = (clickX / width) * duration;
+                }
+            }
+
+            toggleLoop() {
+                const btn = document.getElementById('loopBtn');
+                const audio = document.getElementById('audioElement');
+                
+                this.isLooping = !this.isLooping;
+                audio.loop = this.isLooping;
+                
+                if (this.isLooping) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
+
+            closePlayer() {
+                const audioPlayer = document.getElementById('audioPlayer');
+                const audio = document.getElementById('audioElement');
+                
+                // Stop audio
+                audio.pause();
+                audio.currentTime = 0;
+                
+                // Hide player
+                audioPlayer.classList.remove('active');
+                
+                // Stop analysis if from file
+                if (this.isAnalyzing && !this.source?.mediaStream) {
+                    this.stopAnalysis();
+                }
+            }
+
+            updateTimeDisplay() {
+                const audio = document.getElementById('audioElement');
+                const currentTime = document.getElementById('currentTime');
+                const progressFill = document.getElementById('progressFill');
+                
+                if (audio.duration) {
+                    currentTime.textContent = this.formatTime(audio.currentTime);
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressFill.style.width = progress + '%';
+                }
+            }
+
+            formatTime(seconds) {
+                if (!seconds || isNaN(seconds)) return '0:00';
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            toggleTVMode() {
+                const btn = document.getElementById('tvModeBtn');
+                const body = document.body;
+                
+                body.classList.toggle('tv-mode');
+                btn.classList.toggle('active');
+                
+                // Save preference
+                localStorage.setItem('tvMode', body.classList.contains('tv-mode'));
+                
+                // Update current colors if analyzing
+                if (this.currentEmotion) {
+                    const colors = body.classList.contains('tv-mode') ? 
+                        this.currentEmotion.colorsVibrant : this.currentEmotion.colors;
+                    this.updateBackgroundColors(colors);
+                }
+            }
+
+            loadTVMode() {
+                const tvMode = localStorage.getItem('tvMode') === 'true';
+                if (tvMode) {
+                    document.body.classList.add('tv-mode');
+                    document.getElementById('tvModeBtn').classList.add('active');
+                }
             }
 
             stopAnalysis() {
-                this.isAnalyzing = false;
-                if (this.source) {
+            this.isAnalyzing = false;
+    
+            if (this.source) {
+                // Properly disconnect and stop everything
+                try {
                     if (this.source.mediaStream) {
-                        this.source.mediaStream.getTracks().forEach(track => track.stop());
+                        // Stop all tracks
+                        this.source.mediaStream.getTracks().forEach(track => {
+                            track.stop();
+                        });
                     }
-                    this.source.disconnect();
+                    if (this.source.disconnect) {
+                        this.source.disconnect();
+                    }
+                } catch (e) {
+                    console.error('Error stopping analysis:', e);
+                    }
                 }
-                this.updateStatus('Ready to Feel Music', false);
-            }
+    
+             // Clear references
+             this.source = null;
+             this.analyser = null;
+    
+             this.updateStatus('Ready to Feel Music', false);
+             }
 
             updateStatus(text, active) {
                 document.getElementById('statusText').textContent = text;
@@ -1083,14 +1417,6 @@
         // Initialize the engine when page loads
         document.addEventListener('DOMContentLoaded', () => {
             const engine = new EmotionalIntelligenceEngine();
-            
-            // Add some initial particles animation
-            setTimeout(() => {
-                const particles = document.querySelectorAll('.particle');
-                particles.forEach(particle => {
-                    particle.style.opacity = '0.3';
-                });
-            }, 1000);
         });
     </script>
 </body>

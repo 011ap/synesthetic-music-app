@@ -294,7 +294,7 @@ function showAuthLoading(show) {
 }
 
 // Show emotional history
-async function showEmotionalHistory() {
+window.showEmotionalHistory = async function() {
     // Hide other sections
     document.getElementById('playlistsSection').classList.add('hidden');
     document.getElementById('roomSection').classList.add('hidden');
@@ -306,7 +306,7 @@ async function showEmotionalHistory() {
     // Fetch history
     const history = await window.authManager.getEmotionalHistory(10);
     
-    // Display history
+    // Display history with correct formatting
     const historyDiv = document.getElementById('emotionHistory');
     historyDiv.innerHTML = '<h4>Recent Analyses</h4>';
     
@@ -315,16 +315,30 @@ async function showEmotionalHistory() {
     } else {
         history.forEach(item => {
             const date = new Date(item.created_at).toLocaleDateString();
+            const time = new Date(item.created_at).toLocaleTimeString();
+            const confidence = item.emotion_confidence || 0;
+            
             historyDiv.innerHTML += `
                 <div class="history-item">
                     <div class="history-song">${item.song_name}</div>
-                    <div class="history-emotion">${item.user_emotion || item.detected_emotion}</div>
-                    <div class="history-date">${date}</div>
+                    <div class="history-emotion">${item.user_emotion || item.detected_emotion} (${confidence}%)</div>
+                    <div class="history-date">${date} ${time}</div>
                 </div>
             `;
         });
     }
-}
+    
+    // Update user stats
+    if (window.authManager.currentUser) {
+        const user = window.authManager.currentUser;
+        document.getElementById('totalSongs').textContent = user.total_songs_analyzed || 0;
+        document.getElementById('favoriteEmotion').textContent = user.favorite_emotion || 'None yet';
+        
+        // Calculate emotional range from history
+        const uniqueEmotions = new Set(history.map(h => h.detected_emotion));
+        document.getElementById('emotionalRange').textContent = `${uniqueEmotions.size} types`;
+    }
+};
 
 // Show playlists
 function showPlaylists() {
