@@ -873,11 +873,76 @@ class EmotionEngine {
     }
 
     /**
-     * Initialize AI model (placeholder for TensorFlow.js model)
+     * Initialize AI model (TensorFlow.js neural network)
      */
     async initializeAIModel() {
-        // Placeholder for future TensorFlow.js model loading
-        console.log('🤖 AI model interface prepared (ready for future ML models)');
+        if (typeof tf === 'undefined') {
+            // Load TensorFlow.js if not loaded
+            await new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js';
+                script.onload = resolve;
+                document.head.appendChild(script);
+            });
+        }
+        // Define a simple neural network model
+        this.model = tf.sequential();
+        this.model.add(tf.layers.dense({ inputShape: [8], units: 16, activation: 'relu' }));
+        this.model.add(tf.layers.dense({ units: 16, activation: 'relu' }));
+        this.model.add(tf.layers.dense({ units: 5, activation: 'softmax' })); // 5 emotions for now
+        this.model.compile({ optimizer: 'adam', loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+        this.isModelTrained = false;
+        console.log('🤖 Neural network model initialized');
+    }
+
+    /**
+     * Train the neural network on labeled audio features
+     * @param {Array} featureArray - Array of feature arrays
+     * @param {Array} labelArray - Array of one-hot emotion labels
+     */
+    async trainNeuralNetwork(featureArray, labelArray, epochs = 30) {
+        if (!this.model) await this.initializeAIModel();
+        const xs = tf.tensor2d(featureArray);
+        const ys = tf.tensor2d(labelArray);
+        await this.model.fit(xs, ys, { epochs });
+        this.isModelTrained = true;
+        xs.dispose();
+        ys.dispose();
+        console.log('🧠 Neural network trained on emotion data');
+    }
+
+    /**
+     * Predict emotion using the neural network
+     * @param {Object} features - Extracted audio features
+     * @returns {Object} - Predicted emotion info
+     */
+    async predictEmotionWithNN(features) {
+        if (!this.model || !this.isModelTrained) return null;
+        // Prepare input: [bass, mid, treble, spectralCentroid, spectralRolloff, spectralFlatness, tempo, energy]
+        const input = tf.tensor2d([
+            [
+                features.bassLevel || 0,
+                features.midLevel || 0,
+                features.trebleLevel || 0,
+                features.spectralCentroid || 0,
+                features.spectralRolloff || 0,
+                features.spectralFlatness || 0,
+                features.tempo || 0,
+                features.totalEnergy || 0
+            ]
+        ]);
+        const prediction = this.model.predict(input);
+        const data = await prediction.data();
+        input.dispose();
+        prediction.dispose();
+        // Map output to emotion keys
+        const emotionKeys = ['joy', 'sadness', 'anger', 'calm', 'mystery'];
+        const maxIdx = data.indexOf(Math.max(...data));
+        return {
+            key: emotionKeys[maxIdx],
+            confidence: Math.round(data[maxIdx] * 100),
+            probabilities: data
+        };
     }
 
     /**
