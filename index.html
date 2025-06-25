@@ -951,8 +951,8 @@
                 await this.startMicrophoneAnalysis(stream);
                 button.classList.add('active');
             } catch (error) {
-                console.error('Microphone access denied:', error);
-                this.updateStatus('Microphone access denied', false);
+                console.error('Microphone access error:', error);
+                this.updateStatus('Microphone error: ' + (error && error.message ? error.message : error), false);
             }
         }
 
@@ -995,7 +995,7 @@
                 
                 // Create audio nodes
                 this.source = this.audioContext.createMediaStreamSource(stream);
-                this.source.mediaStream = stream; // Store reference
+                this.mediaStream = stream; // Store reference to the stream for stopping later
                 this.analyser = this.audioContext.createAnalyser();
                 this.analyser.fftSize = 2048;
                 

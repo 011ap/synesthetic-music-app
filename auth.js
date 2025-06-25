@@ -1,7 +1,7 @@
 // === SUPABASE CONFIGURATION ===
 // Replace these with your actual Supabase credentials
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // From Supabase dashboard
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // From Supabase dashboard
+const SUPABASE_URL = 'https://fwuwuofgwvyacmpppect.supabase.co'; // From Supabase dashboard
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3dXd1b2Znd3Z5YWNtcHBwZWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDgzMzEsImV4cCI6MjA2NjQyNDMzMX0.9FdGAMI6YnnKwqXGJp4EvkoEiylhGoLHEGgYJQ5r7mY'; // From Supabase dashboard
 
 // Initialize Supabase client
 let supabase = null;
@@ -586,4 +586,7 @@ async function checkUser() {
 window.authManager = new AuthManager();
 
 // Initialize Supabase when script loads
-initializeSupabase();
+initializeSupabase().then(() => {
+    // Only create AuthManager after Supabase is ready
+    window.authManager = new AuthManager();
+});
