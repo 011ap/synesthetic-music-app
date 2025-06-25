@@ -873,7 +873,16 @@ class EmotionEngine {
     }
 
     /**
-     * Initialize AI model (TensorFlow.js neural network)
+     * Get all emotion keys (primary + complex)
+     */
+    getAllEmotionKeys() {
+        const primary = Object.keys(this.emotionCategories.primary);
+        const complex = Object.keys(this.emotionCategories.complex);
+        return [...primary, ...complex];
+    }
+
+    /**
+     * Initialize AI model (TensorFlow.js neural network) with dynamic output size
      */
     async initializeAIModel() {
         if (typeof tf === 'undefined') {
@@ -885,14 +894,16 @@ class EmotionEngine {
                 document.head.appendChild(script);
             });
         }
-        // Define a simple neural network model
+        // Dynamically determine output size
+        this.emotionKeys = this.getAllEmotionKeys();
+        const outputSize = this.emotionKeys.length;
         this.model = tf.sequential();
-        this.model.add(tf.layers.dense({ inputShape: [8], units: 16, activation: 'relu' }));
-        this.model.add(tf.layers.dense({ units: 16, activation: 'relu' }));
-        this.model.add(tf.layers.dense({ units: 5, activation: 'softmax' })); // 5 emotions for now
+        this.model.add(tf.layers.dense({ inputShape: [8], units: 24, activation: 'relu' }));
+        this.model.add(tf.layers.dense({ units: 24, activation: 'relu' }));
+        this.model.add(tf.layers.dense({ units: outputSize, activation: 'softmax' }));
         this.model.compile({ optimizer: 'adam', loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
         this.isModelTrained = false;
-        console.log('🤖 Neural network model initialized');
+        console.log('🤖 Neural network model initialized with', outputSize, 'emotions');
     }
 
     /**
@@ -921,14 +932,14 @@ class EmotionEngine {
         // Prepare input: [bass, mid, treble, spectralCentroid, spectralRolloff, spectralFlatness, tempo, energy]
         const input = tf.tensor2d([
             [
-                features.bassLevel || 0,
-                features.midLevel || 0,
-                features.trebleLevel || 0,
+                features.bassLevel || features.bass || 0,
+                features.midLevel || features.mid || 0,
+                features.trebleLevel || features.treble || 0,
                 features.spectralCentroid || 0,
                 features.spectralRolloff || 0,
                 features.spectralFlatness || 0,
                 features.tempo || 0,
-                features.totalEnergy || 0
+                features.totalEnergy || features.energy || 0
             ]
         ]);
         const prediction = this.model.predict(input);
@@ -936,13 +947,13 @@ class EmotionEngine {
         input.dispose();
         prediction.dispose();
         // Map output to emotion keys
-        const emotionKeys = ['joy', 'sadness', 'anger', 'calm', 'mystery'];
+        const emotionKeys = this.emotionKeys;
         const maxIdx = data.indexOf(Math.max(...data));
-        return {
-            key: emotionKeys[maxIdx],
-            confidence: Math.round(data[maxIdx] * 100),
-            probabilities: data
-        };
+        const key = emotionKeys[maxIdx];
+        // Find emotion info
+        let emotion = this.emotionCategories.primary[key] || this.emotionCategories.complex[key] || { name: key };
+        emotion = { ...emotion, key, confidence: Math.round(data[maxIdx] * 100) };
+        return emotion;
     }
 
     /**
