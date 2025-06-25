@@ -5,284 +5,1092 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synesthetic - Digital Consciousness Engine</title>
     <meta name="description" content="Revolutionary music emotion analysis with synesthetic experiences. Feel music, share souls.">
-    <meta name="keywords" content="synesthesia, emotion detection, AI, music analysis, consciousness">
+    <style>
+        /* === CSS VARIABLES FOR EMOTIONAL THEMES === */
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050507;
+            --glass-overlay: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
+            
+            /* Synesthetic Color Palette */
+            --synesthetic-red: #ff6b6b;
+            --synesthetic-blue: #45b7d1;
+            --synesthetic-teal: #4ecdc4;
+            --synesthetic-green: #96ceb4;
+            --synesthetic-purple: #dda0dd;
+            --synesthetic-gold: #ffd700;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+            
+            /* Transitions */
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-quick: all 0.2s ease;
+            
+            /* Glass Effect */
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 30px rgba(78, 205, 196, 0.3);
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 1rem;
+            --radius-lg: 1.5rem;
+            --radius-full: 9999px;
+        }
+
+        /* === RESET AND BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* === ANIMATED BACKGROUND === */
+        .emotional-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            background: radial-gradient(circle at 20% 50%, var(--synesthetic-red), transparent 50%),
+                        radial-gradient(circle at 80% 80%, var(--synesthetic-blue), transparent 50%),
+                        radial-gradient(circle at 40% 20%, var(--synesthetic-teal), transparent 50%);
+            filter: blur(100px);
+            animation: emotionalShift 20s ease-in-out infinite;
+        }
+
+        @keyframes emotionalShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            33% { transform: scale(1.1) rotate(120deg); }
+            66% { transform: scale(0.9) rotate(240deg); }
+        }
+
+        /* === CONTAINER === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* === HEADER === */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+            padding: var(--spacing-xxl) 0;
+        }
+
+        .logo {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(135deg, var(--synesthetic-red), var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoShift 10s ease-in-out infinite;
+        }
+
+        @keyframes logoShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* === STATUS INDICATOR === */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--glass-overlay);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--synesthetic-red);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.active {
+            background: var(--synesthetic-green);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* === PRIMARY CONTROLS === */
+        .primary-controls {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, var(--glass-overlay), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            min-height: 120px;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--synesthetic-teal);
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), var(--glass-overlay));
+        }
+
+        .primary-button.active {
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            animation: activeGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(78, 205, 196, 0.6); }
+        }
+
+        .button-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .button-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .button-status {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            font-weight: 400;
+        }
+
+        /* === EMOTIONAL INTELLIGENCE DISPLAY === */
+        .emotional-intelligence {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+            color: var(--synesthetic-teal);
+        }
+
+        .consciousness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .consciousness-layer {
+            background: var(--glass-overlay);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .consciousness-layer:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glass);
+            border-color: var(--synesthetic-teal);
+        }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .layer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--synesthetic-teal);
+        }
+
+        .layer-confidence {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            background: rgba(78, 205, 196, 0.1);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        /* === EMOTION VISUALIZATION === */
+        .emotion-visualization {
+            position: relative;
+            height: 300px;
+            background: var(--glass-overlay);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+            border: 1px solid var(--glass-border);
+        }
+
+        .emotion-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--synesthetic-teal);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            50% { transform: translate(100px, -100px) scale(1.5); }
+        }
+
+        /* === UPLOAD AREA === */
+        .upload-section {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .upload-area {
+            background: var(--glass-overlay);
+            backdrop-filter: blur(20px);
+            border: 2px dashed var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xxl);
+            text-align: center;
+            transition: all var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: var(--synesthetic-teal);
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.05), var(--glass-overlay));
+        }
+
+        .upload-area.dragover {
+            border-color: var(--synesthetic-blue);
+            background: linear-gradient(135deg, rgba(69, 183, 209, 0.1), var(--glass-overlay));
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--synesthetic-teal);
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* === AUDIO PLAYER === */
+        .audio-player {
+            background: var(--glass-overlay);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            display: none;
+        }
+
+        .audio-player.active {
+            display: block;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .track-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-btn {
+            background: var(--glass-overlay);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-quick);
+            color: var(--text-primary);
+            font-size: 1.2rem;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), var(--glass-overlay));
+            border-color: var(--synesthetic-teal);
+            transform: scale(1.1);
+        }
+
+        .control-btn.play-pause {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* === HIDDEN ELEMENTS === */
+        .hidden {
+            display: none !important;
+        }
+
+        /* === LOADING SPINNER === */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--synesthetic-teal);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+            
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .consciousness-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- Add our authentication styles -->
+    <link rel="stylesheet" href="auth-styles.css">
     
-    <!-- Progressive Web App -->
-    <meta name="theme-color" content="#1a1a2e">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- External Dependencies -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/meyda/5.2.1/meyda.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-    
-    <!-- Application Styles -->
-    <link rel="stylesheet" href="assets/styles.css">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <!-- Add our authentication scripts -->
+    <script src="auth.js"></script>
+    <script src="login.js"></script>
 </head>
 <body>
-    <!-- Revolutionary Emotion Canvas -->
-    <div class="emotion-canvas" id="emotionCanvas">
-        <div class="consciousness-particles" id="consciousnessParticles"></div>
-    </div>
+    <!-- Animated Background -->
+    <div class="emotional-background"></div>
 
-    <!-- Main Application Interface -->
-    <div class="consciousness-interface" id="consciousnessInterface">
+    <!-- Main Container -->
+    <div class="container">
         <!-- Header -->
-        <header class="app-header">
-            <h1 class="app-title">
-                <span class="title-icon">🧠</span>
-                Synesthetic
-            </h1>
-            <p class="app-subtitle">Digital Consciousness Engine</p>
-            <div class="connection-status" id="connectionStatus">
-                <span class="status-indicator"></span>
-                <span class="status-text">Initializing consciousness...</span>
-            </div>
+        <header class="header">
+            <h1 class="logo">Synesthetic</h1>
+            <p class="tagline">Digital Consciousness Through Musical Emotion</p>
         </header>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">Ready to Feel Music</span>
+        </div>
 
         <!-- Primary Controls -->
         <section class="primary-controls">
             <div class="control-grid">
-                <button class="primary-button" id="startDetection">
-                    <span class="button-icon">🎤</span>
-                    <span class="button-text">Start Emotional Detection</span>
-                    <span class="button-status">Ready</span>
+                <button class="primary-button" id="micButton">
+                    <div class="button-icon">🎤</div>
+                    <div class="button-text">Live Detection</div>
+                    <div class="button-status">Analyze room audio</div>
                 </button>
                 
-                <button class="primary-button" id="trainConsciousness">
-                    <span class="button-icon">🧠</span>
-                    <span class="button-text">Train Digital Twin</span>
-                    <span class="button-status">Personal AI</span>
+                <button class="primary-button" id="uploadButton">
+                    <div class="button-icon">📁</div>
+                    <div class="button-text">Upload Music</div>
+                    <div class="button-status">Analyze your files</div>
                 </button>
                 
-                <button class="primary-button" id="createRoom">
-                    <span class="button-icon">🌐</span>
-                    <span class="button-text">Create Synesthetic Room</span>
-                    <span class="button-status">Social Experience</span>
+                <button class="primary-button" id="spotifyButton">
+                    <div class="button-icon">🎵</div>
+                    <div class="button-text">Spotify Connect</div>
+                    <div class="button-status">Coming soon</div>
                 </button>
             </div>
         </section>
 
+        <!-- Upload Area -->
+        <section class="upload-section hidden" id="uploadSection">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">🎵</div>
+                <div class="upload-text">Drop your music file here or click to browse</div>
+                <div class="upload-subtext">Supported formats: MP3, WAV, M4A</div>
+                <input type="file" id="fileInput" accept="audio/*">
+            </div>
+        </section>
+
+        <!-- Audio Player -->
+        <div class="audio-player" id="audioPlayer">
+            <div class="player-info">
+                <span class="track-name" id="trackName">No track loaded</span>
+            </div>
+            <div class="player-controls">
+                <button class="control-btn" id="prevBtn">⏮</button>
+                <button class="control-btn play-pause" id="playPauseBtn">▶</button>
+                <button class="control-btn" id="nextBtn">⏭</button>
+            </div>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
         <!-- Emotional Intelligence Display -->
-        <section class="emotional-intelligence" id="emotionalIntelligence">
-            <h2 class="section-title">🎭 Emotional Consciousness Analysis</h2>
+        <section class="emotional-intelligence">
+            <h2 class="section-title">Emotional Consciousness Analysis</h2>
+            
+            <!-- Emotion Visualization -->
+            <div class="emotion-visualization">
+                <div class="emotion-particles" id="emotionParticles"></div>
+            </div>
             
             <div class="consciousness-grid">
                 <!-- Primary Emotion -->
-                <div class="consciousness-layer primary-emotion">
+                <div class="consciousness-layer">
                     <div class="layer-header">
                         <h3 class="layer-title">Primary Emotion</h3>
-                        <div class="layer-confidence" id="primaryConfidence">0%</div>
+                        <span class="layer-confidence" id="primaryConfidence">0%</span>
                     </div>
                     <div class="emotion-display">
-                        <div class="emotion-name" id="primaryEmotionName">Awakening</div>
-                        <div class="emotion-description" id="primaryEmotionDesc">Consciousness initializing...</div>
-                    </div>
-                    <div class="emotion-visualization">
-                        <div class="emotion-wave" id="primaryWave"></div>
-                        <div class="intensity-meter">
-                            <div class="intensity-fill" id="primaryIntensity"></div>
-                        </div>
+                        <div class="emotion-name" id="primaryEmotion">Waiting...</div>
+                        <div class="emotion-description" id="emotionDescription">Play music to begin analysis</div>
                     </div>
                 </div>
-
+                
                 <!-- Emotional Depth -->
-                <div class="consciousness-layer emotional-depth">
+                <div class="consciousness-layer">
                     <div class="layer-header">
                         <h3 class="layer-title">Emotional Depth</h3>
-                        <div class="layer-confidence" id="depthConfidence">0%</div>
+                        <span class="layer-confidence">Live</span>
                     </div>
-                    <div class="depth-analysis">
-                        <div class="depth-value" id="depthValue">Surface</div>
-                        <div class="depth-layers" id="depthLayers">
-                            <div class="depth-layer surface"></div>
-                            <div class="depth-layer middle"></div>
-                            <div class="depth-layer deep"></div>
-                            <div class="depth-layer core"></div>
-                        </div>
+                    <div class="depth-display">
+                        <div id="emotionalDepth">Analyzing complexity...</div>
                     </div>
                 </div>
-
-                <!-- Memory Resonance -->
-                <div class="consciousness-layer memory-resonance">
+                
+                <!-- Synesthetic Mapping -->
+                <div class="consciousness-layer">
                     <div class="layer-header">
-                        <h3 class="layer-title">Memory Resonance</h3>
-                        <div class="layer-confidence" id="memoryConfidence">0%</div>
+                        <h3 class="layer-title">Synesthetic Translation</h3>
+                        <span class="layer-confidence">Active</span>
                     </div>
-                    <div class="memory-analysis">
-                        <div class="memory-strength" id="memoryStrength">Forming...</div>
-                        <div class="memory-associations" id="memoryAssociations">
-                            <!-- Memory triggers will be populated here -->
-                        </div>
+                    <div class="synesthetic-display" id="synestheticDisplay">
+                        <div>Color resonance mapping...</div>
                     </div>
-                </div>
-
-                <!-- Synesthetic Colors -->
-                <div class="consciousness-layer synesthetic-colors">
-                    <div class="layer-header">
-                        <h3 class="layer-title">Synesthetic Palette</h3>
-                        <div class="layer-confidence" id="colorConfidence">0%</div>
-                    </div>
-                    <div class="color-analysis">
-                        <div class="color-palette" id="currentColorPalette">
-                            <!-- Colors will be populated here -->
-                        </div>
-                        <div class="color-description" id="colorDescription">Sensing chromesthesia...</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Personal Training Interface -->
-        <section class="personal-training" id="personalTraining">
-            <h2 class="section-title">🎨 Personal Synesthetic Training</h2>
-            
-            <div class="training-interface">
-                <div class="training-prompt">
-                    <p class="prompt-text">What colors do you feel in your chest when you experience this emotion?</p>
-                    <div class="current-emotion-context" id="currentEmotionContext">
-                        Play music to begin training your digital consciousness...
-                    </div>
-                </div>
-                
-                <div class="color-selection-grid" id="colorSelectionGrid">
-                    <!-- Color options will be dynamically populated -->
-                </div>
-                
-                <div class="training-controls">
-                    <button class="training-button" id="saveEmotionalDNA">
-                        <span class="button-icon">💾</span>
-                        Save Emotional DNA
-                    </button>
-                    <button class="training-button" id="clearTraining">
-                        <span class="button-icon">🔄</span>
-                        Reset Training
-                    </button>
-                    <button class="training-button" id="exportProfile">
-                        <span class="button-icon">📤</span>
-                        Export Profile
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Social Consciousness Network -->
-        <section class="social-consciousness" id="socialConsciousness">
-            <h2 class="section-title">🌐 Social Emotional Network</h2>
-            
-            <div class="social-interface">
-                <div class="room-management">
-                    <div class="room-status" id="roomStatus">
-                        <span class="status-icon">🏠</span>
-                        <span class="status-text">Not connected to any emotional room</span>
-                    </div>
-                    
-                    <div class="room-controls">
-                        <button class="social-button" id="hostRoom">
-                            <span class="button-icon">🎭</span>
-                            Host Emotional Experience
-                        </button>
-                        <button class="social-button" id="joinRoom">
-                            <span class="button-icon">🤝</span>
-                            Join Friend's Emotions
-                        </button>
-                        <button class="social-button" id="discoverRooms">
-                            <span class="button-icon">🔍</span>
-                            Discover Nearby Emotions
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="connected-consciousness" id="connectedConsciousness">
-                    <!-- Connected users will be shown here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Environmental Controls -->
-        <section class="environmental-controls" id="environmentalControls">
-            <h2 class="section-title">💡 Environmental Integration</h2>
-            
-            <div class="environment-grid">
-                <div class="environment-option" id="screenControl">
-                    <div class="option-icon">📱</div>
-                    <div class="option-title">Screen Colors</div>
-                    <div class="option-status">Active</div>
-                    <button class="option-toggle active" id="toggleScreen">ON</button>
-                </div>
-                
-                <div class="environment-option" id="smartLights">
-                    <div class="option-icon">💡</div>
-                    <div class="option-title">Smart Lights</div>
-                    <div class="option-status">Detecting...</div>
-                    <button class="option-toggle" id="toggleLights">OFF</button>
-                </div>
-                
-                <div class="environment-option" id="hapticFeedback">
-                    <div class="option-icon">📳</div>
-                    <div class="option-title">Haptic Feedback</div>
-                    <div class="option-status">Available</div>
-                    <button class="option-toggle" id="toggleHaptic">OFF</button>
-                </div>
-                
-                <div class="environment-option" id="audioVisualization">
-                    <div class="option-icon">🎵</div>
-                    <div class="option-title">Audio Visualization</div>
-                    <div class="option-status">Ready</div>
-                    <button class="option-toggle" id="toggleVisualization">OFF</button>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- Global Status Display -->
-    <div class="global-status" id="globalStatus">
-        <div class="status-content">
-            <span class="status-icon">🧠</span>
-            <span class="status-message">Digital consciousness initialized. Ready to experience your synesthetic soul.</span>
-        </div>
-    </div>
+    <!-- Audio element -->
+    <audio id="audioElement" crossorigin="anonymous"></audio>
 
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav" id="mobileNav">
-        <button class="nav-item active" data-section="emotional-intelligence">
-            <span class="nav-icon">🎭</span>
-            <span class="nav-label">Emotions</span>
-        </button>
-        <button class="nav-item" data-section="personal-training">
-            <span class="nav-icon">🎨</span>
-            <span class="nav-label">Training</span>
-        </button>
-        <button class="nav-item" data-section="social-consciousness">
-            <span class="nav-icon">🌐</span>
-            <span class="nav-label">Social</span>
-        </button>
-        <button class="nav-item" data-section="environmental-controls">
-            <span class="nav-icon">💡</span>
-            <span class="nav-label">Environment</span>
-        </button>
-    </nav>
-
-    <!-- Application Scripts -->
-    <script src="src/synesthetic-core.js"></script>
-    <script src="src/emotion-engine.js"></script>
-    <script src="src/consciousness-interface.js"></script>
-    <script src="components/audio-analyzer.js"></script>
-    <script src="components/color-visualizer.js"></script>
-    <script src="components/social-consciousness.js"></script>
-    <script src="services/supabase-client.js"></script>
-    <script src="services/smart-lights.js"></script>
-
-    <!-- Initialize Application -->
     <script>
-        // Initialize the Synesthetic Consciousness Engine
+        // === EMOTIONAL INTELLIGENCE ENGINE ===
+        class EmotionalIntelligenceEngine {
+            constructor() {
+                this.audioContext = null;
+                this.analyser = null;
+                this.source = null;
+                this.isAnalyzing = false;
+                this.currentEmotion = null;
+                this.emotionalHistory = [];
+                this.emotionMap = this.initializeEmotionMap();
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.createParticles();
+            }
+
+            initializeEmotionMap() {
+                return {
+                    joy: {
+                        name: 'Euphoric Joy',
+                        colors: ['#FFD700', '#FFA500', '#FF69B4'],
+                        characteristics: {
+                            tempo: [120, 180],
+                            frequency: [2000, 8000],
+                            amplitude: [0.7, 1.0],
+                            harmonicity: [0.8, 1.0]
+                        },
+                        description: 'Uplifting energy with bright harmonic resonance'
+                    },
+                    sadness: {
+                        name: 'Melancholic Depth',
+                        colors: ['#4169E1', '#483D8B', '#191970'],
+                        characteristics: {
+                            tempo: [40, 80],
+                            frequency: [200, 1000],
+                            amplitude: [0.2, 0.5],
+                            harmonicity: [0.3, 0.6]
+                        },
+                        description: 'Deep introspective waves with slow-moving patterns'
+                    },
+                    energy: {
+                        name: 'Dynamic Power',
+                        colors: ['#FF0000', '#FF4500', '#DC143C'],
+                        characteristics: {
+                            tempo: [140, 200],
+                            frequency: [100, 500],
+                            amplitude: [0.8, 1.0],
+                            harmonicity: [0.5, 0.8]
+                        },
+                        description: 'Intense rhythmic pulses with driving force'
+                    },
+                    calm: {
+                        name: 'Serene Peace',
+                        colors: ['#4ECDC4', '#45B7D1', '#96CEB4'],
+                        characteristics: {
+                            tempo: [60, 100],
+                            frequency: [500, 2000],
+                            amplitude: [0.3, 0.6],
+                            harmonicity: [0.7, 0.9]
+                        },
+                        description: 'Gentle flowing movements in harmonic balance'
+                    },
+                    mystery: {
+                        name: 'Enigmatic Wonder',
+                        colors: ['#9370DB', '#8A2BE2', '#4B0082'],
+                        characteristics: {
+                            tempo: [80, 120],
+                            frequency: [300, 3000],
+                            amplitude: [0.4, 0.7],
+                            harmonicity: [0.4, 0.7]
+                        },
+                        description: 'Complex layered patterns with unpredictable shifts'
+                    }
+                };
+            }
+
+            setupEventListeners() {
+                // Microphone button
+                document.getElementById('micButton').addEventListener('click', () => this.toggleMicrophone());
+                
+                // Upload button
+                document.getElementById('uploadButton').addEventListener('click', () => {
+                    document.getElementById('uploadSection').classList.toggle('hidden');
+                });
+                
+                // File input
+                document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileUpload(e));
+                
+                // Upload area drag and drop
+                const uploadArea = document.getElementById('uploadArea');
+                uploadArea.addEventListener('click', () => document.getElementById('fileInput').click());
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    if (e.dataTransfer.files.length) {
+                        this.processAudioFile(e.dataTransfer.files[0]);
+                    }
+                });
+                
+                // Audio player controls
+                document.getElementById('playPauseBtn').addEventListener('click', () => this.togglePlayPause());
+                document.getElementById('progressBar').addEventListener('click', (e) => this.seekTo(e));
+            }
+
+            async toggleMicrophone() {
+                const button = document.getElementById('micButton');
+                
+                if (this.isAnalyzing && this.source?.mediaStream) {
+                    this.stopAnalysis();
+                    button.classList.remove('active');
+                    button.querySelector('.button-status').textContent = 'Analyze room audio';
+                } else {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        this.startMicrophoneAnalysis(stream);
+                        button.classList.add('active');
+                        button.querySelector('.button-status').textContent = 'Listening...';
+                    } catch (error) {
+                        console.error('Microphone access denied:', error);
+                        this.updateStatus('Microphone access denied', false);
+                    }
+                }
+            }
+
+            handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    this.processAudioFile(file);
+                }
+            }
+
+            processAudioFile(file) {
+                const audioElement = document.getElementById('audioElement');
+                const audioPlayer = document.getElementById('audioPlayer');
+                const trackName = document.getElementById('trackName');
+                
+                // Update UI
+                trackName.textContent = file.name;
+                audioPlayer.classList.add('active');
+                document.getElementById('uploadSection').classList.add('hidden');
+                
+                // Create object URL and load audio
+                const url = URL.createObjectURL(file);
+                audioElement.src = url;
+                
+                // Start analysis when audio loads
+                audioElement.addEventListener('loadedmetadata', () => {
+                    this.startFileAnalysis(audioElement);
+                });
+            }
+
+            async startMicrophoneAnalysis(stream) {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // Create audio nodes
+                this.source = this.audioContext.createMediaStreamSource(stream);
+                this.analyser = this.audioContext.createAnalyser();
+                this.analyser.fftSize = 2048;
+                
+                // Connect nodes
+                this.source.connect(this.analyser);
+                
+                // Start analysis
+                this.isAnalyzing = true;
+                this.updateStatus('Analyzing live audio...', true);
+                this.analyzeAudio();
+            }
+
+            startFileAnalysis(audioElement) {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // Create audio nodes
+                this.source = this.audioContext.createMediaElementSource(audioElement);
+                this.analyser = this.audioContext.createAnalyser();
+                this.analyser.fftSize = 2048;
+                
+                // Connect nodes
+                this.source.connect(this.analyser);
+                this.source.connect(this.audioContext.destination);
+                
+                // Start analysis
+                this.isAnalyzing = true;
+                this.updateStatus('Analyzing music file...', true);
+                this.analyzeAudio();
+                
+                // Update progress bar
+                audioElement.addEventListener('timeupdate', () => {
+                    const progress = (audioElement.currentTime / audioElement.duration) * 100;
+                    document.getElementById('progressFill').style.width = progress + '%';
+                });
+            }
+
+            analyzeAudio() {
+                if (!this.isAnalyzing) return;
+                
+                const bufferLength = this.analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                this.analyser.getByteFrequencyData(dataArray);
+                
+                // Extract audio features
+                const features = this.extractAudioFeatures(dataArray);
+                
+                // Detect emotion based on features
+                const emotion = this.detectEmotion(features);
+                
+                // Update UI with emotion
+                this.updateEmotionalDisplay(emotion, features);
+                
+                // Continue analysis
+                requestAnimationFrame(() => this.analyzeAudio());
+            }
+
+            extractAudioFeatures(dataArray) {
+                // Calculate various audio features
+                const sum = dataArray.reduce((a, b) => a + b, 0);
+                const average = sum / dataArray.length;
+                
+                // Frequency bands
+                const bass = this.getFrequencyBandAverage(dataArray, 0, 10);
+                const lowMid = this.getFrequencyBandAverage(dataArray, 10, 50);
+                const mid = this.getFrequencyBandAverage(dataArray, 50, 100);
+                const highMid = this.getFrequencyBandAverage(dataArray, 100, 200);
+                const treble = this.getFrequencyBandAverage(dataArray, 200, dataArray.length);
+                
+                // Spectral centroid (brightness)
+                let weightedSum = 0;
+                let magnitudeSum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    weightedSum += i * dataArray[i];
+                    magnitudeSum += dataArray[i];
+                }
+                const spectralCentroid = magnitudeSum > 0 ? weightedSum / magnitudeSum : 0;
+                
+                // Energy
+                const energy = average / 255;
+                
+                // Tempo estimation (simplified)
+                const tempo = this.estimateTempo(dataArray);
+                
+                return {
+                    bass,
+                    lowMid,
+                    mid,
+                    highMid,
+                    treble,
+                    spectralCentroid,
+                    energy,
+                    tempo,
+                    timestamp: Date.now()
+                };
+            }
+
+            getFrequencyBandAverage(dataArray, start, end) {
+                let sum = 0;
+                for (let i = start; i < end && i < dataArray.length; i++) {
+                    sum += dataArray[i];
+                }
+                return sum / (end - start);
+            }
+
+            estimateTempo(dataArray) {
+                // Simplified tempo estimation based on energy peaks
+                // In a real implementation, this would use onset detection
+                const energy = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+                return 60 + (energy / 255) * 140; // Maps to 60-200 BPM range
+            }
+
+            detectEmotion(features) {
+                let bestMatch = null;
+                let bestScore = -1;
+                
+                // Compare features against emotion profiles
+                for (const [emotionKey, emotion] of Object.entries(this.emotionMap)) {
+                    let score = 0;
+                    
+                    // Tempo matching
+                    if (features.tempo >= emotion.characteristics.tempo[0] && 
+                        features.tempo <= emotion.characteristics.tempo[1]) {
+                        score += 0.3;
+                    }
+                    
+                    // Frequency matching (using spectral centroid as proxy)
+                    const normalizedCentroid = (features.spectralCentroid / 1024) * 8000; // Approximate Hz
+                    if (normalizedCentroid >= emotion.characteristics.frequency[0] && 
+                        normalizedCentroid <= emotion.characteristics.frequency[1]) {
+                        score += 0.3;
+                    }
+                    
+                    // Energy/amplitude matching
+                    if (features.energy >= emotion.characteristics.amplitude[0] && 
+                        features.energy <= emotion.characteristics.amplitude[1]) {
+                        score += 0.2;
+                    }
+                    
+                    // Harmonicity (using frequency band ratios as proxy)
+                    const harmonicity = (features.mid + features.highMid) / (features.bass + features.lowMid + 0.1);
+                    const normalizedHarmonicity = Math.min(harmonicity / 2, 1);
+                    if (normalizedHarmonicity >= emotion.characteristics.harmonicity[0] && 
+                        normalizedHarmonicity <= emotion.characteristics.harmonicity[1]) {
+                        score += 0.2;
+                    }
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMatch = { ...emotion, key: emotionKey, confidence: Math.round(score * 100) };
+                    }
+                }
+                
+                return bestMatch;
+            }
+
+            updateEmotionalDisplay(emotion, features) {
+                if (!emotion) return;
+                
+                // Update primary emotion
+                document.getElementById('primaryEmotion').textContent = emotion.name;
+                document.getElementById('emotionDescription').textContent = emotion.description;
+                document.getElementById('primaryConfidence').textContent = emotion.confidence + '%';
+                
+                // Update emotional depth
+                const depth = this.calculateEmotionalDepth(features);
+                document.getElementById('emotionalDepth').innerHTML = `
+                    <div style="font-size: 1.2rem; margin-bottom: 8px;">Depth: ${depth.level}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">${depth.description}</div>
+                `;
+                
+                // Update synesthetic display
+                this.updateSynestheticDisplay(emotion, features);
+                
+                // Update background colors
+                this.updateBackgroundColors(emotion.colors);
+                
+                // Update particles
+                this.updateParticles(emotion, features);
+                
+                // Store in history
+                this.emotionalHistory.push({ emotion, features, timestamp: Date.now() });
+                // Save to Supabase if user is logged in
+                if (window.authManager && window.authManager.currentUser) {
+                    const audioElement = document.getElementById('audioElement');
+                    const trackName = document.getElementById('trackName').textContent;
+    
+                    window.authManager.saveEmotionalMapping({
+                        name: trackName !== 'No track loaded' ? trackName : 'Live Audio',
+                        detectedEmotion: emotion.name,
+                        confidence: emotion.confidence,
+                        colors: emotion.colors,
+                        features: features
+                    });
+                }
+                if (this.emotionalHistory.length > 100) {
+                    this.emotionalHistory.shift();
+                }
+            }
+
+            calculateEmotionalDepth(features) {
+                const complexity = (features.bass * 0.2 + features.mid * 0.3 + features.treble * 0.2 + 
+                                  features.spectralCentroid * 0.3) / 255;
+                
+                if (complexity > 0.8) {
+                    return { level: 'Profound', description: 'Multi-layered emotional complexity detected' };
+                } else if (complexity > 0.6) {
+                    return { level: 'Deep', description: 'Rich emotional texture with nuanced feelings' };
+                } else if (complexity > 0.4) {
+                    return { level: 'Moderate', description: 'Clear emotional expression with some depth' };
+                } else {
+                    return { level: 'Surface', description: 'Simple, direct emotional expression' };
+                }
+            }
+
+            updateSynestheticDisplay(emotion, features) {
+                const display = document.getElementById('synestheticDisplay');
+                const colorIntensity = Math.round(features.energy * 100);
+                
+                display.innerHTML = `
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        ${emotion.colors.map(color => `
+                            <div style="width: 40px; height: 40px; background: ${color}; 
+                                       border-radius: 8px; opacity: ${features.energy};"></div>
+                        `).join('')}
+                    </div>
+                    <div style="font-size: 0.9rem;">
+                        <div>Primary: ${emotion.colors[0]}</div>
+                        <div>Intensity: ${colorIntensity}%</div>
+                        <div>Resonance: ${emotion.key}</div>
+                    </div>
+                `;
+            }
+
+            updateBackgroundColors(colors) {
+                const bg = document.querySelector('.emotional-background');
+                bg.style.background = `
+                    radial-gradient(circle at 20% 50%, ${colors[0]}40, transparent 50%),
+                    radial-gradient(circle at 80% 80%, ${colors[1]}40, transparent 50%),
+                    radial-gradient(circle at 40% 20%, ${colors[2]}40, transparent 50%)
+                `;
+            }
+
+            createParticles() {
+                const container = document.getElementById('emotionParticles');
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 10 + 's';
+                    particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                    container.appendChild(particle);
+                }
+            }
+
+            updateParticles(emotion, features) {
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach((particle, index) => {
+                    const colorIndex = index % emotion.colors.length;
+                    particle.style.background = emotion.colors[colorIndex];
+                    particle.style.opacity = features.energy * 0.8;
+                    particle.style.transform = `scale(${0.5 + features.energy})`;
+                });
+            }
+
+            togglePlayPause() {
+                const audio = document.getElementById('audioElement');
+                const btn = document.getElementById('playPauseBtn');
+                
+                if (audio.paused) {
+                    audio.play();
+                    btn.textContent = '⏸';
+                } else {
+                    audio.pause();
+                    btn.textContent = '▶';
+                }
+            }
+
+            seekTo(event) {
+                const audio = document.getElementById('audioElement');
+                const progressBar = document.getElementById('progressBar');
+                const clickX = event.offsetX;
+                const width = progressBar.offsetWidth;
+                const duration = audio.duration;
+                
+                audio.currentTime = (clickX / width) * duration;
+            }
+
+            stopAnalysis() {
+                this.isAnalyzing = false;
+                if (this.source) {
+                    if (this.source.mediaStream) {
+                        this.source.mediaStream.getTracks().forEach(track => track.stop());
+                    }
+                    this.source.disconnect();
+                }
+                this.updateStatus('Ready to Feel Music', false);
+            }
+
+            updateStatus(text, active) {
+                document.getElementById('statusText').textContent = text;
+                const indicator = document.getElementById('statusIndicator');
+                if (active) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            }
+        }
+
+        // Initialize the engine when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            window.synestheticApp = new SynestheticCore();
-            console.log('🧠 Synesthetic Consciousness Engine initialized');
+            const engine = new EmotionalIntelligenceEngine();
+            
+            // Add some initial particles animation
+            setTimeout(() => {
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach(particle => {
+                    particle.style.opacity = '0.3';
+                });
+            }, 1000);
         });
     </script>
 </body>
