@@ -1040,14 +1040,12 @@
                 // Extract audio features
                 const features = this.extractAudioFeatures(dataArray);
                 
-                // Detect emotion based on features
-                const emotion = this.detectEmotion(features);
-                
-                // Update UI with emotion
-                this.updateEmotionalDisplay(emotion, features);
-                
-                // Continue analysis
-                requestAnimationFrame(() => this.analyzeAudio());
+                // Detect emotion using async neural net if available
+                this.detectEmotionAsync(features).then(emotion => {
+                    this.updateEmotionalDisplay(emotion, features);
+                    // Continue analysis
+                    requestAnimationFrame(() => this.analyzeAudio());
+                });
             }
 
             extractAudioFeatures(dataArray) {
@@ -1147,6 +1145,23 @@
                 
                 this.currentEmotion = bestMatch; // Store current emotion
                 return bestMatch;
+            }
+
+            // Add async neural net-aware emotion detection
+            async detectEmotionAsync(features) {
+                if (window.emotionEngine && window.emotionEngine.isModelTrained && window.emotionEngine.predictEmotionWithNN) {
+                    try {
+                        const nnResult = await window.emotionEngine.predictEmotionWithNN(features);
+                        if (nnResult) {
+                            this.currentEmotion = nnResult;
+                            return nnResult;
+                        }
+                    } catch (e) {
+                        console.warn('Neural net prediction failed, falling back:', e);
+                    }
+                }
+                // Fallback to rule-based
+                return this.detectEmotion(features);
             }
 
             updateEmotionalDisplay(emotion, features) {
