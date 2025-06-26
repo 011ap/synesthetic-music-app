@@ -97,6 +97,18 @@ class EmotionFeedbackSystem {
                     font-weight: bold;
                     cursor: pointer;
                 ">✅ Soul is Correct</button>
+                
+                <button id="submitCorrectionBtn" style="
+                    background: linear-gradient(45deg, #ff006e, #ff6b00);
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: bold;
+                    cursor: pointer;
+                    display: none;
+                ">🧠 Submit Feedback</button>
+                
                 <button id="skipBtn" style="
                     background: rgba(255, 255, 255, 0.1);
                     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -150,7 +162,20 @@ class EmotionFeedbackSystem {
                 // Add selection to clicked button
                 btn.classList.add('selected');
                 this.selectedCorrection = btn.dataset.emotion;
+                
+                // Show submit button when emotion is selected
+                this.showSubmitButton();
             });
+        });
+
+        // Emotional story text area - show submit button when user types
+        const storyTextarea = this.feedbackUI.querySelector('#emotionalStory');
+        storyTextarea.addEventListener('input', () => {
+            if (storyTextarea.value.trim().length > 0 || this.selectedCorrection) {
+                this.showSubmitButton();
+            } else {
+                this.hideSubmitButton();
+            }
         });
 
         // Correct button - soul was right
@@ -158,10 +183,84 @@ class EmotionFeedbackSystem {
             this.submitFeedback(true, this.currentEmotion.primary);
         });
 
+        // Submit correction button - soul was wrong, user provides correction
+        this.feedbackUI.querySelector('#submitCorrectionBtn').addEventListener('click', () => {
+            const storyText = this.feedbackUI.querySelector('#emotionalStory').value.trim();
+            
+            if (this.selectedCorrection) {
+                // User selected an emotion correction
+                this.submitFeedback(false, this.selectedCorrection);
+            } else if (storyText.length > 0) {
+                // User only provided a story, let them know they need to select an emotion
+                this.showEmotionSelectionPrompt();
+            } else {
+                // No correction provided
+                alert('Please select what emotion you felt, or click "Soul is Correct" if it was right!');
+            }
+        });
+
         // Skip button
         this.feedbackUI.querySelector('#skipBtn').addEventListener('click', () => {
             this.hideFeedback();
         });
+    }
+
+    /**
+     * Show the submit button when user provides feedback
+     */
+    showSubmitButton() {
+        const submitBtn = this.feedbackUI.querySelector('#submitCorrectionBtn');
+        const correctBtn = this.feedbackUI.querySelector('#correctBtn');
+        
+        submitBtn.style.display = 'block';
+        correctBtn.textContent = '✅ Correct';
+        
+        // Update button text based on what user has provided
+        const hasEmotion = this.selectedCorrection;
+        const hasStory = this.feedbackUI.querySelector('#emotionalStory').value.trim().length > 0;
+        
+        if (hasEmotion && hasStory) {
+            submitBtn.textContent = '🧠 Submit Correction + Story';
+        } else if (hasEmotion) {
+            submitBtn.textContent = '🧠 Submit Correction';
+        } else if (hasStory) {
+            submitBtn.textContent = '💭 Submit Story';
+        }
+    }
+
+    /**
+     * Hide the submit button
+     */
+    hideSubmitButton() {
+        const submitBtn = this.feedbackUI.querySelector('#submitCorrectionBtn');
+        const correctBtn = this.feedbackUI.querySelector('#correctBtn');
+        
+        submitBtn.style.display = 'none';
+        correctBtn.textContent = '✅ Soul is Correct';
+    }
+
+    /**
+     * Show prompt for emotion selection when user only provided story
+     */
+    showEmotionSelectionPrompt() {
+        const emotionOptions = this.feedbackUI.querySelector('#emotionOptions');
+        emotionOptions.style.border = '2px solid #ff006e';
+        emotionOptions.style.background = 'rgba(255, 0, 110, 0.1)';
+        
+        // Add temporary message
+        const message = document.createElement('div');
+        message.style.cssText = 'color: #ff006e; font-size: 12px; text-align: center; margin: 5px 0; font-weight: bold;';
+        message.textContent = '👆 Please select which emotion you felt!';
+        emotionOptions.parentNode.insertBefore(message, emotionOptions.nextSibling);
+        
+        // Remove highlighting after 3 seconds
+        setTimeout(() => {
+            emotionOptions.style.border = '';
+            emotionOptions.style.background = '';
+            if (message.parentNode) {
+                message.parentNode.removeChild(message);
+            }
+        }, 3000);
     }
 
     /**
@@ -175,8 +274,12 @@ class EmotionFeedbackSystem {
         this.feedbackUI.querySelector('#detectedEmotion').textContent = emotionState.primary;
         this.feedbackUI.querySelector('#detectedConfidence').textContent = emotionState.confidence + '%';
         
-        // Clear previous selections
+        // Clear previous selections and inputs
         this.feedbackUI.querySelectorAll('.emotion-btn').forEach(btn => btn.classList.remove('selected'));
+        this.feedbackUI.querySelector('#emotionalStory').value = '';
+        
+        // Reset button states
+        this.hideSubmitButton();
         
         // Show UI
         this.feedbackUI.style.display = 'block';

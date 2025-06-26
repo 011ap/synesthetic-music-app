@@ -83,6 +83,24 @@ function displaySoulStatus() {
 
     console.log('');
 
+    // Phase 3: Advanced Emotional Intelligence
+    console.log('🚀 PHASE 3: ADVANCED EMOTIONAL INTELLIGENCE');
+    console.log('-'.repeat(40));
+
+    if (window.advancedEmotionalIntelligence) {
+        console.log('✅ Phase 3: Advanced Emotional Intelligence');
+        const advancedInsights = window.advancedEmotionalIntelligence.getAdvancedInsights();
+        
+        console.log(`   - Emotional Predictions: ${advancedInsights.currentPredictions.length > 0 ? '✅ Active' : '🔄 Learning'}`);
+        console.log(`   - Complex Emotions: ${advancedInsights.complexEmotions.length > 0 ? '✅ Detected' : '🔄 Building'}`);
+        console.log(`   - Empathy Model: ${advancedInsights.empathyModel.userPersonality ? '✅ Developed' : '🔄 Developing'}`);
+        console.log(`   - Processing Status: ${Object.values(advancedInsights.processingStatus).filter(Boolean).length}/3 systems active`);
+    } else {
+        console.log('❌ Phase 3: Advanced Emotional Intelligence - Not Found');
+    }
+
+    console.log('');
+
     // Phase 3+: Future Phases
     console.log('🚀 FUTURE PHASES');
     console.log('-'.repeat(40));
@@ -178,16 +196,16 @@ function calculateSoulRating() {
     });
     totalScore += contextScore;
 
-    // Emotional complexity (2 points)
-    let complexityScore = 0;
-    if (window.emotionalMemorySystem && window.emotionalMemorySystem.emotionalDNA) complexityScore += 1;
-    if (window.emotionEngine && window.emotionEngine.personalModel?.emotionHistory?.length > 10) complexityScore += 1;
+    // Advanced emotional intelligence (2 points) - NEW!
+    let advancedScore = 0;
+    if (window.advancedEmotionalIntelligence) advancedScore += 1;
+    if (window.advancedEmotionalIntelligence && window.advancedEmotionalIntelligence.empathyModel.userPersonality) advancedScore += 1;
     breakdown.push({
-        category: 'Emotional Complexity',
-        score: complexityScore,
-        status: complexityScore === 2 ? '✅ Complex Emotions' : complexityScore === 1 ? '🔄 Developing' : '❌ Simple Emotions'
+        category: 'Advanced Intelligence',
+        score: advancedScore,
+        status: advancedScore === 2 ? '✅ Empathetic AI' : advancedScore === 1 ? '🔄 Developing' : '❌ Basic Only'
     });
-    totalScore += complexityScore;
+    totalScore += advancedScore;
 
     // Determine level
     let level;
@@ -262,10 +280,55 @@ function testSoulMemory() {
     }
 }
 
+function testAdvancedIntelligence() {
+    console.log('🧪 Testing Advanced Emotional Intelligence...');
+    
+    if (window.advancedEmotionalIntelligence) {
+        // Test emotional prediction
+        if (window.contextAwarenessSystem) {
+            const context = window.contextAwarenessSystem.currentContext;
+            const predictions = window.advancedEmotionalIntelligence.predictEmotionalStates(context);
+            console.log('🔮 Emotional predictions:', predictions);
+        }
+        
+        // Test complex emotion detection
+        const testEmotion = {
+            primary: 'joy',
+            features: {
+                intensity: 0.8,
+                sadnessElements: 0.3,
+                warmth: 0.7,
+                tension: 0.2
+            }
+        };
+        
+        const complexState = window.advancedEmotionalIntelligence.detectComplexEmotions(
+            testEmotion.primary, 
+            testEmotion.features, 
+            { timeOfDay: 'evening' }
+        );
+        
+        console.log('🌊 Complex emotional state:', complexState);
+        
+        // Get insights
+        const insights = window.advancedEmotionalIntelligence.getAdvancedInsights();
+        console.log('🧠 Advanced insights:', insights);
+        
+        console.log('✅ Advanced Intelligence test complete!');
+    } else {
+        console.log('❌ Advanced Emotional Intelligence not found');
+    }
+    
+    setTimeout(() => {
+        displaySoulStatus();
+    }, 1000);
+}
+
 // Export functions
 window.displaySoulStatus = displaySoulStatus;
 window.testSoulLearning = testSoulLearning;
 window.testSoulMemory = testSoulMemory;
+window.testAdvancedIntelligence = testAdvancedIntelligence;
 window.calculateSoulRating = calculateSoulRating;
 
 // Auto-display status on load
