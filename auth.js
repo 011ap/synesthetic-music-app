@@ -548,13 +548,18 @@ class AuthManager {
     
     // UI Helper functions
     showUserDashboard() {
-        // This will be called from the main app
-        console.log('User logged in:', this.currentUser.username || this.currentUser.email);
+        // Always update UI for user after login/session check
+        import('./login.js').then(mod => {
+            mod.createUserDashboard();
+            mod.updateUIForUser(this.currentUser);
+        });
     }
     
     hideUserDashboard() {
-        // This will be called from the main app
-        console.log('User logged out');
+        // Always update UI for guest after logout
+        import('./login.js').then(mod => {
+            mod.updateUIForGuest();
+        });
     }
     
     showNotification(message) {
@@ -566,7 +571,6 @@ class AuthManager {
 // Check if user is already logged in
 async function checkUser() {
     const { data: { user } } = await supabase.auth.getUser();
-    
     if (user) {
         // Get full profile
         const { data: profile } = await supabase
@@ -574,7 +578,6 @@ async function checkUser() {
             .select('*')
             .eq('id', user.id)
             .single();
-            
         if (profile) {
             window.authManager.currentUser = profile;
             window.authManager.showUserDashboard();
@@ -582,11 +585,60 @@ async function checkUser() {
     }
 }
 
+// --- Robust UI flow: Only create UI after session check and cleanup any lingering UI ---
+function cleanupAuthUI() {
+    document.getElementById('authModal')?.remove();
+    document.getElementById('userDashboard')?.remove();
+    document.getElementById('authButton')?.remove();
+    // Remove any leftover overlays
+    document.getElementById('authLoadingOverlay')?.remove();
+}
+
+// Show a loading overlay during session check
+function showAuthLoadingOverlay() {
+    if (document.getElementById('authLoadingOverlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'authLoadingOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.background = 'rgba(15,15,20,0.85)';
+    overlay.style.zIndex = 9999;
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.innerHTML = '<div style="color:#fff;font-size:2rem;letter-spacing:2px;">Loading...</div>';
+    document.body.appendChild(overlay);
+}
+
+function hideAuthLoadingOverlay() {
+    document.getElementById('authLoadingOverlay')?.remove();
+}
+
 // Initialize auth manager
 window.authManager = new AuthManager();
 
 // Initialize Supabase when script loads
-initializeSupabase().then(() => {
-    // Only create AuthManager after Supabase is ready
+initializeSupabase().then(async () => {
+    showAuthLoadingOverlay();
     window.authManager = new AuthManager();
+    await checkUser();
+    import('./login.js').then(mod => {
+        cleanupAuthUI(); // Remove any lingering UI before creating new
+        hideAuthLoadingOverlay();
+        if (window.authManager.currentUser) {
+            if (!document.getElementById('userDashboard')) {
+                mod.createUserDashboard();
+            }
+            mod.updateUIForUser(window.authManager.currentUser);
+        } else {
+            if (!document.getElementById('authButton')) {
+                mod.createAuthModal();
+                mod.addAuthButton();
+            }
+            mod.updateUIForGuest();
+        }
+    });
 });

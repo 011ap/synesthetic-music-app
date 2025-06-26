@@ -1,20 +1,20 @@
 // === LOGIN UI SYSTEM ===
 
-// Create login modal HTML
+// Only export functions, do not create UI on import
+
+// Create login modal HTML (if not already present)
 function createAuthModal() {
+    if (document.getElementById('authModal')) return;
     const modalHTML = `
-        <div id="authModal" class="auth-modal hidden">
+        <div id="authModal" class="auth-modal hidden" style="display:none;">
             <div class="auth-container">
-                <button class="close-btn" onclick="closeAuthModal()">×</button>
-                
+                <button class="close-btn" onclick="closeAuthModal()">&times;</button>
                 <h2 class="auth-title">Welcome to Synesthetic</h2>
                 <p class="auth-subtitle">Create your emotional profile</p>
-                
                 <div class="auth-tabs">
-                    <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
-                    <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</button>
+                    <button class="auth-tab active" id="loginTab" type="button">Sign In</button>
+                    <button class="auth-tab" id="signupTab" type="button">Sign Up</button>
                 </div>
-                
                 <!-- Login Form -->
                 <form id="loginForm" class="auth-form">
                     <div class="form-group">
@@ -25,7 +25,6 @@ function createAuthModal() {
                     </div>
                     <button type="submit" class="auth-submit-btn">Sign In</button>
                 </form>
-                
                 <!-- Signup Form -->
                 <form id="signupForm" class="auth-form hidden">
                     <div class="form-group">
@@ -39,19 +38,27 @@ function createAuthModal() {
                     </div>
                     <button type="submit" class="auth-submit-btn">Create Account</button>
                 </form>
-                
                 <div id="authError" class="auth-error hidden"></div>
                 <div id="authSuccess" class="auth-success hidden"></div>
             </div>
         </div>
     `;
-    
-    // Add modal to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Add event listeners
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
     document.getElementById('signupForm').addEventListener('submit', handleSignup);
+    document.getElementById('authModal').classList.add('hidden');
+    document.getElementById('authModal').style.display = 'none';
+    // Attach tab event listeners robustly
+    const loginTab = document.getElementById('loginTab');
+    const signupTab = document.getElementById('signupTab');
+    if (loginTab && signupTab) {
+        loginTab.onclick = () => switchTab('login');
+        signupTab.onclick = () => switchTab('signup');
+    } else {
+        console.warn('Auth modal tabs not found!');
+    }
+    // Always show only the sign in form by default
+    switchTab('login');
 }
 
 // Create user dashboard HTML
@@ -63,85 +70,69 @@ function createUserDashboard() {
                     <span class="user-icon">👤</span>
                     <span class="username" id="displayUsername">Guest</span>
                 </div>
-                <button class="dashboard-btn" onclick="showEmotionalHistory()">
+                <button class="dashboard-btn" id="historyBtn">
                     <span class="btn-icon">📊</span>
                     <span>My History</span>
                 </button>
-                <button class="dashboard-btn" onclick="showPlaylists()">
+                <button class="dashboard-btn" id="playlistsBtn">
                     <span class="btn-icon">🎵</span>
                     <span>Playlists</span>
                 </button>
-                <button class="dashboard-btn" onclick="createRoom()">
+                <button class="dashboard-btn" id="roomBtn">
                     <span class="btn-icon">🏠</span>
                     <span>Create Room</span>
                 </button>
-                <button class="dashboard-btn logout" onclick="handleLogout()">
-                    <span class="btn-icon">🚪</span>
+                <button class="dashboard-btn logout" id="logoutBtn">
+                    <span class="btn-icon">🔪</span>
                     <span>Logout</span>
                 </button>
             </div>
-            
-            <div class="emotional-stats hidden" id="emotionalStats">
-                <h3>Your Emotional DNA</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalSongs">0</div>
-                        <div class="stat-label">Songs Analyzed</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="favoriteEmotion">-</div>
-                        <div class="stat-label">Dominant Emotion</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="emotionalRange">-</div>
-                        <div class="stat-label">Emotional Range</div>
-                    </div>
-                </div>
-                <div class="emotion-history" id="emotionHistory"></div>
-            </div>
-            
-            <div class="playlists-section hidden" id="playlistsSection">
-                <h3>Your Emotional Playlists</h3>
-                <button class="create-playlist-btn" onclick="showCreatePlaylist()">+ Create New Playlist</button>
-                <div class="playlists-grid" id="playlistsGrid"></div>
-            </div>
-            
-            <div class="room-section hidden" id="roomSection">
-                <h3>Emotion Sharing Room</h3>
-                <div class="room-create">
-                    <input type="text" id="roomName" placeholder="Room name...">
-                    <button onclick="createEmotionRoom()">Create Room</button>
-                </div>
-                <div class="room-join">
-                    <input type="text" id="roomCode" placeholder="Enter room code...">
-                    <button onclick="joinRoom()">Join Room</button>
-                </div>
-                <div class="active-room hidden" id="activeRoom">
-                    <h4>Active Room: <span id="activeRoomName"></span></h4>
-                    <p>Room Code: <span id="activeRoomCode"></span></p>
-                    <p>Participants: <span id="roomParticipants"></span></p>
-                    <button onclick="leaveRoom()">Leave Room</button>
-                </div>
-            </div>
+            <div class="emotional-stats hidden" id="emotionalStats"></div>
+            <div class="playlists-section hidden" id="playlistsSection"></div>
+            <div class="room-section hidden" id="roomSection"></div>
         </div>
     `;
-    
-    // Add dashboard after header
     const header = document.querySelector('.header');
-    header.insertAdjacentHTML('afterend', dashboardHTML);
+    if (!document.getElementById('userDashboard')) {
+        header.insertAdjacentHTML('afterend', dashboardHTML);
+    }
+    // Always start with all dashboard sections hidden except header
+    setTimeout(() => {
+      document.getElementById('emotionalStats')?.classList.add('hidden');
+      document.getElementById('playlistsSection')?.classList.add('hidden');
+      document.getElementById('roomSection')?.classList.add('hidden');
+      // Attach event listeners for dashboard buttons (robustly re-attach every time)
+      document.getElementById('historyBtn')?.addEventListener('click', () => {
+        document.getElementById('emotionalStats')?.classList.remove('hidden');
+        document.getElementById('playlistsSection')?.classList.add('hidden');
+        document.getElementById('roomSection')?.classList.add('hidden');
+      });
+      document.getElementById('playlistsBtn')?.addEventListener('click', () => {
+        document.getElementById('emotionalStats')?.classList.add('hidden');
+        document.getElementById('playlistsSection')?.classList.remove('hidden');
+        document.getElementById('roomSection')?.classList.add('hidden');
+      });
+      document.getElementById('roomBtn')?.addEventListener('click', () => {
+        document.getElementById('emotionalStats')?.classList.add('hidden');
+        document.getElementById('playlistsSection')?.classList.add('hidden');
+        document.getElementById('roomSection')?.classList.remove('hidden');
+      });
+      document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+    }, 0);
 }
 
-// Add auth button to header
+// Add auth button to header (if not already present)
 function addAuthButton() {
+    if (document.getElementById('authButton')) return;
     const authButtonHTML = `
-        <button id="authButton" class="auth-button" onclick="showAuthModal()">
+        <button id="authButton" class="auth-button">
             <span class="auth-icon">👤</span>
             <span>Sign In</span>
         </button>
     `;
-    
     const header = document.querySelector('.header');
     header.insertAdjacentHTML('beforeend', authButtonHTML);
+    document.getElementById('authButton').onclick = showAuthModal;
 }
 
 // Handle login
@@ -205,23 +196,25 @@ async function handleLogout() {
 // Update UI for logged in user
 function updateUIForUser(user) {
     // Hide auth button
-    document.getElementById('authButton').style.display = 'none';
-    
+    const authBtn = document.getElementById('authButton');
+    if (authBtn) authBtn.style.display = 'none';
     // Show dashboard
     const dashboard = document.getElementById('userDashboard');
-    dashboard.classList.remove('hidden');
-    
-    // Update username
-    document.getElementById('displayUsername').textContent = user.username || user.email;
-    
-    // Update stats
-    document.getElementById('totalSongs').textContent = user.total_songs_analyzed || 0;
-    document.getElementById('favoriteEmotion').textContent = user.favorite_emotion || '-';
-    
-    // Calculate emotional range
-    if (user.emotional_dna && user.emotional_dna.dominant_emotions) {
-        const range = user.emotional_dna.dominant_emotions.length;
-        document.getElementById('emotionalRange').textContent = `${range} emotions`;
+    if (dashboard) {
+        dashboard.classList.remove('hidden');
+        // Update username
+        const usernameSpan = document.getElementById('displayUsername');
+        if (usernameSpan && user && (user.username || user.email)) {
+            usernameSpan.textContent = user.username || user.email;
+        }
+        // Always start with all dashboard sections hidden except header
+        setTimeout(() => {
+            document.getElementById('emotionalStats')?.classList.add('hidden');
+            document.getElementById('playlistsSection')?.classList.add('hidden');
+            document.getElementById('roomSection')?.classList.add('hidden');
+        }, 0);
+    } else {
+        console.warn('[updateUIForUser] Dashboard not found!');
     }
 }
 
@@ -241,12 +234,32 @@ function updateUIForGuest() {
 
 // Show auth modal
 function showAuthModal() {
-    document.getElementById('authModal').classList.remove('hidden');
+    const modal = document.getElementById('authModal');
+    if (modal) {
+        switchTab('login'); // Always reset to sign in form
+        // Defensive: forcibly hide sign up form and show sign in form
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        if (loginForm && signupForm) {
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            loginForm.style.display = '';
+            signupForm.style.display = 'none';
+        }
+        modal.classList.remove('hidden');
+        modal.style.display = 'block';
+    } else {
+        console.warn('Auth modal not found when trying to show!');
+    }
 }
 
 // Close auth modal
 function closeAuthModal() {
-    document.getElementById('authModal').classList.add('hidden');
+    const modal = document.getElementById('authModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
     // Clear forms
     document.getElementById('loginForm').reset();
     document.getElementById('signupForm').reset();
@@ -257,31 +270,68 @@ function closeAuthModal() {
 
 // Switch between login and signup tabs
 function switchTab(tab) {
+    const loginTab = document.getElementById('loginTab');
+    const signupTab = document.getElementById('signupTab');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    console.log('[switchTab] called with:', tab, {loginTab, signupTab, loginForm, signupForm});
+    if (!loginTab || !signupTab || !loginForm || !signupForm) {
+        console.warn('Auth modal elements missing for tab switch!');
+        return;
+    }
     if (tab === 'login') {
-        document.getElementById('loginTab').classList.add('active');
-        document.getElementById('signupTab').classList.remove('active');
-        document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('signupForm').classList.add('hidden');
+        loginTab.classList.add('active');
+        signupTab.classList.remove('active');
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+        loginForm.style.display = '';
+        signupForm.style.display = 'none';
     } else {
-        document.getElementById('signupTab').classList.add('active');
-        document.getElementById('loginTab').classList.remove('active');
-        document.getElementById('signupForm').classList.remove('hidden');
-        document.getElementById('loginForm').classList.add('hidden');
+        signupTab.classList.add('active');
+        loginTab.classList.remove('active');
+        signupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        signupForm.style.display = '';
+        loginForm.style.display = 'none';
     }
 }
+window.switchTab = switchTab;
 
 // Show auth error
 function showAuthError(message) {
     const errorDiv = document.getElementById('authError');
-    errorDiv.textContent = message;
-    errorDiv.classList.remove('hidden');
+    const successDiv = document.getElementById('authSuccess');
+    if (successDiv) {
+        successDiv.classList.add('hidden');
+        successDiv.textContent = '';
+    }
+    if (errorDiv) {
+        if (message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        } else {
+            errorDiv.textContent = '';
+            errorDiv.classList.add('hidden');
+        }
+    }
 }
 
-// Show auth success
 function showAuthSuccess(message) {
+    const errorDiv = document.getElementById('authError');
     const successDiv = document.getElementById('authSuccess');
-    successDiv.textContent = message;
-    successDiv.classList.remove('hidden');
+    if (errorDiv) {
+        errorDiv.classList.add('hidden');
+        errorDiv.textContent = '';
+    }
+    if (successDiv) {
+        if (message) {
+            successDiv.textContent = message;
+            successDiv.classList.remove('hidden');
+        } else {
+            successDiv.textContent = '';
+            successDiv.classList.add('hidden');
+        }
+    }
 }
 
 // Show auth loading
@@ -408,20 +458,37 @@ async function joinRoom() {
     }
 }
 
-// Initialize auth UI when DOM loads
-document.addEventListener('DOMContentLoaded', () => {
-    createAuthModal();
-    createUserDashboard();
-    addAuthButton();
-    
-    // Override auth manager UI callbacks
-    window.authManager.showUserDashboard = function() {
-        if (this.currentUser) {
-            updateUIForUser(this.currentUser);
-        }
-    };
-    
-    window.authManager.hideUserDashboard = function() {
-        updateUIForGuest();
-    };
-});
+// Attach global functions for modal/tab switching (for HTML event handlers)
+window.closeAuthModal = closeAuthModal;
+window.showAuthModal = showAuthModal;
+window.switchTab = switchTab;
+window.handleLogout = handleLogout;
+window.showPlaylists = showPlaylists;
+window.createRoom = createRoom;
+window.createEmotionRoom = createEmotionRoom;
+window.joinRoom = joinRoom;
+
+// Convert to ES module: export all major functions
+export {
+  createAuthModal,
+  createUserDashboard,
+  addAuthButton,
+  handleLogin,
+  handleSignup,
+  handleLogout,
+  updateUIForUser,
+  updateUIForGuest,
+  showAuthModal,
+  closeAuthModal,
+  switchTab,
+  showAuthError,
+  showAuthSuccess,
+  showAuthLoading,
+  showPlaylists,
+  createRoom,
+  createEmotionRoom,
+  joinRoom
+};
+
+// Remove global window assignments and DOMContentLoaded block
+// Instead, export all functions for import elsewhere

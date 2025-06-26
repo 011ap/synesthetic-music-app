@@ -3,7 +3,7 @@
 // === CONTINUATION OF EMOTIONAL INTELLIGENCE ENGINE ===
 // These methods extend the EmotionalIntelligenceEngine class
 
-function calculateEmotionalDepth(features) {
+export function calculateEmotionalDepth(features) {
     const complexity = (features.bass * 0.2 + features.mid * 0.3 + features.treble * 0.2 + 
                       features.spectralCentroid * 0.3) / 255;
     
@@ -18,7 +18,7 @@ function calculateEmotionalDepth(features) {
     }
 }
 
-function updateSynestheticDisplay(emotion, features) {
+export function updateSynestheticDisplay(emotion, features) {
     const display = document.getElementById('synestheticDisplay');
     const colorIntensity = Math.round(features.energy * 100);
     const isTVMode = document.body.classList.contains('tv-mode');
@@ -40,7 +40,7 @@ function updateSynestheticDisplay(emotion, features) {
     `;
 }
 
-function updateBackgroundColors(colors) {
+export function updateBackgroundColors(colors) {
     const bg = document.querySelector('.emotional-background');
     const opacity = document.body.classList.contains('tv-mode') ? '1' : '0.7';
     bg.style.background = `
@@ -51,7 +51,7 @@ function updateBackgroundColors(colors) {
     bg.style.opacity = opacity;
 }
 
-function createParticles() {
+export function createParticles() {
     const container = document.getElementById('emotionParticles');
     container.innerHTML = ''; // Clear existing
     for (let i = 0; i < 60; i++) {
@@ -65,7 +65,7 @@ function createParticles() {
     }
 }
 
-function updateParticles(emotion, features) {
+export function updateParticles(emotion, features) {
     const particles = document.querySelectorAll('.particle');
     const isTVMode = document.body.classList.contains('tv-mode');
     const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
@@ -79,7 +79,7 @@ function updateParticles(emotion, features) {
     });
 }
 
-function togglePlayPause() {
+export function togglePlayPause() {
     const audio = document.getElementById('audioElement');
     const btn = document.getElementById('playPauseBtn');
     
@@ -92,7 +92,7 @@ function togglePlayPause() {
     }
 }
 
-function seekTo(event) {
+export function seekTo(event) {
     const audio = document.getElementById('audioElement');
     const progressBar = document.getElementById('progressBar');
     const clickX = event.offsetX;
@@ -104,7 +104,7 @@ function seekTo(event) {
     }
 }
 
-function toggleLoop() {
+export function toggleLoop() {
     const btn = document.getElementById('loopBtn');
     const audio = document.getElementById('audioElement');
     
@@ -118,7 +118,7 @@ function toggleLoop() {
     }
 }
 
-function closePlayer() {
+export function closePlayer() {
     const audioPlayer = document.getElementById('audioPlayer');
     const audio = document.getElementById('audioElement');
     
@@ -135,7 +135,7 @@ function closePlayer() {
     }
 }
 
-function updateTimeDisplay() {
+export function updateTimeDisplay() {
     const audio = document.getElementById('audioElement');
     const currentTime = document.getElementById('currentTime');
     const progressFill = document.getElementById('progressFill');
@@ -147,14 +147,14 @@ function updateTimeDisplay() {
     }
 }
 
-function formatTime(seconds) {
+export function formatTime(seconds) {
     if (!seconds || isNaN(seconds)) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-function toggleTVMode() {
+export function toggleTVMode() {
     const btn = document.getElementById('tvModeBtn');
     const body = document.body;
     
@@ -172,7 +172,7 @@ function toggleTVMode() {
     }
 }
 
-function loadTVMode() {
+export function loadTVMode() {
     const tvMode = localStorage.getItem('tvMode') === 'true';
     if (tvMode) {
         document.body.classList.add('tv-mode');
@@ -180,7 +180,7 @@ function loadTVMode() {
     }
 }
 
-function stopAnalysis() {
+export function stopAnalysis() {
     this.isAnalyzing = false;
     if (this.source) {
         if (this.source.mediaStream) {
@@ -191,7 +191,7 @@ function stopAnalysis() {
     this.updateStatus('Ready to Feel Music', false);
 }
 
-function updateStatus(text, active) {
+export function updateStatus(text, active) {
     document.getElementById('statusText').textContent = text;
     const indicator = document.getElementById('statusIndicator');
     if (active) {
@@ -595,33 +595,6 @@ const playlistModalStyles = `
 
 document.head.insertAdjacentHTML('beforeend', playlistModalStyles);
 
-// Initialize the emotion engine when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Create global reference to emotion engine
-    window.emotionEngine = new EmotionalIntelligenceEngine();
-    
-    // Add methods to the prototype
-    EmotionalIntelligenceEngine.prototype.calculateEmotionalDepth = calculateEmotionalDepth;
-    EmotionalIntelligenceEngine.prototype.updateSynestheticDisplay = updateSynestheticDisplay;
-    EmotionalIntelligenceEngine.prototype.updateBackgroundColors = updateBackgroundColors;
-    EmotionalIntelligenceEngine.prototype.createParticles = createParticles;
-    EmotionalIntelligenceEngine.prototype.updateParticles = updateParticles;
-    EmotionalIntelligenceEngine.prototype.togglePlayPause = togglePlayPause;
-    EmotionalIntelligenceEngine.prototype.seekTo = seekTo;
-    EmotionalIntelligenceEngine.prototype.toggleLoop = toggleLoop;
-    EmotionalIntelligenceEngine.prototype.closePlayer = closePlayer;
-    EmotionalIntelligenceEngine.prototype.updateTimeDisplay = updateTimeDisplay;
-    EmotionalIntelligenceEngine.prototype.formatTime = formatTime;
-    EmotionalIntelligenceEngine.prototype.toggleTVMode = toggleTVMode;
-    EmotionalIntelligenceEngine.prototype.loadTVMode = loadTVMode;
-    EmotionalIntelligenceEngine.prototype.stopAnalysis = stopAnalysis;
-    EmotionalIntelligenceEngine.prototype.updateStatus = updateStatus;
-    
-    // Fix playlist button visibility
-    setTimeout(() => {
-        const createPlaylistBtn = document.querySelector('.create-playlist-btn');
-        if (createPlaylistBtn) {
-            createPlaylistBtn.addEventListener('click', window.showCreatePlaylist);
-        }
-    }, 1000);
-});
+// Convert app.js to an ES module by exporting all major functions
+// and removing global window assignments and DOMContentLoaded.
+// This prepares the file for modular imports and prevents global conflicts.

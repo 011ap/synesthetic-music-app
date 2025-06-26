@@ -996,6 +996,27 @@ class EmotionEngine {
     }
 
     /**
+     * Learn from user feedback/correction (called from sidebar)
+     * @param {Object} feedback - {correct: boolean, correctLabel?: string}
+     */
+    learnFromCorrection(feedback) {
+        if (feedback.correct) {
+            // Optionally reinforce last prediction as correct
+            // For now, just log and increment a counter
+            this.personalModel.correctCount = (this.personalModel.correctCount || 0) + 1;
+            console.log('✅ User confirmed emotion prediction was correct.');
+        } else if (feedback.correctLabel) {
+            // Save correction for learning
+            const lastEmotion = this.personalModel.emotionHistory[this.personalModel.emotionHistory.length - 1];
+            this.addUserCorrection(lastEmotion?.primary, feedback.correctLabel, lastEmotion);
+            this.personalModel.correctionCount = (this.personalModel.correctionCount || 0) + 1;
+            console.log('📝 User provided correction:', feedback.correctLabel);
+        }
+        // Optionally: update personality profile, retrain, etc.
+        this.savePersonalModel();
+    }
+
+    /**
      * Get emotion analysis statistics
      */
     getAnalysisStatistics() {
@@ -1024,7 +1045,7 @@ class EmotionEngine {
      * Calculate learning progress
      */
     calculateLearningProgress() {
-        if (this.personalModel.emotionHistory.length < 10) return 0;
+        if this.personalModel.emotionHistory.length < 10) return 0;
         
         const recent = this.personalModel.emotionHistory.slice(-50);
         const avgRecentConfidence = recent.reduce((sum, e) => sum + e.confidence, 0) / recent.length;
@@ -1033,7 +1054,4 @@ class EmotionEngine {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = EmotionEngine;
-}
+export default EmotionEngine;

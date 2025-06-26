@@ -201,6 +201,13 @@
     color: #4ECDC4;
 }
 
+.auth-error.hidden, .auth-success.hidden {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
 /* === USER DASHBOARD STYLES === */
 
 .user-dashboard {
@@ -444,6 +451,11 @@
 
 .active-room button:hover {
     background: rgba(255, 107, 107, 0.3);
+}
+
+/* Hidden Class */
+.hidden {
+  display: none !important;
 }
 
 /* Responsive */
