@@ -745,6 +745,8 @@
                     <button id="trainSoulBtn" style="margin-top:1em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Train Neural Net</button>
                     <button id="downloadTrainingDataBtn" style="margin-top:0.7em;background:var(--synesthetic-gold);color:#222;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Download My Training Data</button>
                     <button id="clearTrainingDataBtn" style="margin-top:0.5em;background:var(--synesthetic-red);color:#fff;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Clear Training Data</button>
+                    <button id="importTrainingDataBtn" style="margin-top:0.5em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Import Training Data</button>
+                    <input type="file" id="importTrainingDataInput" accept="application/json" style="display:none;" />
                     <div id="trainSoulStatus" style="margin-top:0.7em;font-size:0.95em;color:var(--text-tertiary);"></div>
                     
                     <!-- Training Examples List Preview -->
@@ -1710,6 +1712,43 @@ if (window.authManager && window.authManager.currentRoomCode) {
                 }, 100);
                 trainSoulStatus.textContent = 'Training data downloaded!';
                 trainSoulStatus.style.color = 'var(--synesthetic-gold)';
+            });
+            // Import Training Data logic
+            const importTrainingDataBtn = document.getElementById('importTrainingDataBtn');
+            const importTrainingDataInput = document.getElementById('importTrainingDataInput');
+            importTrainingDataBtn.addEventListener('click', () => {
+                importTrainingDataInput.value = '';
+                importTrainingDataInput.click();
+            });
+            importTrainingDataInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const imported = JSON.parse(evt.target.result);
+                        if (!Array.isArray(imported)) throw new Error('File must be a JSON array.');
+                        let added = 0;
+                        imported.forEach(ex => {
+                            if (ex && typeof ex === 'object' && typeof ex.label === 'string' && typeof ex.features === 'object') {
+                                trainingExamples.push({ label: ex.label, features: ex.features });
+                                added++;
+                            }
+                        });
+                        updateTrainingExamplesList();
+                        if (added) {
+                            trainSoulStatus.textContent = `Imported ${added} example(s)! Total: ${trainingExamples.length}`;
+                            trainSoulStatus.style.color = 'var(--synesthetic-blue)';
+                        } else {
+                            trainSoulStatus.textContent = 'No valid examples found in file.';
+                            trainSoulStatus.style.color = '#ff006e';
+                        }
+                    } catch (err) {
+                        trainSoulStatus.textContent = 'Import failed: ' + (err && err.message ? err.message : err);
+                        trainSoulStatus.style.color = '#ff006e';
+                    }
+                };
+                reader.readAsText(file);
             });
             // Initial render
             updateTrainingExamplesList();
