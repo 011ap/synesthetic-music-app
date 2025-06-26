@@ -9,6 +9,10 @@ class EmotionEngine {
         this.coreApp = coreApp;
         this.isInitialized = false;
         
+        // Initialize factory soul system - our human baseline
+        this.factorySoul = null;
+        this.initializeFactorySoul();
+        
         // Advanced audio analysis configuration
         this.audioFeatures = {
             spectralCentroid: 0,
@@ -21,7 +25,7 @@ class EmotionEngine {
             zcr: 0
         };
         
-        // Emotional intelligence model
+        // Emotional intelligence model (now influenced by factory soul)
         this.emotionalModel = {
             valence: 0,      // Positive vs Negative emotion
             arousal: 0,      // High vs Low energy
@@ -29,12 +33,13 @@ class EmotionEngine {
             complexity: 0    // Emotional depth/sophistication
         };
         
-        // Personal learning system
+        // Personal learning system (starts with factory soul baseline)
         this.personalModel = {
             emotionHistory: [],
             userCorrections: [],
             personalityProfile: null,
-            adaptationRate: 0.1
+            adaptationRate: 0.1,
+            factorySoulBaseline: null // Will be set after factory soul loads
         };
         
         // Context tracking for memory integration
@@ -93,6 +98,99 @@ class EmotionEngine {
             console.error('❌ Emotion Engine initialization failed:', error);
             this.isInitialized = false;
         }
+    }
+
+    /**
+     * Initialize Factory Soul - Our Human Baseline
+     */
+    async initializeFactorySoul() {
+        try {
+            console.log('🧠 Loading human baseline soul...');
+            
+            // Check if FactorySoulTrain is available
+            if (typeof FactorySoulTrain !== 'undefined') {
+                const trainer = new FactorySoulTrain();
+                
+                // Wait for training to complete
+                while (!trainer.trainingComplete) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                this.factorySoul = trainer.getFactorySoul();
+                this.personalModel.factorySoulBaseline = JSON.parse(JSON.stringify(this.factorySoul));
+                
+                console.log('✨ Factory soul loaded - Starting with human-like emotional patterns');
+                console.log('🔬 Soul characteristics:', trainer.getFactorySoulInsights());
+                
+                // Apply factory soul to initial emotional model
+                this.applyFactorySoulBaseline();
+                
+            } else {
+                console.warn('⚠️ FactorySoulTrain not available - using basic emotional patterns');
+                this.createBasicSoul();
+            }
+            
+        } catch (error) {
+            console.error('❌ Factory soul initialization failed:', error);
+            this.createBasicSoul();
+        }
+    }
+    
+    /**
+     * Apply factory soul baseline to our emotional processing
+     */
+    applyFactorySoulBaseline() {
+        if (!this.factorySoul) return;
+        
+        console.log('🎭 Applying human emotional baseline...');
+        
+        // Set initial personality-influenced emotional tendencies
+        const personality = this.factorySoul.corePersonality;
+        const emotionalProcessing = this.factorySoul.emotionalProcessing;
+        
+        // Adjust emotional model based on personality
+        this.emotionalModel.valence = personality.agreeableness * 0.4 + (1 - personality.neuroticism) * 0.4 + 0.2;
+        this.emotionalModel.arousal = personality.extraversion * 0.6 + personality.openness * 0.3 + 0.1;
+        this.emotionalModel.dominance = personality.conscientiousness * 0.4 + personality.extraversion * 0.4 + 0.2;
+        this.emotionalModel.complexity = personality.openness * 0.6 + emotionalProcessing.emotionalComplexity * 0.4;
+        
+        // Set initial musical DNA influence
+        this.musicalDNA = this.factorySoul.musicalDNA;
+        
+        console.log('🎵 Musical DNA loaded:', Object.keys(this.musicalDNA));
+        console.log('🧬 Personality baseline:', personality);
+    }
+    
+    /**
+     * Create basic soul if factory soul not available
+     */
+    createBasicSoul() {
+        console.log('🔧 Creating basic emotional soul...');
+        
+        this.factorySoul = {
+            corePersonality: {
+                openness: 0.6,
+                conscientiousness: 0.6,
+                extraversion: 0.5,
+                agreeableness: 0.7,
+                neuroticism: 0.4
+            },
+            emotionalProcessing: {
+                emotionalInertia: 0.6,
+                emotionalVolatility: 0.4,
+                emotionalDepth: 0.7,
+                emotionalComplexity: 0.6
+            },
+            musicalDNA: {
+                classical: { baseAffinity: 0.5, emotionalResponse: { wonder: 0.7, peace: 0.6 } },
+                rock: { baseAffinity: 0.5, emotionalResponse: { energy: 0.8, power: 0.7 } },
+                electronic: { baseAffinity: 0.5, emotionalResponse: { futurism: 0.7, energy: 0.6 } },
+                jazz: { baseAffinity: 0.5, emotionalResponse: { sophistication: 0.8, spontaneity: 0.6 } }
+            }
+        };
+        
+        this.personalModel.factorySoulBaseline = JSON.parse(JSON.stringify(this.factorySoul));
+        this.applyFactorySoulBaseline();
     }
 
     /**
@@ -439,17 +537,48 @@ class EmotionEngine {
      * Analyze emotional dimensions from audio features
      */
     analyzeEmotionalDimensions(features) {
-        // Valence (positive vs negative emotion)
-        const valence = this.calculateValence(features);
+        // Raw emotional dimensions from audio
+        const rawValence = this.calculateValence(features);
+        const rawArousal = this.calculateArousal(features);
+        const rawDominance = this.calculateDominance(features);
+        const rawComplexity = this.calculateComplexity(features);
         
-        // Arousal (high vs low energy)
-        const arousal = this.calculateArousal(features);
+        // Apply factory soul human baseline influence
+        let valence = rawValence;
+        let arousal = rawArousal;
+        let dominance = rawDominance;
+        let complexity = rawComplexity;
         
-        // Dominance (control vs submission)
-        const dominance = this.calculateDominance(features);
+        if (this.factorySoul && this.factorySoul.corePersonality) {
+            const personality = this.factorySoul.corePersonality;
+            const processing = this.factorySoul.emotionalProcessing;
+            
+            // Personality influences how we interpret emotional signals
+            // Agreeable people tend to perceive more positive emotions
+            valence = rawValence * 0.7 + (personality.agreeableness * 0.3);
+            
+            // Extraverted people perceive higher arousal/energy
+            arousal = rawArousal * 0.8 + (personality.extraversion * 0.2);
+            
+            // Conscientious people feel more in control (dominance)
+            dominance = rawDominance * 0.8 + (personality.conscientiousness * 0.2);
+            
+            // Open people perceive more emotional complexity
+            complexity = rawComplexity * 0.7 + (personality.openness * 0.3);
+            
+            // Neuroticism affects emotional volatility
+            const neuroticismEffect = personality.neuroticism * 0.1;
+            arousal += neuroticismEffect;
+            valence -= neuroticismEffect * 0.5;
+            
+            console.log(`🧬 Applied human baseline - P:${personality.agreeableness.toFixed(2)} E:${personality.extraversion.toFixed(2)} O:${personality.openness.toFixed(2)}`);
+        }
         
-        // Complexity (emotional sophistication)
-        const complexity = this.calculateComplexity(features);
+        // Ensure values stay in valid range
+        valence = Math.min(1.0, Math.max(0.0, valence));
+        arousal = Math.min(1.0, Math.max(0.0, arousal));
+        dominance = Math.min(1.0, Math.max(0.0, dominance));
+        complexity = Math.min(1.0, Math.max(0.0, complexity));
         
         return { valence, arousal, dominance, complexity };
     }
@@ -573,7 +702,7 @@ class EmotionEngine {
     }
 
     /**
-     * Map emotional dimensions to specific emotions
+     * Map emotional dimensions to specific emotions with factory soul influence
      */
     mapToEmotions(dimensions) {
         const { valence, arousal, dominance, complexity } = dimensions;
@@ -583,7 +712,13 @@ class EmotionEngine {
         let bestScore = 0;
         
         Object.entries(this.emotionCategories.primary).forEach(([key, emotion]) => {
-            const score = this.calculateEmotionMatchScore(dimensions, emotion);
+            let score = this.calculateEmotionMatchScore(dimensions, emotion);
+            
+            // Apply factory soul musical DNA influence if available
+            if (this.factorySoul && this.musicalDNA) {
+                score = this.applyMusicalDNAInfluence(score, key, dimensions);
+            }
+            
             if (score > bestScore) {
                 bestScore = score;
                 bestMatch = { key, emotion, type: 'primary' };
@@ -593,7 +728,13 @@ class EmotionEngine {
         // Check complex emotions if complexity is high
         if (complexity > 0.6) {
             Object.entries(this.emotionCategories.complex).forEach(([key, emotion]) => {
-                const score = this.calculateEmotionMatchScore(dimensions, emotion);
+                let score = this.calculateEmotionMatchScore(dimensions, emotion);
+                
+                // Apply factory soul musical DNA influence if available
+                if (this.factorySoul && this.musicalDNA) {
+                    score = this.applyMusicalDNAInfluence(score, key, dimensions);
+                }
+                
                 if (score > bestScore) {
                     bestScore = score;
                     bestMatch = { key, emotion, type: 'complex' };
@@ -607,6 +748,52 @@ class EmotionEngine {
             dimensions: dimensions,
             alternativeMatches: this.findAlternativeMatches(dimensions, bestMatch)
         };
+    }
+    
+    /**
+     * Apply musical DNA influence from factory soul
+     */
+    applyMusicalDNAInfluence(baseScore, emotionKey, dimensions) {
+        if (!this.musicalDNA) return baseScore;
+        
+        // Try to detect genre from audio characteristics (simplified)
+        const detectedGenre = this.detectMusicGenre(dimensions);
+        
+        if (detectedGenre && this.musicalDNA[detectedGenre]) {
+            const genreData = this.musicalDNA[detectedGenre];
+            const genreAffinity = genreData.baseAffinity || 0.5;
+            
+            // Check if this emotion is typical for this genre
+            if (genreData.emotionalResponse && genreData.emotionalResponse[emotionKey]) {
+                const emotionTypicalness = genreData.emotionalResponse[emotionKey];
+                const influence = genreAffinity * emotionTypicalness * 0.3; // 30% max influence
+                
+                console.log(`🎵 Musical DNA: ${detectedGenre} -> ${emotionKey} (${(influence * 100).toFixed(1)}% boost)`);
+                
+                return Math.min(1.0, baseScore + influence);
+            }
+        }
+        
+        return baseScore;
+    }
+    
+    /**
+     * Detect music genre from audio characteristics (simplified)
+     */
+    detectMusicGenre(dimensions) {
+        const { valence, arousal, complexity } = dimensions;
+        
+        // Simple genre detection based on emotional dimensions
+        if (complexity > 0.7 && valence > 0.6) return 'jazz';
+        if (arousal > 0.8 && valence > 0.7) return 'rock';
+        if (arousal < 0.4 && complexity > 0.6) return 'classical';
+        if (arousal > 0.6 && complexity < 0.4) return 'pop';
+        if (arousal < 0.3 && valence < 0.5) return 'ambient';
+        if (valence < 0.5 && complexity > 0.5) return 'blues';
+        if (arousal > 0.7 && complexity > 0.6) return 'electronic';
+        if (valence > 0.6 && complexity < 0.6) return 'folk';
+        
+        return null; // Genre not detected
     }
 
     /**
@@ -1442,6 +1629,41 @@ class EmotionEngine {
         this.sessionStartTime = null;
         this.lastUserFeedback = null;
         this.lastUserStory = null;
+    }
+
+    /**
+     * Initialize factory soul system - our human baseline
+     */
+    initializeFactorySoul() {
+        // Basic human-like emotional responses
+        this.factorySoul = {
+            joy: 0.25,
+            sadness: 0.25,
+            anger: 0.2,
+            fear: 0.15,
+            surprise: 0.1,
+            disgust: 0.05
+        };
+        
+        // Normalize to ensure total influence is 1.0
+        const total = Object.values(this.factorySoul).reduce((a, b) => a + b, 0);
+        Object.keys(this.factorySoul).forEach(key => {
+            this.factorySoul[key] /= total;
+        });
+        
+        console.log('👶 Factory soul initialized - baseline human emotions');
+    }
+
+    /**
+     * Apply factory soul influence to emotional model
+     */
+    applyFactorySoulInfluence() {
+        if (!this.factorySoul) return;
+        
+        // Gently nudge emotional model towards factory soul baseline
+        Object.keys(this.emotionalModel).forEach(key => {
+            this.emotionalModel[key] = Math.min(1.0, this.emotionalModel[key] + this.factorySoul[key] * 0.1);
+        });
     }
 }
 
