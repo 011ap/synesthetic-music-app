@@ -19,11 +19,11 @@ export function calculateEmotionalDepth(features) {
 }
 
 export function updateSynestheticDisplay(emotion, features) {
+    console.log('[Visualizer] updateSynestheticDisplay', {emotion, features});
     const display = document.getElementById('synestheticDisplay');
     const colorIntensity = Math.round(features.energy * 100);
     const isTVMode = document.body.classList.contains('tv-mode');
     const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
-    
     display.innerHTML = `
         <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center;">
             ${colors.map(color => `
@@ -41,6 +41,7 @@ export function updateSynestheticDisplay(emotion, features) {
 }
 
 export function updateBackgroundColors(colors) {
+    console.log('[Visualizer] updateBackgroundColors', colors);
     const bg = document.querySelector('.emotional-background');
     const opacity = document.body.classList.contains('tv-mode') ? '1' : '0.7';
     bg.style.background = `
@@ -66,10 +67,10 @@ export function createParticles() {
 }
 
 export function updateParticles(emotion, features) {
+    console.log('[Visualizer] updateParticles', {emotion, features});
     const particles = document.querySelectorAll('.particle');
     const isTVMode = document.body.classList.contains('tv-mode');
     const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
-    
     particles.forEach((particle, index) => {
         const colorIndex = index % colors.length;
         particle.style.background = colors[colorIndex];
@@ -724,4 +725,41 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', attachAudioProgressListeners);
 } else {
   attachAudioProgressListeners();
+}
+
+// Ensure all visualization functions are always available on window.app
+window.app = {
+  ...window.app,
+  updateSynestheticDisplay,
+  updateParticles,
+  updateBackgroundColors,
+  togglePlayPause,
+  seekTo,
+  toggleLoop,
+  closePlayer,
+  updateTimeDisplay,
+  formatTime,
+  // add any other relevant exports here
+};
+
+// Add a minimal startFileAnalysis for upload demo/feedback
+if (typeof window !== 'undefined' && window.synestheticCore) {
+  window.synestheticCore.startFileAnalysis = function(blob) {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      audioContext.decodeAudioData(e.target.result, (audioBuffer) => {
+        // Fake analysis: generate random emotion data for demo
+        const fakeState = {
+          primary: 'Joy',
+          confidence: Math.random() * 100,
+          depth: Math.random() * 100,
+          intensity: Math.random(),
+          synestheticColors: ['#FFD700', '#FF69B4', '#4ECDC4'],
+        };
+        window.synestheticCore.updateEmotionalConsciousness(fakeState);
+      });
+    };
+    reader.readAsArrayBuffer(blob);
+  };
 }

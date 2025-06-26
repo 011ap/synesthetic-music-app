@@ -555,30 +555,39 @@ class SynestheticCore {
      * Update the emotional consciousness display
      */
     updateEmotionalConsciousness(emotionalState) {
+        console.log('[SoulEngine] updateEmotionalConsciousness called:', emotionalState);
         this.currentEmotionalState = emotionalState;
-        
-        // Update primary emotion
-        this.updateElement('primaryEmotionName', emotionalState.primary);
-        this.updateElement('primaryEmotionDesc', this.getEmotionDescription(emotionalState.primary));
+        // Update primary emotion UI
+        this.updateElement('primaryEmotion', emotionalState.primary);
+        this.updateElement('emotionDescription', this.getEmotionDescription(emotionalState.primary));
         this.updateElement('primaryConfidence', `${Math.round(emotionalState.confidence)}%`);
-        this.updateProgressBar('primaryIntensity', emotionalState.intensity * 100);
-        
-        // Update emotional depth
-        this.updateElement('depthValue', this.getDepthDescription(emotionalState.depth));
-        this.updateElement('depthConfidence', `${Math.round(emotionalState.depth)}%`);
-        this.updateDepthVisualization(emotionalState.depth);
-        
-        // Update memory resonance
-        this.updateElement('memoryStrength', this.getMemoryDescription(emotionalState.memoryResonance));
-        this.updateElement('memoryConfidence', `${Math.round(emotionalState.memoryResonance)}%`);
-        
-        // Update synesthetic colors
-        this.updateColorPalette(emotionalState.synestheticColors);
-        this.updateElement('colorConfidence', `${emotionalState.synestheticColors.length * 25}%`);
-        
-        // Update training context if in training mode
-        if (this.isTraining) {
-            this.updateTrainingContext(emotionalState);
+        this.updateElement('emotionalDepth', this.getDepthDescription(emotionalState.depth));
+        // Call expressive visualizations from app.js
+        if (window.app) {
+            if (window.app.updateSynestheticDisplay && emotionalState.synestheticColors && emotionalState.synestheticColors.length) {
+                console.log('[SoulEngine] Calling updateSynestheticDisplay', emotionalState.synestheticColors);
+                window.app.updateSynestheticDisplay({
+                    colors: emotionalState.synestheticColors,
+                    key: emotionalState.primary,
+                    colorsVibrant: emotionalState.synestheticColors // fallback
+                }, {
+                    energy: emotionalState.intensity || 0.7
+                });
+            }
+            if (window.app.updateParticles && emotionalState.synestheticColors && emotionalState.synestheticColors.length) {
+                console.log('[SoulEngine] Calling updateParticles', emotionalState.synestheticColors);
+                window.app.updateParticles({
+                    colors: emotionalState.synestheticColors,
+                    key: emotionalState.primary,
+                    colorsVibrant: emotionalState.synestheticColors
+                }, {
+                    energy: emotionalState.intensity || 0.7
+                });
+            }
+            if (window.app.updateBackgroundColors && emotionalState.synestheticColors && emotionalState.synestheticColors.length) {
+                console.log('[SoulEngine] Calling updateBackgroundColors', emotionalState.synestheticColors);
+                window.app.updateBackgroundColors(emotionalState.synestheticColors);
+            }
         }
     }
 
