@@ -755,6 +755,11 @@ export async function startMicAnalysis() {
   // Start listening
   console.log('[Mic] Starting microphone analysis...');
   
+  // 🧠 Start analysis session for memory tracking
+  if (window.emotionEngine && window.emotionEngine.startAnalysisSession) {
+    window.emotionEngine.startAnalysisSession('mic');
+  }
+  
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
       micStream = stream;
@@ -863,6 +868,11 @@ export function stopMicAnalysis() {
   console.log('[Mic] Stopping microphone analysis...');
   
   isListening = false;
+  
+  // 🧠 End analysis session for memory tracking
+  if (window.emotionEngine && window.emotionEngine.endAnalysisSession) {
+    window.emotionEngine.endAnalysisSession();
+  }
   
   if (micStream) {
     micStream.getTracks().forEach(track => track.stop());

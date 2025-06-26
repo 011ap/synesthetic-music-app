@@ -37,6 +37,13 @@ class EmotionEngine {
             adaptationRate: 0.1
         };
         
+        // Context tracking for memory integration
+        this.currentAnalysisSource = null; // 'mic', 'upload', 'auto'
+        this.currentSessionDuration = 0;
+        this.lastUserFeedback = null;
+        this.lastUserStory = null;
+        this.sessionStartTime = null;
+        
         // Emotion categories with sophisticated mapping
         this.emotionCategories = this.initializeEmotionCategories();
         
@@ -905,6 +912,20 @@ class EmotionEngine {
         if (this.personalModel.emotionHistory.length % 10 === 0) {
             this.savePersonalModel();
         }
+        
+        // 🧠 Phase 2.2: Record in Emotional Memory System
+        if (window.emotionalMemorySystem) {
+            try {
+                window.emotionalMemorySystem.recordEmotionalExperience(emotionalState, {
+                    source: this.currentAnalysisSource || 'audio',
+                    duration: this.currentSessionDuration || 0,
+                    userFeedback: this.lastUserFeedback || null,
+                    story: this.lastUserStory || null
+                });
+            } catch (error) {
+                console.warn('⚠️ Failed to record emotional experience in memory system:', error);
+            }
+        }
     }
 
     /**
@@ -1110,6 +1131,19 @@ class EmotionEngine {
      */
     learnFromUserFeedback(feedbackData) {
         console.log('🧠 Phase 2.5: Learning from user feedback + story:', feedbackData);
+        
+        // 🧠 Set feedback and story for memory integration
+        this.setUserFeedback({
+            wasCorrect: feedbackData.wasCorrect,
+            detected: feedbackData.detected,
+            correctedTo: feedbackData.correctedTo,
+            confidence: feedbackData.confidence,
+            timestamp: feedbackData.timestamp
+        });
+        
+        if (feedbackData.emotionalStory) {
+            this.setUserStory(feedbackData.emotionalStory);
+        }
         
         // Add to user corrections for immediate learning
         this.personalModel.userCorrections.push({
@@ -1371,6 +1405,43 @@ class EmotionEngine {
         const avgRecentConfidence = recent.reduce((sum, e) => sum + e.confidence, 0) / recent.length;
         
         return Math.min(100, avgRecentConfidence);
+    }
+
+    /**
+     * 🧠 Context Management for Memory Integration
+     */
+    startAnalysisSession(source = 'audio') {
+        this.currentAnalysisSource = source;
+        this.sessionStartTime = Date.now();
+        this.currentSessionDuration = 0;
+        console.log(`🎭 Starting ${source} analysis session`);
+    }
+
+    updateSessionDuration() {
+        if (this.sessionStartTime) {
+            this.currentSessionDuration = Date.now() - this.sessionStartTime;
+        }
+    }
+
+    setUserFeedback(feedback) {
+        this.lastUserFeedback = feedback;
+        console.log('🎭 User feedback received:', feedback);
+    }
+
+    setUserStory(story) {
+        this.lastUserStory = story;
+        console.log('🎭 User story received');
+    }
+
+    endAnalysisSession() {
+        this.updateSessionDuration();
+        console.log(`🎭 Ending analysis session after ${this.currentSessionDuration}ms`);
+        
+        // Reset context for next session
+        this.currentAnalysisSource = null;
+        this.sessionStartTime = null;
+        this.lastUserFeedback = null;
+        this.lastUserStory = null;
     }
 }
 

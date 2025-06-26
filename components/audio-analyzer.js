@@ -253,6 +253,11 @@ class AudioAnalyzer {
     stopAnalysis() {
         this.isAnalyzing = false;
         
+        // 🧠 End analysis session for memory tracking
+        if (window.emotionEngine && window.emotionEngine.endAnalysisSession) {
+            window.emotionEngine.endAnalysisSession();
+        }
+        
         if (this.meydaAnalyzer) {
             this.meydaAnalyzer.stop();
             this.meydaAnalyzer = null;
@@ -280,6 +285,11 @@ class AudioAnalyzer {
     async startFileAnalysis(audioUrl, fileName) {
         try {
             console.log('[AudioAnalyzer] Starting file analysis for:', fileName);
+            
+            // 🧠 Start analysis session for memory tracking
+            if (window.emotionEngine && window.emotionEngine.startAnalysisSession) {
+                window.emotionEngine.startAnalysisSession('upload');
+            }
             
             // Create audio element for file playback
             const audio = new Audio(audioUrl);

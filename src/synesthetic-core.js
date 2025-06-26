@@ -557,6 +557,12 @@ class SynestheticCore {
     updateEmotionalConsciousness(emotionalState) {
         console.log('[DEBUG] updateEmotionalConsciousness called', emotionalState);
         this.currentEmotionalState = emotionalState;
+        
+        // 🧠 Phase 2.2: Update session duration in emotion engine
+        if (window.emotionEngine && window.emotionEngine.updateSessionDuration) {
+            window.emotionEngine.updateSessionDuration();
+        }
+        
         // Update primary emotion UI
         this.updateElement('primaryEmotion', emotionalState.primary);
         this.updateElement('emotionDescription', this.getEmotionDescription(emotionalState.primary));
