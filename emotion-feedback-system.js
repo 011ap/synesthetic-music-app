@@ -53,7 +53,7 @@ class EmotionFeedbackSystem {
                 </div>
             </div>
             
-            <div id="emotionOptions" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+            <div id="emotionOptions" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
                 <button class="emotion-btn" data-emotion="joy">😊 Joy</button>
                 <button class="emotion-btn" data-emotion="sadness">😢 Sad</button>
                 <button class="emotion-btn" data-emotion="anger">😠 Angry</button>
@@ -63,6 +63,28 @@ class EmotionFeedbackSystem {
                 <button class="emotion-btn" data-emotion="passion">🔥 Passion</button>
                 <button class="emotion-btn" data-emotion="nostalgia">🌅 Nostalgia</button>
                 <button class="emotion-btn" data-emotion="awe">🌟 Awe</button>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <div style="color: #00f5ff; font-size: 14px; margin-bottom: 8px; text-align: left;">
+                    💭 Or tell me your story... (optional)
+                </div>
+                <textarea id="emotionalStory" placeholder="How does this music make you feel? Share your thoughts, memories, or what you're imagining... The soul learns from your stories too." 
+                    style="
+                        width: 100%;
+                        height: 80px;
+                        background: rgba(255, 255, 255, 0.1);
+                        border: 1px solid rgba(0, 245, 255, 0.3);
+                        border-radius: 8px;
+                        color: white;
+                        padding: 10px;
+                        font-size: 12px;
+                        resize: vertical;
+                        font-family: inherit;
+                    "></textarea>
+                <div style="color: rgba(255, 255, 255, 0.6); font-size: 10px; margin-top: 4px;">
+                    ✨ Share anything - a memory, feeling, story, or what you imagine. The soul learns from your words.
+                </div>
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: center;">
@@ -175,13 +197,19 @@ class EmotionFeedbackSystem {
      * Submit user feedback for learning
      */
     submitFeedback(wasCorrect, correctedEmotion = null) {
+        const emotionalStory = this.feedbackUI.querySelector('#emotionalStory').value.trim();
+        
         const feedbackData = {
             timestamp: Date.now(),
             detected: this.currentEmotion.primary,
             wasCorrect: wasCorrect,
             correctedTo: wasCorrect ? this.currentEmotion.primary : (this.selectedCorrection || correctedEmotion),
             confidence: this.currentEmotion.confidence,
-            audioFeatures: this.currentEmotion.audioFeatures || this.currentEmotion.features
+            audioFeatures: this.currentEmotion.audioFeatures || this.currentEmotion.features,
+            // 💭 PHASE 2.5: EMOTIONAL STORYTELLING
+            emotionalStory: emotionalStory,
+            storyAnalysis: emotionalStory ? this.analyzeEmotionalStory(emotionalStory) : null,
+            hasStory: emotionalStory.length > 0
         };
 
         // Store learning data
@@ -190,7 +218,7 @@ class EmotionFeedbackSystem {
         // Send to EmotionEngine for learning
         if (window.emotionEngine && window.emotionEngine.learnFromUserFeedback) {
             window.emotionEngine.learnFromUserFeedback(feedbackData);
-            console.log('🧠 Phase 2: Soul learned from feedback:', feedbackData);
+            console.log('🧠 Phase 2.5: Soul learned from feedback + story:', feedbackData);
         }
 
         // Save to localStorage for persistence
@@ -199,13 +227,155 @@ class EmotionFeedbackSystem {
         this.hideFeedback();
         
         // Show thank you message
-        this.showThankYou(wasCorrect);
+        this.showThankYou(wasCorrect, emotionalStory.length > 0);
+    }
+
+    /**
+     * 💭 PHASE 2.5: Analyze emotional story using basic NLP
+     */
+    analyzeEmotionalStory(story) {
+        if (!story || story.length < 5) return null;
+        
+        const analysis = {
+            wordCount: story.split(' ').length,
+            sentiment: this.analyzeSentiment(story),
+            emotionalKeywords: this.extractEmotionalKeywords(story),
+            themes: this.identifyThemes(story),
+            intensity: this.calculateEmotionalIntensity(story),
+            imagery: this.extractImagery(story),
+            memories: this.detectMemoryReferences(story)
+        };
+        
+        console.log('💭 Story Analysis:', analysis);
+        return analysis;
+    }
+
+    /**
+     * Basic sentiment analysis
+     */
+    analyzeSentiment(text) {
+        const positiveWords = ['happy', 'joy', 'love', 'beautiful', 'amazing', 'wonderful', 'good', 'great', 'fantastic', 'brilliant', 'peaceful', 'calm', 'excited', 'thrilled'];
+        const negativeWords = ['sad', 'angry', 'hate', 'terrible', 'awful', 'bad', 'horrible', 'depressed', 'anxious', 'scared', 'worried', 'frustrated'];
+        
+        const words = text.toLowerCase().split(/\W+/);
+        let positiveScore = 0;
+        let negativeScore = 0;
+        
+        words.forEach(word => {
+            if (positiveWords.includes(word)) positiveScore++;
+            if (negativeWords.includes(word)) negativeScore++;
+        });
+        
+        const totalWords = words.length;
+        return {
+            positive: positiveScore / totalWords,
+            negative: negativeScore / totalWords,
+            neutral: 1 - ((positiveScore + negativeScore) / totalWords),
+            overall: positiveScore > negativeScore ? 'positive' : negativeScore > positiveScore ? 'negative' : 'neutral'
+        };
+    }
+
+    /**
+     * Extract emotional keywords
+     */
+    extractEmotionalKeywords(text) {
+        const emotionWords = {
+            joy: ['happy', 'joyful', 'elated', 'cheerful', 'blissful', 'euphoric'],
+            sadness: ['sad', 'melancholy', 'depressed', 'gloomy', 'sorrowful', 'blue'],
+            anger: ['angry', 'furious', 'rage', 'annoyed', 'frustrated', 'mad'],
+            fear: ['scared', 'afraid', 'anxious', 'worried', 'nervous', 'terrified'],
+            love: ['love', 'affection', 'romance', 'caring', 'tender', 'devoted'],
+            peace: ['calm', 'peaceful', 'serene', 'tranquil', 'relaxed', 'zen'],
+            energy: ['energetic', 'pumped', 'excited', 'thrilled', 'dynamic', 'vibrant'],
+            nostalgia: ['remember', 'memories', 'childhood', 'past', 'nostalgic', 'reminds']
+        };
+        
+        const words = text.toLowerCase().split(/\W+/);
+        const foundEmotions = {};
+        
+        Object.entries(emotionWords).forEach(([emotion, keywords]) => {
+            const matches = keywords.filter(keyword => words.includes(keyword));
+            if (matches.length > 0) {
+                foundEmotions[emotion] = matches;
+            }
+        });
+        
+        return foundEmotions;
+    }
+
+    /**
+     * Identify story themes
+     */
+    identifyThemes(text) {
+        const themes = {
+            nature: ['sky', 'ocean', 'mountain', 'forest', 'tree', 'flower', 'sun', 'moon', 'stars'],
+            relationships: ['friend', 'family', 'mother', 'father', 'love', 'partner', 'relationship'],
+            memories: ['remember', 'childhood', 'school', 'growing up', 'used to', 'back then'],
+            journey: ['travel', 'road', 'journey', 'adventure', 'exploring', 'destination'],
+            time: ['time', 'moment', 'future', 'past', 'present', 'now', 'forever'],
+            music: ['song', 'melody', 'rhythm', 'beat', 'music', 'sound', 'voice']
+        };
+        
+        const words = text.toLowerCase().split(/\W+/);
+        const foundThemes = [];
+        
+        Object.entries(themes).forEach(([theme, keywords]) => {
+            const matchCount = keywords.filter(keyword => words.includes(keyword)).length;
+            if (matchCount > 0) {
+                foundThemes.push({ theme, matches: matchCount });
+            }
+        });
+        
+        return foundThemes.sort((a, b) => b.matches - a.matches);
+    }
+
+    /**
+     * Calculate emotional intensity from text
+     */
+    calculateEmotionalIntensity(text) {
+        const intensifiers = ['very', 'extremely', 'incredibly', 'absolutely', 'totally', 'completely', 'deeply', 'profoundly'];
+        const emotionalPunctuation = text.match(/[!?]{2,}/g);
+        const capsWords = text.match(/\b[A-Z]{2,}\b/g);
+        
+        const words = text.toLowerCase().split(/\W+/);
+        const intensifierCount = intensifiers.filter(word => words.includes(word)).length;
+        
+        let intensity = 0.5; // Base intensity
+        intensity += intensifierCount * 0.15;
+        intensity += (emotionalPunctuation ? emotionalPunctuation.length : 0) * 0.1;
+        intensity += (capsWords ? capsWords.length : 0) * 0.1;
+        
+        return Math.min(1.0, intensity);
+    }
+
+    /**
+     * Extract imagery and visual elements
+     */
+    extractImagery(text) {
+        const visualWords = ['see', 'bright', 'dark', 'light', 'color', 'red', 'blue', 'green', 'golden', 'purple', 'black', 'white', 'rainbow', 'shining', 'glow'];
+        const sensoryWords = ['hear', 'feel', 'touch', 'warm', 'cold', 'soft', 'rough', 'smooth', 'loud', 'quiet'];
+        
+        const words = text.toLowerCase().split(/\W+/);
+        const visual = visualWords.filter(word => words.includes(word));
+        const sensory = sensoryWords.filter(word => words.includes(word));
+        
+        return { visual, sensory };
+    }
+
+    /**
+     * Detect memory references
+     */
+    detectMemoryReferences(text) {
+        const memoryIndicators = ['remember', 'childhood', 'when i was', 'back then', 'used to', 'reminds me', 'takes me back', 'memories'];
+        const words = text.toLowerCase();
+        
+        return memoryIndicators.filter(indicator => words.includes(indicator));
     }
 
     /**
      * Show thank you message
      */
-    showThankYou(wasCorrect) {
+    showThankYou(wasCorrect, hadStory = false) {
         const message = document.createElement('div');
         message.style.cssText = `
             position: fixed;
@@ -218,16 +388,26 @@ class EmotionFeedbackSystem {
             font-weight: bold;
             z-index: 10001;
             animation: slideIn 0.3s ease;
+            max-width: 300px;
         `;
-        message.textContent = wasCorrect ? 
-            '🎉 Soul learned: I was correct!' : 
-            '🧠 Soul learned: Thanks for teaching me!';
-
+        
+        let messageText = '';
+        if (hadStory) {
+            messageText = wasCorrect ? 
+                '💭 Soul learned: I was right + your beautiful story!' : 
+                '💭 Soul learned: Thanks for the correction + story!';
+        } else {
+            messageText = wasCorrect ? 
+                '🎉 Soul learned: I was correct!' : 
+                '🧠 Soul learned: Thanks for teaching me!';
+        }
+        
+        message.textContent = messageText;
         document.body.appendChild(message);
         
         setTimeout(() => {
             message.remove();
-        }, 3000);
+        }, 4000);
     }
 
     /**

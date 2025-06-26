@@ -1106,10 +1106,10 @@ class EmotionEngine {
     }
 
     /**
-     * PHASE 2: Learn from user feedback
+     * PHASE 2.5: Learn from user feedback + emotional stories
      */
     learnFromUserFeedback(feedbackData) {
-        console.log('🧠 Phase 2: Learning from user feedback:', feedbackData);
+        console.log('🧠 Phase 2.5: Learning from user feedback + story:', feedbackData);
         
         // Add to user corrections for immediate learning
         this.personalModel.userCorrections.push({
@@ -1118,21 +1118,30 @@ class EmotionEngine {
             wasCorrect: feedbackData.wasCorrect,
             audioFeatures: feedbackData.audioFeatures,
             timestamp: feedbackData.timestamp,
-            confidence: feedbackData.confidence
+            confidence: feedbackData.confidence,
+            // 💭 PHASE 2.5: EMOTIONAL STORYTELLING DATA
+            emotionalStory: feedbackData.emotionalStory,
+            storyAnalysis: feedbackData.storyAnalysis,
+            hasStory: feedbackData.hasStory
         });
+        
+        // If user provided a story, learn from the narrative context
+        if (feedbackData.hasStory && feedbackData.storyAnalysis) {
+            this.learnFromEmotionalStory(feedbackData);
+        }
         
         // If soul was wrong, adjust future predictions
         if (!feedbackData.wasCorrect) {
-            console.log('🧠 Phase 2: Soul was wrong - learning correction from', 
+            console.log('🧠 Phase 2.5: Soul was wrong - learning correction from', 
                        feedbackData.detected, 'to', feedbackData.correctedTo);
             
             // Store feature-emotion correction mapping
-            this.addEmotionCorrection(feedbackData.audioFeatures, feedbackData.correctedTo);
+            this.addEmotionCorrection(feedbackData.audioFeatures, feedbackData.correctedTo, feedbackData.storyAnalysis);
         } else {
-            console.log('🧠 Phase 2: Soul was correct - reinforcing', feedbackData.detected);
+            console.log('🧠 Phase 2.5: Soul was correct - reinforcing', feedbackData.detected);
             
             // Reinforce correct prediction
-            this.reinforceCorrectPrediction(feedbackData.audioFeatures, feedbackData.detected);
+            this.reinforceCorrectPrediction(feedbackData.audioFeatures, feedbackData.detected, feedbackData.storyAnalysis);
         }
         
         // Update adaptation rate based on learning progress
@@ -1143,9 +1152,128 @@ class EmotionEngine {
     }
 
     /**
-     * Add emotion correction mapping
+     * 💭 PHASE 2.5: Learn from emotional storytelling
      */
-    addEmotionCorrection(audioFeatures, correctEmotion) {
+    learnFromEmotionalStory(feedbackData) {
+        const { storyAnalysis, correctedTo, audioFeatures } = feedbackData;
+        
+        if (!storyAnalysis) return;
+        
+        console.log('💭 Learning from emotional story:', storyAnalysis);
+        
+        // Create story-emotion associations
+        if (!this.personalModel.storyEmotionMappings) {
+            this.personalModel.storyEmotionMappings = [];
+        }
+        
+        // Store story context with emotion
+        this.personalModel.storyEmotionMappings.push({
+            emotion: correctedTo,
+            sentiment: storyAnalysis.sentiment,
+            keywords: storyAnalysis.emotionalKeywords,
+            themes: storyAnalysis.themes,
+            intensity: storyAnalysis.intensity,
+            imagery: storyAnalysis.imagery,
+            memories: storyAnalysis.memories,
+            audioFeatures: audioFeatures,
+            timestamp: Date.now(),
+            storyLength: storyAnalysis.wordCount
+        });
+        
+        // Keep only last 50 story mappings to prevent memory bloat
+        if (this.personalModel.storyEmotionMappings.length > 50) {
+            this.personalModel.storyEmotionMappings = this.personalModel.storyEmotionMappings.slice(-50);
+        }
+        
+        // Learn patterns between story elements and emotions
+        this.identifyStoryEmotionPatterns();
+    }
+
+    /**
+     * Identify patterns between stories and emotions
+     */
+    identifyStoryEmotionPatterns() {
+        if (!this.personalModel.storyEmotionMappings || this.personalModel.storyEmotionMappings.length < 3) {
+            return;
+        }
+        
+        // Group by emotion
+        const emotionGroups = {};
+        this.personalModel.storyEmotionMappings.forEach(mapping => {
+            if (!emotionGroups[mapping.emotion]) {
+                emotionGroups[mapping.emotion] = [];
+            }
+            emotionGroups[mapping.emotion].push(mapping);
+        });
+        
+        // Find patterns for each emotion
+        const patterns = {};
+        Object.entries(emotionGroups).forEach(([emotion, mappings]) => {
+            if (mappings.length >= 2) {
+                patterns[emotion] = this.analyzeEmotionStoryPattern(mappings);
+            }
+        });
+        
+        this.personalModel.storyPatterns = patterns;
+        console.log('💭 Story-emotion patterns identified:', patterns);
+    }
+
+    /**
+     * Analyze story patterns for specific emotion
+     */
+    analyzeEmotionStoryPattern(mappings) {
+        const pattern = {
+            commonKeywords: {},
+            commonThemes: {},
+            avgSentiment: { positive: 0, negative: 0, neutral: 0 },
+            avgIntensity: 0,
+            memoryTriggers: [],
+            visualElements: []
+        };
+        
+        // Analyze common keywords
+        mappings.forEach(mapping => {
+            Object.entries(mapping.keywords).forEach(([emotion, words]) => {
+                if (!pattern.commonKeywords[emotion]) {
+                    pattern.commonKeywords[emotion] = {};
+                }
+                words.forEach(word => {
+                    pattern.commonKeywords[emotion][word] = (pattern.commonKeywords[emotion][word] || 0) + 1;
+                });
+            });
+            
+            // Analyze themes
+            mapping.themes.forEach(theme => {
+                pattern.commonThemes[theme.theme] = (pattern.commonThemes[theme.theme] || 0) + theme.matches;
+            });
+            
+            // Average sentiment
+            pattern.avgSentiment.positive += mapping.sentiment.positive;
+            pattern.avgSentiment.negative += mapping.sentiment.negative;
+            pattern.avgSentiment.neutral += mapping.sentiment.neutral;
+            
+            // Average intensity
+            pattern.avgIntensity += mapping.intensity;
+            
+            // Collect memory triggers and visual elements
+            pattern.memoryTriggers.push(...mapping.memories);
+            pattern.visualElements.push(...mapping.imagery.visual);
+        });
+        
+        // Calculate averages
+        const count = mappings.length;
+        pattern.avgSentiment.positive /= count;
+        pattern.avgSentiment.negative /= count;
+        pattern.avgSentiment.neutral /= count;
+        pattern.avgIntensity /= count;
+        
+        return pattern;
+    }
+
+    /**
+     * Add emotion correction mapping with story context
+     */
+    addEmotionCorrection(audioFeatures, correctEmotion, storyAnalysis = null) {
         if (!this.personalModel.emotionCorrections) {
             this.personalModel.emotionCorrections = [];
         }
@@ -1154,7 +1282,9 @@ class EmotionEngine {
             features: audioFeatures,
             correctEmotion: correctEmotion,
             timestamp: Date.now(),
-            weight: 1.0
+            weight: 1.0,
+            // 💭 PHASE 2.5: Include story context
+            storyContext: storyAnalysis
         });
         
         // Keep only last 100 corrections to prevent memory bloat
@@ -1164,9 +1294,9 @@ class EmotionEngine {
     }
 
     /**
-     * Reinforce correct prediction
+     * Reinforce correct prediction with story context
      */
-    reinforceCorrectPrediction(audioFeatures, emotion) {
+    reinforceCorrectPrediction(audioFeatures, emotion, storyAnalysis = null) {
         if (!this.personalModel.reinforcements) {
             this.personalModel.reinforcements = [];
         }
@@ -1175,7 +1305,9 @@ class EmotionEngine {
             features: audioFeatures,
             emotion: emotion,
             timestamp: Date.now(),
-            weight: 0.5  // Lower weight than corrections
+            weight: 0.5,  // Lower weight than corrections
+            // 💭 PHASE 2.5: Include story context
+            storyContext: storyAnalysis
         });
         
         // Keep only last 50 reinforcements
