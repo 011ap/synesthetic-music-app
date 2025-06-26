@@ -1581,6 +1581,61 @@ if (window.authManager && window.authManager.currentRoomCode) {
                     content.classList.toggle('hidden');
                 });
             });
+
+            // === Train My Soul: Data Collection Logic ===
+            const trainSoulForm = document.getElementById('trainSoulForm');
+            const emotionLabelInput = document.getElementById('emotionLabelInput');
+            const featuresInput = document.getElementById('featuresInput');
+            const trainSoulStatus = document.getElementById('trainSoulStatus');
+            let trainingExamples = [];
+
+            trainSoulForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const label = emotionLabelInput.value.trim();
+                let features;
+                try {
+                    features = JSON.parse(featuresInput.value);
+                } catch (err) {
+                    trainSoulStatus.textContent = 'Invalid JSON in features.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                if (!label || typeof features !== 'object') {
+                    trainSoulStatus.textContent = 'Please provide both a label and valid features.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                trainingExamples.push({ label, features });
+                trainSoulStatus.textContent = `Added! Total examples: ${trainingExamples.length}`;
+                trainSoulStatus.style.color = 'var(--synesthetic-green)';
+                trainSoulForm.reset();
+            });
+
+            // Wire up trainSoulBtn to trigger neural net training
+            const trainSoulBtn = document.getElementById('trainSoulBtn');
+            trainSoulBtn.addEventListener('click', async () => {
+                if (!window.emotionEngine || typeof window.emotionEngine.trainOnUserData !== 'function') {
+                    trainSoulStatus.textContent = 'Neural net not loaded.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                if (!trainingExamples.length) {
+                    trainSoulStatus.textContent = 'Add at least one training example first.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                trainSoulStatus.textContent = 'Training...';
+                trainSoulStatus.style.color = 'var(--synesthetic-blue)';
+                try {
+                    await window.emotionEngine.trainOnUserData(trainingExamples);
+                    trainSoulStatus.textContent = 'Training complete! Your soul is smarter.';
+                    trainSoulStatus.style.color = 'var(--synesthetic-green)';
+                    trainingExamples = [];
+                } catch (err) {
+                    trainSoulStatus.textContent = 'Training failed: ' + (err && err.message ? err.message : err);
+                    trainSoulStatus.style.color = '#ff006e';
+                }
+            });
         });
 
         // === EMOTION ENGINE (NEURAL NETWORK BRAIN) ===
