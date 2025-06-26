@@ -63,6 +63,8 @@ function createAuthModal() {
 
 // Create user dashboard HTML
 function createUserDashboard() {
+    // Remove any existing dashboard to avoid duplicate nodes and listeners
+    document.getElementById('userDashboard')?.remove();
     const dashboardHTML = `
         <div id="userDashboard" class="user-dashboard hidden">
             <div class="dashboard-header">
@@ -87,37 +89,82 @@ function createUserDashboard() {
                     <span>Logout</span>
                 </button>
             </div>
-            <div class="emotional-stats hidden" id="emotionalStats"></div>
-            <div class="playlists-section hidden" id="playlistsSection"></div>
-            <div class="room-section hidden" id="roomSection"></div>
+            <div class="emotional-stats hidden" id="emotionalStats">
+                <h3>Your Emotional DNA</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalSongs">0</div>
+                        <div class="stat-label">Songs Analyzed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="favoriteEmotion">-</div>
+                        <div class="stat-label">Dominant Emotion</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="emotionalRange">-</div>
+                        <div class="stat-label">Emotional Range</div>
+                    </div>
+                </div>
+                <div class="emotion-history" id="emotionHistory"></div>
+            </div>
+            <div class="playlists-section hidden" id="playlistsSection">
+                <h3>Your Emotional Playlists</h3>
+                <button class="create-playlist-btn" id="createPlaylistBtn">+ Create New Playlist</button>
+                <div class="playlists-grid" id="playlistsGrid"></div>
+            </div>
+            <div class="room-section hidden" id="roomSection">
+                <h3>Emotion Sharing Room</h3>
+                <div class="room-create">
+                    <input type="text" id="roomName" placeholder="Room name...">
+                    <button id="createRoomBtn">Create Room</button>
+                </div>
+                <div class="room-join">
+                    <input type="text" id="roomCode" placeholder="Enter room code...">
+                    <button id="joinRoomBtn">Join Room</button>
+                </div>
+                <div class="active-room hidden" id="activeRoom">
+                    <h4>Active Room: <span id="activeRoomName"></span></h4>
+                    <p>Room Code: <span id="activeRoomCode"></span></p>
+                    <p>Participants: <span id="roomParticipants"></span></p>
+                    <button id="leaveRoomBtn">Leave Room</button>
+                </div>
+            </div>
         </div>
     `;
     const header = document.querySelector('.header');
-    if (!document.getElementById('userDashboard')) {
-        header.insertAdjacentHTML('afterend', dashboardHTML);
-    }
+    header.insertAdjacentHTML('afterend', dashboardHTML);
     // Always start with all dashboard sections hidden except header
     setTimeout(() => {
       document.getElementById('emotionalStats')?.classList.add('hidden');
       document.getElementById('playlistsSection')?.classList.add('hidden');
       document.getElementById('roomSection')?.classList.add('hidden');
-      // Attach event listeners for dashboard buttons (robustly re-attach every time)
-      document.getElementById('historyBtn')?.addEventListener('click', () => {
+      // Attach event listeners programmatically ONLY
+      const historyBtn = document.getElementById('historyBtn');
+      const playlistsBtn = document.getElementById('playlistsBtn');
+      const roomBtn = document.getElementById('roomBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (historyBtn) historyBtn.addEventListener('click', () => {
+        console.log('[Dashboard] showEmotionalHistory called');
         document.getElementById('emotionalStats')?.classList.remove('hidden');
         document.getElementById('playlistsSection')?.classList.add('hidden');
         document.getElementById('roomSection')?.classList.add('hidden');
       });
-      document.getElementById('playlistsBtn')?.addEventListener('click', () => {
+      if (playlistsBtn) playlistsBtn.addEventListener('click', () => {
+        console.log('[Dashboard] showPlaylists called');
         document.getElementById('emotionalStats')?.classList.add('hidden');
         document.getElementById('playlistsSection')?.classList.remove('hidden');
         document.getElementById('roomSection')?.classList.add('hidden');
       });
-      document.getElementById('roomBtn')?.addEventListener('click', () => {
+      if (roomBtn) roomBtn.addEventListener('click', () => {
+        console.log('[Dashboard] createRoom called');
         document.getElementById('emotionalStats')?.classList.add('hidden');
         document.getElementById('playlistsSection')?.classList.add('hidden');
         document.getElementById('roomSection')?.classList.remove('hidden');
       });
-      document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+      if (logoutBtn) logoutBtn.addEventListener('click', () => {
+        console.log('[Dashboard] handleLogout called');
+        handleLogout();
+      });
     }, 0);
 }
 
@@ -187,14 +234,17 @@ async function handleSignup(e) {
 // Handle logout
 async function handleLogout() {
     const result = await window.authManager.signOut();
-    
     if (result.success) {
         updateUIForGuest();
+        // Remove dashboard from DOM for clean state
+        document.getElementById('userDashboard')?.remove();
     }
 }
 
 // Update UI for logged in user
 function updateUIForUser(user) {
+    // Always (re)create dashboard to guarantee listeners are attached
+    createUserDashboard();
     // Hide auth button
     const authBtn = document.getElementById('authButton');
     if (authBtn) authBtn.style.display = 'none';
@@ -458,15 +508,38 @@ async function joinRoom() {
     }
 }
 
+// Global error handler for debugging
+window.onerror = function(message, source, lineno, colno, error) {
+  console.error('[Global Error]', message, 'at', source + ':' + lineno + ':' + colno, error);
+};
+
 // Attach global functions for modal/tab switching (for HTML event handlers)
 window.closeAuthModal = closeAuthModal;
 window.showAuthModal = showAuthModal;
 window.switchTab = switchTab;
-window.handleLogout = handleLogout;
-window.showPlaylists = showPlaylists;
-window.createRoom = createRoom;
-window.createEmotionRoom = createEmotionRoom;
-window.joinRoom = joinRoom;
+// Attach dashboard handlers to window for robust event binding
+window.handleLogout = function() {
+  console.log('[Dashboard] handleLogout called');
+  return handleLogout();
+};
+window.showEmotionalHistory = function() {
+  console.log('[Dashboard] showEmotionalHistory called');
+  document.getElementById('emotionalStats')?.classList.remove('hidden');
+  document.getElementById('playlistsSection')?.classList.add('hidden');
+  document.getElementById('roomSection')?.classList.add('hidden');
+};
+window.showPlaylists = function() {
+  console.log('[Dashboard] showPlaylists called');
+  document.getElementById('emotionalStats')?.classList.add('hidden');
+  document.getElementById('playlistsSection')?.classList.remove('hidden');
+  document.getElementById('roomSection')?.classList.add('hidden');
+};
+window.createRoom = function() {
+  console.log('[Dashboard] createRoom called');
+  document.getElementById('emotionalStats')?.classList.add('hidden');
+  document.getElementById('playlistsSection')?.classList.add('hidden');
+  document.getElementById('roomSection')?.classList.remove('hidden');
+};
 
 // Convert to ES module: export all major functions
 export {

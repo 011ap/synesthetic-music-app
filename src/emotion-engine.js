@@ -1045,7 +1045,7 @@ class EmotionEngine {
      * Calculate learning progress
      */
     calculateLearningProgress() {
-        if this.personalModel.emotionHistory.length < 10) return 0;
+        if (this.personalModel.emotionHistory.length < 10) return 0;
         
         const recent = this.personalModel.emotionHistory.slice(-50);
         const avgRecentConfidence = recent.reduce((sum, e) => sum + e.confidence, 0) / recent.length;

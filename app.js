@@ -107,11 +107,9 @@ export function seekTo(event) {
 export function toggleLoop() {
     const btn = document.getElementById('loopBtn');
     const audio = document.getElementById('audioElement');
-    
-    this.isLooping = !this.isLooping;
-    audio.loop = this.isLooping;
-    
-    if (this.isLooping) {
+    window.isLooping = !window.isLooping;
+    audio.loop = window.isLooping;
+    if (window.isLooping) {
         btn.classList.add('active');
     } else {
         btn.classList.remove('active');
@@ -598,3 +596,132 @@ document.head.insertAdjacentHTML('beforeend', playlistModalStyles);
 // Convert app.js to an ES module by exporting all major functions
 // and removing global window assignments and DOMContentLoaded.
 // This prepares the file for modular imports and prevents global conflicts.
+
+export async function startMicAnalysis() {
+  const micBtn = document.getElementById('micButton');
+  if (window.micActive) {
+    window.micActive = false;
+    micBtn.classList.remove('active');
+    document.getElementById('trackName').textContent = 'No track loaded';
+    document.getElementById('audioPlayer').classList.remove('active');
+    if (window.synestheticCore && typeof window.synestheticCore.stopEmotionalDetection === 'function') {
+      window.synestheticCore.stopEmotionalDetection();
+    }
+    if (window._synestheticMicStream) {
+      window._synestheticMicStream.getTracks().forEach(track => track.stop());
+      window._synestheticMicStream = null;
+    }
+    return;
+  }
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert('Microphone access is not supported in this browser.');
+      return;
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    window._synestheticMicStream = stream;
+    window.micActive = true;
+    micBtn.classList.add('active');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const audio = document.getElementById('audioElement');
+    audioPlayer.classList.add('active');
+    document.getElementById('trackName').textContent = 'LIVE (Microphone)';
+    audio.src = '';
+    audio.pause();
+    if (window.attachPlayerUIListeners) window.attachPlayerUIListeners();
+    if (window.synestheticCore && typeof window.synestheticCore.startEmotionalDetection === 'function') {
+      window.synestheticCore.startEmotionalDetection(stream);
+    }
+  } catch (err) {
+    alert('Microphone access denied or error: ' + err.message);
+  }
+}
+
+export function showUploadSection() {
+  // Just focus the file input for now
+  document.getElementById('fileInput')?.click();
+}
+
+export function handleUploadClick() {
+  document.getElementById('fileInput')?.click();
+}
+
+export function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // Show player UI
+    const audioPlayer = document.getElementById('audioPlayer');
+    const audio = document.getElementById('audioElement');
+    audioPlayer.classList.add('active');
+    document.getElementById('trackName').textContent = file.name;
+    if (window.attachPlayerUIListeners) window.attachPlayerUIListeners();
+    if (window.attachAudioProgressListeners) window.attachAudioProgressListeners();
+    // Load file into audio element
+    const blob = new Blob([e.target.result], { type: file.type });
+    const url = URL.createObjectURL(blob);
+    audio.src = url;
+    audio.onloadedmetadata = () => {
+      audio.play();
+    };
+    // Start soul engine/analysis
+    if (window.synestheticCore && typeof window.synestheticCore.startFileAnalysis === 'function') {
+      window.synestheticCore.startFileAnalysis(blob);
+    }
+  };
+  reader.onerror = function(e) {
+    alert('Error reading file: ' + e.message);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function attachPlayerUIListeners() {
+  const audio = document.getElementById('audioElement');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const loopBtn = document.getElementById('loopBtn');
+  const closeBtn = document.getElementById('closePlayer');
+  const progressBar = document.getElementById('progressBar');
+
+  if (playPauseBtn) playPauseBtn.onclick = () => window.app && window.app.togglePlayPause ? window.app.togglePlayPause() : null;
+  if (loopBtn) loopBtn.onclick = () => window.app && window.app.toggleLoop ? window.app.toggleLoop() : null;
+  if (closeBtn) closeBtn.onclick = () => window.app && window.app.closePlayer ? window.app.closePlayer() : null;
+  if (progressBar) progressBar.onclick = (e) => window.app && window.app.seekTo ? window.app.seekTo(e) : null;
+  // prevBtn and nextBtn can be implemented as needed
+}
+
+// Attach listeners after DOMContentLoaded and after every player UI show
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachPlayerUIListeners);
+} else {
+  attachPlayerUIListeners();
+}
+
+// Expose for re-attachment after player UI is shown
+window.attachPlayerUIListeners = attachPlayerUIListeners;
+
+// Patch: Call this after showing player UI in mic/upload handlers
+
+// Attach timeupdate and loadedmetadata listeners to update progress/timer
+function attachAudioProgressListeners() {
+  const audio = document.getElementById('audioElement');
+  if (!audio) return;
+  audio.ontimeupdate = () => {
+    if (window.app && window.app.updateTimeDisplay) window.app.updateTimeDisplay();
+  };
+  audio.onloadedmetadata = () => {
+    document.getElementById('totalTime').textContent = window.app && window.app.formatTime ? window.app.formatTime(audio.duration) : '';
+    if (window.app && window.app.updateTimeDisplay) window.app.updateTimeDisplay();
+  };
+}
+
+// Call this after showing player UI in upload handler
+window.attachAudioProgressListeners = attachAudioProgressListeners;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachAudioProgressListeners);
+} else {
+  attachAudioProgressListeners();
+}
