@@ -666,7 +666,7 @@ export function handleFileUpload(event) {
     audio.onloadedmetadata = () => {
       audio.play();
     };
-    // Start soul engine/analysis
+    // Only trigger real analysis for visual feedback
     if (window.synestheticCore && typeof window.synestheticCore.startFileAnalysis === 'function') {
       window.synestheticCore.startFileAnalysis(blob);
     }
@@ -744,20 +744,67 @@ window.app = {
 
 // Add a minimal startFileAnalysis for upload demo/feedback
 if (typeof window !== 'undefined' && window.synestheticCore) {
-  window.synestheticCore.startFileAnalysis = function(blob) {
+  window.synestheticCore.startFileAnalysis = async function(blob) {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const reader = new FileReader();
-    reader.onload = function(e) {
-      audioContext.decodeAudioData(e.target.result, (audioBuffer) => {
-        // Fake analysis: generate random emotion data for demo
-        const fakeState = {
-          primary: 'Joy',
-          confidence: Math.random() * 100,
-          depth: Math.random() * 100,
-          intensity: Math.random(),
-          synestheticColors: ['#FFD700', '#FF69B4', '#4ECDC4'],
+    reader.onload = async function(e) {
+      audioContext.decodeAudioData(e.target.result, async (audioBuffer) => {
+        // === REAL ANALYSIS ===
+        // Extract simple features: energy, spectral centroid, bass/mid/treble
+        const channelData = audioBuffer.getChannelData(0);
+        const frameSize = 2048;
+        let energy = 0, spectralCentroid = 0, bass = 0, mid = 0, treble = 0;
+        let nFrames = 0;
+        for (let i = 0; i < channelData.length; i += frameSize) {
+          const frame = channelData.slice(i, i + frameSize);
+          // Energy
+          const frameEnergy = Math.sqrt(frame.reduce((sum, v) => sum + v * v, 0) / frame.length);
+          energy += frameEnergy;
+          // FFT for spectral features
+          const fft = new Float32Array(frameSize);
+          for (let j = 0; j < frame.length; j++) fft[j] = frame[j];
+          // Simple FFT magnitude (no windowing, for demo)
+          const mag = fft.map(Math.abs);
+          // Spectral centroid
+          let centroid = 0, sumMag = 0;
+          for (let k = 0; k < mag.length; k++) {
+            centroid += k * mag[k];
+            sumMag += mag[k];
+          }
+          spectralCentroid += sumMag ? centroid / sumMag : 0;
+          // Bass/mid/treble (split bins)
+          const bassBins = mag.slice(0, Math.floor(mag.length * 0.15));
+          const midBins = mag.slice(Math.floor(mag.length * 0.15), Math.floor(mag.length * 0.5));
+          const trebleBins = mag.slice(Math.floor(mag.length * 0.5));
+          bass += bassBins.reduce((a, b) => a + b, 0) / (bassBins.length || 1);
+          mid += midBins.reduce((a, b) => a + b, 0) / (midBins.length || 1);
+          treble += trebleBins.reduce((a, b) => a + b, 0) / (trebleBins.length || 1);
+          nFrames++;
+        }
+        energy /= nFrames;
+        spectralCentroid /= nFrames;
+        bass /= nFrames;
+        mid /= nFrames;
+        treble /= nFrames;
+        // Map features to emotion (simple demo logic)
+        let primary = 'Calm', color = '#4ECDC4';
+        if (energy > 0.1 && spectralCentroid > 5000) {
+          primary = 'Joy'; color = '#FFD700';
+        } else if (energy < 0.05 && bass > treble) {
+          primary = 'Sadness'; color = '#1A1A2E';
+        } else if (mid > bass && mid > treble) {
+          primary = 'Wonder'; color = '#45B7D1';
+        }
+        const realState = {
+          primary,
+          confidence: Math.min(100, Math.round(energy * 100)),
+          depth: Math.round((mid + treble) * 50),
+          intensity: Math.min(1, energy * 2),
+          synestheticColors: [color, '#FF69B4', '#4ECDC4'],
+          features: { energy, spectralCentroid, bass, mid, treble }
         };
-        window.synestheticCore.updateEmotionalConsciousness(fakeState);
+        console.log('[startFileAnalysis] Real analysis result:', realState);
+        window.synestheticCore.updateEmotionalConsciousness(realState);
       });
     };
     reader.readAsArrayBuffer(blob);
