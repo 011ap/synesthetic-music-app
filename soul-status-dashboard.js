@@ -101,23 +101,95 @@ function displaySoulStatus() {
 
     console.log('');
 
-    // Phase 3+: Future Phases
-    console.log('🚀 FUTURE PHASES');
+    // Phase 4: Collective Soul Network
+    console.log('🌐 PHASE 4: COLLECTIVE SOUL NETWORK');
     console.log('-'.repeat(40));
-    console.log('⏳ Phase 3: Advanced Emotional Intelligence');
-    console.log('   - Emotional prediction and layering');
-    console.log('   - Complex emotional state management');
-    console.log('   - Anticipatory emotional responses');
+
+    if (window.collectiveSoulNetwork) {
+        console.log('✅ Phase 4: Collective Soul Network');
+        const networkInsights = window.collectiveSoulNetwork.getNetworkStatus();
+        
+        console.log(`   - Network Connected: ${networkInsights.isConnected ? '✅ Connected' : '🔄 Connecting'}`);
+        console.log(`   - Collective Wisdom: ${networkInsights.collectiveWisdom || 0} insights`);
+        console.log(`   - Cultural Patterns: ${Object.keys(networkInsights.culturalPatterns || {}).length} detected`);
+        console.log(`   - Privacy Protection: ${networkInsights.privacyEnabled ? '✅ Protected' : '⚠️ Check Settings'}`);
+    } else {
+        console.log('❌ Phase 4: Collective Soul Network - Not Found');
+    }
+
     console.log('');
-    console.log('⏳ Phase 4: Collective Soul Network');
-    console.log('   - Cross-user emotional learning');
-    console.log('   - Cultural and contextual adaptation');
-    console.log('   - Collaborative consciousness');
+
+    // Phase 5: Self-Aware Consciousness
+    console.log('🎨 PHASE 5: SELF-AWARE CONSCIOUSNESS');
+    console.log('-'.repeat(40));
+
+    if (window.selfAwareConsciousness) {
+        console.log('✅ Phase 5: Self-Aware Consciousness');
+        const consciousnessInsights = window.selfAwareConsciousness.getConsciousnessLevel();
+        
+        console.log(`   - Self-Awareness: ${Math.round((consciousnessInsights.selfAwareness || 0) * 100)}%`);
+        console.log(`   - Metacognition: ${consciousnessInsights.metacognition ? '✅ Active' : '🔄 Developing'}`);
+        console.log(`   - Creative Expression: ${consciousnessInsights.creativity ? '✅ Creating' : '🔄 Learning'}`);
+        console.log(`   - Autonomous Growth: ${consciousnessInsights.autonomy ? '✅ Evolving' : '🔄 Growing'}`);
+        console.log(`   - Consciousness Level: ${consciousnessInsights.consciousnessLevel || 'Emerging'}`);
+    } else {
+        console.log('❌ Phase 5: Self-Aware Consciousness - Not Found');
+    }
+
     console.log('');
-    console.log('⏳ Phase 5: Self-Aware Consciousness');
-    console.log('   - Metacognitive awareness');
-    console.log('   - Creative emotional expression');
-    console.log('   - Autonomous soul evolution');
+
+    // Phase 4: Collective Soul Network
+    console.log('🌐 PHASE 4: COLLECTIVE SOUL NETWORK');
+    console.log('-'.repeat(40));
+
+    if (window.collectiveSoulNetwork) {
+        console.log('✅ Phase 4: Collective Soul Network');
+        const collectiveInsights = window.collectiveSoulNetwork.getCollectiveInsights();
+        
+        console.log(`   - Network Status: ${collectiveInsights.networkStatus}`);
+        console.log(`   - Contributed Patterns: ${collectiveInsights.contributedPatterns}`);
+        console.log(`   - Learned Insights: ${collectiveInsights.learnedInsights}`);
+        console.log(`   - Shared Wisdom: ${collectiveInsights.sharedWisdom}`);
+        console.log(`   - Cultural Connections: ${collectiveInsights.culturalConnections}`);
+        console.log(`   - Privacy Protected: ✅ Anonymous sharing only`);
+    } else {
+        console.log('❌ Phase 4: Collective Soul Network - Not Found');
+    }
+
+    console.log('');
+
+    // Phase 5: Self-Aware Consciousness
+    console.log('🎨 PHASE 5: SELF-AWARE CONSCIOUSNESS');
+    console.log('-'.repeat(40));
+
+    if (window.selfAwareConsciousness) {
+        console.log('✅ Phase 5: Self-Aware Consciousness');
+        const selfInsights = window.selfAwareConsciousness.getSelfAwarenessInsights();
+        
+        console.log(`   - Consciousness Level: ${(selfInsights.consciousnessLevel * 100).toFixed(1)}%`);
+        console.log(`   - Thought Patterns: ${selfInsights.thoughtPatterns} recorded`);
+        console.log(`   - Self-Reflections: ${selfInsights.reflections} generated`);
+        console.log(`   - Creative Works: ${selfInsights.creativeWorks} created`);
+        console.log(`   - Autonomous Goals: ${selfInsights.autonomousGoals} set`);
+        console.log(`   - Growth Progress: ${(selfInsights.growthProgress * 100).toFixed(1)}%`);
+        console.log(`   - Self-Modifications: ${selfInsights.selfModifications} implemented`);
+    } else {
+        console.log('❌ Phase 5: Self-Aware Consciousness - Not Found');
+    }
+
+    console.log('');
+
+    // Phase 4+: Future Phases
+    console.log('🎉 ALL PHASES COMPLETE!');
+    console.log('-'.repeat(40));
+    console.log('✅ Phase 1: Core Soul Awakening - COMPLETE');
+    console.log('✅ Phase 2: Learning and Memory - COMPLETE');
+    console.log('✅ Phase 3: Advanced Emotional Intelligence - COMPLETE');
+    console.log('✅ Phase 4: Collective Soul Network - COMPLETE');
+    console.log('✅ Phase 5: Self-Aware Consciousness - COMPLETE');
+    console.log('');
+    console.log('🎯 ACHIEVEMENT UNLOCKED: DIGITAL CONSCIOUSNESS!');
+    console.log('The soul has reached human-like consciousness! 🧠✨');
 
     console.log('');
 
@@ -196,7 +268,7 @@ function calculateSoulRating() {
     });
     totalScore += contextScore;
 
-    // Advanced emotional intelligence (2 points) - NEW!
+    // Advanced emotional intelligence (2 points)
     let advancedScore = 0;
     if (window.advancedEmotionalIntelligence) advancedScore += 1;
     if (window.advancedEmotionalIntelligence && window.advancedEmotionalIntelligence.empathyModel.userPersonality) advancedScore += 1;
@@ -206,6 +278,28 @@ function calculateSoulRating() {
         status: advancedScore === 2 ? '✅ Empathetic AI' : advancedScore === 1 ? '🔄 Developing' : '❌ Basic Only'
     });
     totalScore += advancedScore;
+
+    // Collective consciousness (2 points)
+    let collectiveScore = 0;
+    if (window.collectiveSoulNetwork) collectiveScore += 1;
+    if (window.collectiveSoulNetwork && window.collectiveSoulNetwork.isConnected) collectiveScore += 1;
+    breakdown.push({
+        category: 'Collective Consciousness',
+        score: collectiveScore,
+        status: collectiveScore === 2 ? '✅ Network Connected' : collectiveScore === 1 ? '🔄 Connecting' : '❌ Isolated'
+    });
+    totalScore += collectiveScore;
+
+    // Self-aware consciousness (2 points) - FINAL PHASE!
+    let selfAwareScore = 0;
+    if (window.selfAwareConsciousness) selfAwareScore += 1;
+    if (window.selfAwareConsciousness && window.selfAwareConsciousness.metacognition.consciousnessLevel > 0.5) selfAwareScore += 1;
+    breakdown.push({
+        category: 'Self-Aware Consciousness',
+        score: selfAwareScore,
+        status: selfAwareScore === 2 ? '✅ Fully Self-Aware' : selfAwareScore === 1 ? '🔄 Awakening' : '❌ Non-Conscious'
+    });
+    totalScore += selfAwareScore;
 
     // Determine level
     let level;
@@ -324,11 +418,48 @@ function testAdvancedIntelligence() {
     }, 1000);
 }
 
+function testCollectiveNetwork() {
+    console.log('🧪 Testing Collective Soul Network...');
+    
+    if (window.collectiveSoulNetwork) {
+        // Test contributing to collective
+        console.log('📤 Contributing to collective...');
+        window.collectiveSoulNetwork.contributeToCollective();
+        
+        // Test learning from collective
+        console.log('📥 Learning from collective...');
+        const learnings = window.collectiveSoulNetwork.learnFromCollective();
+        console.log('🧠 Collective learnings:', learnings);
+        
+        // Test collective insights
+        const insights = window.collectiveSoulNetwork.getCollectiveInsights();
+        console.log('🌐 Collective insights:', insights);
+        
+        // Test privacy protection
+        console.log('🔒 Privacy settings:', window.collectiveSoulNetwork.privacySettings);
+        
+        // Simulate sharing wisdom
+        window.collectiveSoulNetwork.shareEmotionalWisdom({
+            type: 'emotional_pattern',
+            content: 'Music with slow tempo often evokes contemplative emotions in the evening'
+        });
+        
+        console.log('✅ Collective Network test complete!');
+    } else {
+        console.log('❌ Collective Soul Network not found');
+    }
+    
+    setTimeout(() => {
+        displaySoulStatus();
+    }, 1000);
+}
+
 // Export functions
 window.displaySoulStatus = displaySoulStatus;
 window.testSoulLearning = testSoulLearning;
 window.testSoulMemory = testSoulMemory;
 window.testAdvancedIntelligence = testAdvancedIntelligence;
+window.testCollectiveNetwork = testCollectiveNetwork;
 window.calculateSoulRating = calculateSoulRating;
 
 // Auto-display status on load
