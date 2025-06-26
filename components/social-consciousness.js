@@ -1062,7 +1062,6 @@ class SocialConsciousness {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SocialConsciousness;
-}
+// Make available globally
+window.SocialConsciousness = SocialConsciousness;
+export default SocialConsciousness;

@@ -275,6 +275,173 @@ class AudioAnalyzer {
     }
 
     /**
+     * Start file analysis with audio URL
+     */
+    async startFileAnalysis(audioUrl, fileName) {
+        try {
+            console.log('[AudioAnalyzer] Starting file analysis for:', fileName);
+            
+            // Create audio element for file playback
+            const audio = new Audio(audioUrl);
+            audio.crossOrigin = 'anonymous';
+            
+            // Wait for audio to load metadata
+            await new Promise((resolve, reject) => {
+                audio.addEventListener('loadedmetadata', resolve);
+                audio.addEventListener('error', reject);
+                audio.load();
+            });
+            
+            // Initialize audio context if needed
+            if (!this.audioContext) {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // Create analyser
+            this.analyser = this.audioContext.createAnalyser();
+            this.analyser.fftSize = this.config.fftSize;
+            this.analyser.smoothingTimeConstant = this.config.smoothingTimeConstant;
+            
+            // Create source from audio element
+            this.sourceNode = this.audioContext.createMediaElementSource(audio);
+            this.sourceNode.connect(this.analyser);
+            this.sourceNode.connect(this.audioContext.destination);
+            
+            // Initialize buffers
+            this.initializeBuffers();
+            
+            // Connect to the main player UI
+            this.setupPlayerUI(audio, fileName);
+            
+            // Start analysis
+            this.isAnalyzing = true;
+            this.setupAnalysisLoop();
+            
+            // Play audio for analysis
+            audio.play();
+            
+            // Create initial emotional response for file upload
+            const fileEmotion = {
+                primary: 'Processing',
+                confidence: 90,
+                depth: 70,
+                intensity: 0.8,
+                synestheticColors: ['#4ECDC4', '#44A08D', '#093637'],
+                features: { energy: 0.8, bass: 60, mid: 70, treble: 50 }
+            };
+            
+            // Trigger immediate visual feedback
+            if (window.synestheticCore?.updateEmotionalConsciousness) {
+                window.synestheticCore.updateEmotionalConsciousness(fileEmotion);
+            }
+            
+            console.log('[AudioAnalyzer] File analysis started for:', fileName);
+            
+            // Handle audio end - keep connection alive for seeking
+            audio.addEventListener('ended', () => {
+                // Don't stop analysis - just pause it so seeking still works
+                this.isAnalyzing = false;
+                console.log('[AudioAnalyzer] File playback ended - analysis paused (seeking still available)');
+            });
+            
+            // Store reference to audio for potential reconnection
+            this.currentAudio = audio;
+            
+        } catch (error) {
+            console.error('[AudioAnalyzer] Failed to start file analysis:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Setup player UI for file playback
+     */
+    setupPlayerUI(audio, fileName) {
+        // Set as main audio element
+        const existingAudio = document.getElementById('audioElement');
+        if (existingAudio) {
+            existingAudio.remove();
+        }
+        
+        audio.id = 'audioElement';
+        audio.style.display = 'none';
+        document.body.appendChild(audio);
+        
+        // Show and setup player UI
+        const audioPlayer = document.getElementById('audioPlayer');
+        const trackName = document.getElementById('trackName');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        
+        if (audioPlayer) {
+            audioPlayer.classList.add('active');
+        }
+        
+        if (trackName) {
+            trackName.textContent = fileName || 'Audio File';
+        }
+        
+        if (playPauseBtn) {
+            playPauseBtn.textContent = '⏸'; // Show pause since audio is playing
+        }
+        
+        // Setup time updates
+        audio.addEventListener('timeupdate', () => {
+            if (window.app && window.app.updateTimeDisplay) {
+                window.app.updateTimeDisplay();
+            }
+        });
+        
+        // Setup progress bar click
+        const progressBar = document.getElementById('progressBar');
+        if (progressBar) {
+            progressBar.onclick = (event) => {
+                if (window.app && window.app.seekTo) {
+                    window.app.seekTo(event);
+                }
+            };
+        }
+        
+        // Setup total time when metadata loads
+        audio.addEventListener('loadedmetadata', () => {
+            const totalTime = document.getElementById('totalTime');
+            if (totalTime && window.app && window.app.formatTime) {
+                totalTime.textContent = window.app.formatTime(audio.duration);
+            }
+        });
+        
+        // Setup player control event listeners
+        if (playPauseBtn) {
+            playPauseBtn.onclick = () => {
+                if (window.app && window.app.togglePlayPause) {
+                    window.app.togglePlayPause();
+                }
+            };
+        }
+        
+        const loopBtn = document.getElementById('loopBtn');
+        if (loopBtn) {
+            loopBtn.onclick = () => {
+                if (window.app && window.app.toggleLoop) {
+                    window.app.toggleLoop();
+                }
+            };
+        }
+        
+        const closePlayer = document.getElementById('closePlayer');
+        if (closePlayer) {
+            closePlayer.onclick = () => {
+                if (window.app && window.app.closePlayer) {
+                    window.app.closePlayer();
+                }
+                // Also stop analysis
+                this.stopAnalysis();
+            };
+        }
+        
+        console.log('[AudioAnalyzer] Player UI setup complete for:', fileName);
+    }
+
+    /**
      * Perform real-time audio analysis
      */
     performRealTimeAnalysis() {
@@ -289,45 +456,30 @@ class AudioAnalyzer {
         this.extractSpectralFeatures();
         this.extractTemporalFeatures();
         this.extractHarmonicFeatures();
-        this.extractRhythmFeatures();
-        this.extractPerceptualFeatures();
-        
-        // Store analysis in history
-        this.storeAnalysisHistory();
-        
-        // Notify core app of new analysis
-        if (this.coreApp && this.coreApp.emotionEngine) {
-            this.coreApp.emotionEngine.processAudioFeatures(this.features);
-        }
-    }
-
-    /**
-     * Extract spectral features
-     */
-    extractSpectralFeatures() {
-        const magnitude = this.buffers.magnitude;
-        const frequency = this.buffers.frequency;
-        
-        // Spectral centroid (brightness)
-        this.features.spectral.centroid = this.calculateSpectralCentroid(magnitude);
-        
-        // Spectral rolloff
-        this.features.spectral.rolloff = this.calculateSpectralRolloff(magnitude);
-        
-        // Spectral flatness (noisiness)
-        this.features.spectral.flatness = this.calculateSpectralFlatness(magnitude);
-        
-        // Spectral spread (bandwidth)
-        this.features.spectral.spread = this.calculateSpectralSpread(magnitude);
+        this.features.spectral.spread = this.calculateSpectralSpread(this.buffers.magnitude);
         
         // Spectral slope
-        this.features.spectral.slope = this.calculateSpectralSlope(magnitude);
+        this.features.spectral.slope = this.calculateSpectralSlope(this.buffers.magnitude);
         
         // Spectral kurtosis (peakedness)
-        this.features.spectral.kurtosis = this.calculateSpectralKurtosis(magnitude);
+        this.features.spectral.kurtosis = this.calculateSpectralKurtosis(this.buffers.magnitude);
         
         // Spectral skewness (asymmetry)
-        this.features.spectral.skewness = this.calculateSpectralSkewness(magnitude);
+        this.features.spectral.skewness = this.calculateSpectralSkewness(this.buffers.magnitude);
+        
+        // 🧠 PHASE 1: USE REAL EMOTION ENGINE FOR FILE ANALYSIS
+        // Send frequency data to EmotionEngine for advanced analysis
+        if (window.emotionEngine && window.emotionEngine.analyze && this.buffers.frequency) {
+            try {
+                const emotionalState = window.emotionEngine.analyze(this.buffers.frequency);
+                if (emotionalState && window.synestheticCore?.updateEmotionalConsciousness) {
+                    window.synestheticCore.updateEmotionalConsciousness(emotionalState);
+                    console.log('[Soul Awakening] File analysis using EmotionEngine:', emotionalState.primary);
+                }
+            } catch (error) {
+                console.warn('[Soul Awakening] EmotionEngine file analysis failed:', error);
+            }
+        }
     }
 
     /**
@@ -1042,7 +1194,18 @@ class AudioAnalyzer {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = AudioAnalyzer;
+// Make available globally
+window.AudioAnalyzer = AudioAnalyzer;
+
+// Create a global audio analyzer instance
+window.audioAnalyzer = new AudioAnalyzer();
+
+// Export standalone startFileAnalysis function for easy import
+export async function startFileAnalysis(audioUrl, fileName) {
+    if (!window.audioAnalyzer) {
+        window.audioAnalyzer = new AudioAnalyzer();
+    }
+    return await window.audioAnalyzer.startFileAnalysis(audioUrl, fileName);
 }
+
+export default AudioAnalyzer;

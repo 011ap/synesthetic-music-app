@@ -138,17 +138,22 @@ function createUserDashboard() {
       document.getElementById('emotionalStats')?.classList.add('hidden');
       document.getElementById('playlistsSection')?.classList.add('hidden');
       document.getElementById('roomSection')?.classList.add('hidden');
-      // Attach event listeners programmatically ONLY
+      // Attach event listeners programmatically ONLY (prevent duplicates)
       const historyBtn = document.getElementById('historyBtn');
       const playlistsBtn = document.getElementById('playlistsBtn');
       const roomBtn = document.getElementById('roomBtn');
       const logoutBtn = document.getElementById('logoutBtn');
-      if (historyBtn) historyBtn.addEventListener('click', () => {
-        console.log('[Dashboard] showEmotionalHistory called');
-        document.getElementById('emotionalStats')?.classList.remove('hidden');
-        document.getElementById('playlistsSection')?.classList.add('hidden');
-        document.getElementById('roomSection')?.classList.add('hidden');
-      });
+      
+      // Remove existing listeners first
+      if (historyBtn && !historyBtn.hasAttribute('data-listener-attached')) {
+        historyBtn.addEventListener('click', () => {
+          console.log('[Dashboard] showEmotionalHistory called');
+          document.getElementById('emotionalStats')?.classList.remove('hidden');
+          document.getElementById('playlistsSection')?.classList.add('hidden');
+          document.getElementById('roomSection')?.classList.add('hidden');
+        });
+        historyBtn.setAttribute('data-listener-attached', 'true');
+      }
       if (playlistsBtn) playlistsBtn.addEventListener('click', () => {
         console.log('[Dashboard] showPlaylists called');
         document.getElementById('emotionalStats')?.classList.add('hidden');

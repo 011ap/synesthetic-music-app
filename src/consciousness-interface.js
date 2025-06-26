@@ -268,11 +268,11 @@ class ConsciousnessInterface {
      */
     recalculateLayout() {
         // Force layout recalculation
-        const interface = document.getElementById('consciousnessInterface');
-        if (interface) {
-            interface.style.display = 'none';
-            interface.offsetHeight; // Trigger reflow
-            interface.style.display = '';
+        const interfaceElement = document.getElementById('consciousnessInterface');
+        if (interfaceElement) {
+            interfaceElement.style.display = 'none';
+            interfaceElement.offsetHeight; // Trigger reflow
+            interfaceElement.style.display = '';
         }
     }
 
@@ -1305,7 +1305,6 @@ class ConsciousnessInterface {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ConsciousnessInterface;
-}
+// Make available globally
+window.ConsciousnessInterface = ConsciousnessInterface;
+export default ConsciousnessInterface;

@@ -218,22 +218,17 @@ class SmartLights {
      */
     async discoverPhilipsHueBridge() {
         try {
-            // Try UPnP discovery (simplified)
-            const discoveryURL = 'https://discovery.meethue.com/';
-            const response = await this.makeHTTPRequest(discoveryURL, 'GET');
+            // Skip external discovery to prevent CORS errors in web environment
+            console.log('💡 Philips Hue discovery skipped - configure manually to enable');
             
-            if (response && response.length > 0) {
-                const bridge = response[0];
-                this.configs.philipsHue.bridgeIP = bridge.internalipaddress;
-                
-                console.log(`🔍 Philips Hue bridge discovered at ${bridge.internalipaddress}`);
-                
-                // Try to authenticate (user needs to press bridge button)
-                await this.authenticatePhilipsHue();
-            }
+            // Use simulation mode instead
+            this.isSimulationMode = true;
+            console.log('🎭 Using light simulation mode due to CORS restrictions');
+            
+            return false;
             
         } catch (error) {
-            console.log('🔍 Philips Hue bridge not found - manual setup required');
+            console.log('🔍 Philips Hue bridge setup skipped:', error.message);
         }
     }
 
@@ -948,7 +943,6 @@ class SmartLights {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SmartLights;
-}
+// Make available globally
+window.SmartLights = SmartLights;
+export default SmartLights;

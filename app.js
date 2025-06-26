@@ -1,5 +1,10 @@
 // === COMPLETE APP.JS FILE ===
 
+// === MICROPHONE ANALYSIS STATE ===
+let isListening = false;
+let micStream = null;
+let micAnalyzer = null;
+
 // === CONTINUATION OF EMOTIONAL INTELLIGENCE ENGINE ===
 // These methods extend the EmotionalIntelligenceEngine class
 
@@ -19,8 +24,13 @@ export function calculateEmotionalDepth(features) {
 }
 
 export function updateSynestheticDisplay(emotion, features) {
-    console.log('[Visualizer] updateSynestheticDisplay', {emotion, features});
+    console.log('[DEBUG] updateSynestheticDisplay called', {emotion, features});
     const display = document.getElementById('synestheticDisplay');
+    if (!display) {
+        console.warn('[Visualizer] #synestheticDisplay not found!');
+        return;
+    }
+    console.log('[Visualizer] updateSynestheticDisplay', {emotion, features});
     const colorIntensity = Math.round(features.energy * 100);
     const isTVMode = document.body.classList.contains('tv-mode');
     const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
@@ -40,6 +50,35 @@ export function updateSynestheticDisplay(emotion, features) {
     `;
 }
 
+export function updateParticles(emotion, features) {
+    const particles = document.querySelectorAll('.particle');
+    if (!particles.length) {
+        console.warn('[Visualizer] No .particle elements found! Creating them...');
+        createParticles();
+        // Try again after creating particles
+        const newParticles = document.querySelectorAll('.particle');
+        if (!newParticles.length) {
+            console.error('[Visualizer] Failed to create particles!');
+            return;
+        }
+        console.log('[Visualizer] Successfully created particles');
+    }
+    
+    const activeParticles = document.querySelectorAll('.particle');
+    console.log('[Visualizer] updateParticles', {emotion, features, particleCount: activeParticles.length});
+    
+    const isTVMode = document.body.classList.contains('tv-mode');
+    const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
+    
+    activeParticles.forEach((particle, index) => {
+        const colorIndex = index % colors.length;
+        particle.style.background = colors[colorIndex];
+        particle.style.opacity = features.energy * (isTVMode ? 1 : 0.8);
+        particle.style.transform = `scale(${0.5 + features.energy * (isTVMode ? 2 : 1)})`;
+        particle.style.boxShadow = `0 0 ${10 + features.energy * 20}px ${colors[colorIndex]}`;
+    });
+}
+
 export function updateBackgroundColors(colors) {
     console.log('[Visualizer] updateBackgroundColors', colors);
     const bg = document.querySelector('.emotional-background');
@@ -54,7 +93,14 @@ export function updateBackgroundColors(colors) {
 
 export function createParticles() {
     const container = document.getElementById('emotionParticles');
+    if (!container) {
+        console.warn('[Particles] Container #emotionParticles not found!');
+        return;
+    }
+    
+    console.log('[Particles] Creating 60 particles...');
     container.innerHTML = ''; // Clear existing
+    
     for (let i = 0; i < 60; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -64,20 +110,8 @@ export function createParticles() {
         particle.style.animationDuration = (8 + Math.random() * 8) + 's';
         container.appendChild(particle);
     }
-}
-
-export function updateParticles(emotion, features) {
-    console.log('[Visualizer] updateParticles', {emotion, features});
-    const particles = document.querySelectorAll('.particle');
-    const isTVMode = document.body.classList.contains('tv-mode');
-    const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
-    particles.forEach((particle, index) => {
-        const colorIndex = index % colors.length;
-        particle.style.background = colors[colorIndex];
-        particle.style.opacity = features.energy * (isTVMode ? 1 : 0.8);
-        particle.style.transform = `scale(${0.5 + features.energy * (isTVMode ? 2 : 1)})`;
-        particle.style.boxShadow = `0 0 ${10 + features.energy * 20}px ${colors[colorIndex]}`;
-    });
+    
+    console.log('[Particles] Created 60 particles successfully');
 }
 
 export function togglePlayPause() {
@@ -96,12 +130,44 @@ export function togglePlayPause() {
 export function seekTo(event) {
     const audio = document.getElementById('audioElement');
     const progressBar = document.getElementById('progressBar');
+    
+    if (!audio || !progressBar) {
+        console.warn('[Player] Audio element or progress bar not found');
+        return;
+    }
+    
     const clickX = event.offsetX;
     const width = progressBar.offsetWidth;
     const duration = audio.duration;
     
-    if (duration) {
-        audio.currentTime = (clickX / width) * duration;
+    if (duration && !isNaN(duration)) {
+        const newTime = (clickX / width) * duration;
+        
+        // Important: If audio has ended, we need to restart analysis
+        if (audio.ended) {
+            console.log('[Player] Audio ended - restarting analysis for seek');
+            // Restart analysis without stopping/starting everything
+            if (window.audioAnalyzer) {
+                window.audioAnalyzer.isAnalyzing = true;
+                if (window.audioAnalyzer.setupAnalysisLoop) {
+                    window.audioAnalyzer.setupAnalysisLoop();
+                }
+            }
+        }
+        
+        // Set the new time
+        audio.currentTime = newTime;
+        
+        // Always start playing when seeking (user expects playback)
+        audio.play().then(() => {
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            if (playPauseBtn) {
+                playPauseBtn.textContent = '⏸';
+            }
+            console.log('[Player] Seeked to:', newTime, 'seconds and resumed playback');
+        }).catch(error => {
+            console.warn('[Player] Could not resume playback:', error);
+        });
     }
 }
 
@@ -147,36 +213,38 @@ export function updateTimeDisplay() {
 }
 
 export function formatTime(seconds) {
-    if (!seconds || isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  if (!seconds || isNaN(seconds)) return '0:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 export function toggleTVMode() {
-    const btn = document.getElementById('tvModeBtn');
-    const body = document.body;
-    
-    body.classList.toggle('tv-mode');
-    btn.classList.toggle('active');
-    
-    // Save preference
-    localStorage.setItem('tvMode', body.classList.contains('tv-mode'));
-    
-    // Update current colors if analyzing
-    if (this.currentEmotion) {
-        const colors = body.classList.contains('tv-mode') ? 
-            this.currentEmotion.colorsVibrant : this.currentEmotion.colors;
-        this.updateBackgroundColors(colors);
-    }
+  const body = document.body;
+  body.classList.toggle('tv-mode');
+  const isTVMode = body.classList.contains('tv-mode');
+  
+  // Save to localStorage
+  localStorage.setItem('tvMode', isTVMode);
+  
+  // Update button text
+  const tvBtn = document.getElementById('tvModeBtn');
+  if (tvBtn) {
+    tvBtn.textContent = isTVMode ? '📱 Normal' : '📺 TV Mode';
+  }
+  
+  console.log(`[TV Mode] ${isTVMode ? 'Enabled' : 'Disabled'}`);
 }
 
 export function loadTVMode() {
-    const tvMode = localStorage.getItem('tvMode') === 'true';
-    if (tvMode) {
-        document.body.classList.add('tv-mode');
-        document.getElementById('tvModeBtn').classList.add('active');
+  const savedTVMode = localStorage.getItem('tvMode') === 'true';
+  if (savedTVMode) {
+    document.body.classList.add('tv-mode');
+    const tvBtn = document.getElementById('tvModeBtn');
+    if (tvBtn) {
+      tvBtn.textContent = '📱 Normal';
     }
+  }
 }
 
 export function stopAnalysis() {
@@ -598,215 +666,289 @@ document.head.insertAdjacentHTML('beforeend', playlistModalStyles);
 // and removing global window assignments and DOMContentLoaded.
 // This prepares the file for modular imports and prevents global conflicts.
 
-export async function startMicAnalysis() {
-  const micBtn = document.getElementById('micButton');
-  if (window.micActive) {
-    window.micActive = false;
-    micBtn.classList.remove('active');
-    document.getElementById('trackName').textContent = 'No track loaded';
-    document.getElementById('audioPlayer').classList.remove('active');
-    if (window.synestheticCore && typeof window.synestheticCore.stopEmotionalDetection === 'function') {
-      window.synestheticCore.stopEmotionalDetection();
-    }
-    if (window._synestheticMicStream) {
-      window._synestheticMicStream.getTracks().forEach(track => track.stop());
-      window._synestheticMicStream = null;
-    }
-    return;
-  }
-  try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert('Microphone access is not supported in this browser.');
-      return;
-    }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    window._synestheticMicStream = stream;
-    window.micActive = true;
-    micBtn.classList.add('active');
-    const audioPlayer = document.getElementById('audioPlayer');
-    const audio = document.getElementById('audioElement');
-    audioPlayer.classList.add('active');
-    document.getElementById('trackName').textContent = 'LIVE (Microphone)';
-    audio.src = '';
-    audio.pause();
-    if (window.attachPlayerUIListeners) window.attachPlayerUIListeners();
-    if (window.synestheticCore && typeof window.synestheticCore.startEmotionalDetection === 'function') {
-      window.synestheticCore.startEmotionalDetection(stream);
-    }
-  } catch (err) {
-    alert('Microphone access denied or error: ' + err.message);
-  }
-}
-
+// === UPLOAD FUNCTIONALITY ===
 export function showUploadSection() {
-  // Just focus the file input for now
-  document.getElementById('fileInput')?.click();
+  console.log('[Upload] showUploadSection called');
+  const uploadSection = document.getElementById('uploadSection');
+  if (uploadSection) {
+    uploadSection.classList.toggle('hidden');
+    console.log('[Upload] Upload section visibility toggled');
+  } else {
+    console.error('[Upload] uploadSection element not found');
+  }
 }
 
 export function handleUploadClick() {
-  document.getElementById('fileInput')?.click();
+  console.log('[Upload] handleUploadClick called');
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) {
+    fileInput.click();
+  }
 }
 
-export function handleFileUpload(event) {
+export async function handleFileUpload(event) {
   const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    // Show player UI
-    const audioPlayer = document.getElementById('audioPlayer');
-    const audio = document.getElementById('audioElement');
-    audioPlayer.classList.add('active');
-    document.getElementById('trackName').textContent = file.name;
-    if (window.attachPlayerUIListeners) window.attachPlayerUIListeners();
-    if (window.attachAudioProgressListeners) window.attachAudioProgressListeners();
-    // Load file into audio element
-    const blob = new Blob([e.target.result], { type: file.type });
-    const url = URL.createObjectURL(blob);
-    audio.src = url;
-    audio.onloadedmetadata = () => {
-      audio.play();
-    };
-    // Only trigger real analysis for visual feedback
-    if (window.synestheticCore && typeof window.synestheticCore.startFileAnalysis === 'function') {
-      window.synestheticCore.startFileAnalysis(blob);
+  if (!file) {
+    console.log('[Upload] No file selected');
+    return;
+  }
+  
+  console.log('[Upload] File selected:', file.name, file.type);
+  
+  // Validate file type
+  if (!file.type.startsWith('audio/')) {
+    alert('Please select an audio file');
+    return;
+  }
+  
+  try {
+    // Create audio URL
+    const audioUrl = URL.createObjectURL(file);
+    
+    // Start file analysis using audio analyzer
+    if (window.audioAnalyzer && window.audioAnalyzer.startFileAnalysis) {
+      console.log('[Upload] Starting file analysis...');
+      await window.audioAnalyzer.startFileAnalysis(audioUrl, file.name);
+    } else {
+      console.warn('[Upload] Audio analyzer not available, importing...');
+      const audioAnalyzer = await import('./components/audio-analyzer.js');
+      if (audioAnalyzer.startFileAnalysis) {
+        await audioAnalyzer.startFileAnalysis(audioUrl, file.name);
+      } else {
+        console.error('[Upload] Audio analyzer startFileAnalysis function not found');
+      }
     }
-  };
-  reader.onerror = function(e) {
-    alert('Error reading file: ' + e.message);
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function attachPlayerUIListeners() {
-  const audio = document.getElementById('audioElement');
-  const playPauseBtn = document.getElementById('playPauseBtn');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const loopBtn = document.getElementById('loopBtn');
-  const closeBtn = document.getElementById('closePlayer');
-  const progressBar = document.getElementById('progressBar');
-
-  if (playPauseBtn) playPauseBtn.onclick = () => window.app && window.app.togglePlayPause ? window.app.togglePlayPause() : null;
-  if (loopBtn) loopBtn.onclick = () => window.app && window.app.toggleLoop ? window.app.toggleLoop() : null;
-  if (closeBtn) closeBtn.onclick = () => window.app && window.app.closePlayer ? window.app.closePlayer() : null;
-  if (progressBar) progressBar.onclick = (e) => window.app && window.app.seekTo ? window.app.seekTo(e) : null;
-  // prevBtn and nextBtn can be implemented as needed
-}
-
-// Attach listeners after DOMContentLoaded and after every player UI show
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', attachPlayerUIListeners);
-} else {
-  attachPlayerUIListeners();
-}
-
-// Expose for re-attachment after player UI is shown
-window.attachPlayerUIListeners = attachPlayerUIListeners;
-
-// Patch: Call this after showing player UI in mic/upload handlers
-
-// Attach timeupdate and loadedmetadata listeners to update progress/timer
-function attachAudioProgressListeners() {
-  const audio = document.getElementById('audioElement');
-  if (!audio) return;
-  audio.ontimeupdate = () => {
-    if (window.app && window.app.updateTimeDisplay) window.app.updateTimeDisplay();
-  };
-  audio.onloadedmetadata = () => {
-    document.getElementById('totalTime').textContent = window.app && window.app.formatTime ? window.app.formatTime(audio.duration) : '';
-    if (window.app && window.app.updateTimeDisplay) window.app.updateTimeDisplay();
-  };
-}
-
-// Call this after showing player UI in upload handler
-window.attachAudioProgressListeners = attachAudioProgressListeners;
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', attachAudioProgressListeners);
-} else {
-  attachAudioProgressListeners();
-}
-
-// Ensure all visualization functions are always available on window.app
-window.app = {
-  ...window.app,
-  updateSynestheticDisplay,
-  updateParticles,
-  updateBackgroundColors,
-  togglePlayPause,
-  seekTo,
-  toggleLoop,
-  closePlayer,
-  updateTimeDisplay,
-  formatTime,
-  // add any other relevant exports here
-};
-
-// Add a minimal startFileAnalysis for upload demo/feedback
-if (typeof window !== 'undefined' && window.synestheticCore) {
-  window.synestheticCore.startFileAnalysis = async function(blob) {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-      audioContext.decodeAudioData(e.target.result, async (audioBuffer) => {
-        // === REAL ANALYSIS ===
-        // Extract simple features: energy, spectral centroid, bass/mid/treble
-        const channelData = audioBuffer.getChannelData(0);
-        const frameSize = 2048;
-        let energy = 0, spectralCentroid = 0, bass = 0, mid = 0, treble = 0;
-        let nFrames = 0;
-        for (let i = 0; i < channelData.length; i += frameSize) {
-          const frame = channelData.slice(i, i + frameSize);
-          // Energy
-          const frameEnergy = Math.sqrt(frame.reduce((sum, v) => sum + v * v, 0) / frame.length);
-          energy += frameEnergy;
-          // FFT for spectral features
-          const fft = new Float32Array(frameSize);
-          for (let j = 0; j < frame.length; j++) fft[j] = frame[j];
-          // Simple FFT magnitude (no windowing, for demo)
-          const mag = fft.map(Math.abs);
-          // Spectral centroid
-          let centroid = 0, sumMag = 0;
-          for (let k = 0; k < mag.length; k++) {
-            centroid += k * mag[k];
-            sumMag += mag[k];
-          }
-          spectralCentroid += sumMag ? centroid / sumMag : 0;
-          // Bass/mid/treble (split bins)
-          const bassBins = mag.slice(0, Math.floor(mag.length * 0.15));
-          const midBins = mag.slice(Math.floor(mag.length * 0.15), Math.floor(mag.length * 0.5));
-          const trebleBins = mag.slice(Math.floor(mag.length * 0.5));
-          bass += bassBins.reduce((a, b) => a + b, 0) / (bassBins.length || 1);
-          mid += midBins.reduce((a, b) => a + b, 0) / (midBins.length || 1);
-          treble += trebleBins.reduce((a, b) => a + b, 0) / (trebleBins.length || 1);
-          nFrames++;
-        }
-        energy /= nFrames;
-        spectralCentroid /= nFrames;
-        bass /= nFrames;
-        mid /= nFrames;
-        treble /= nFrames;
-        // Map features to emotion (simple demo logic)
-        let primary = 'Calm', color = '#4ECDC4';
-        if (energy > 0.1 && spectralCentroid > 5000) {
-          primary = 'Joy'; color = '#FFD700';
-        } else if (energy < 0.05 && bass > treble) {
-          primary = 'Sadness'; color = '#1A1A2E';
-        } else if (mid > bass && mid > treble) {
-          primary = 'Wonder'; color = '#45B7D1';
-        }
-        const realState = {
-          primary,
-          confidence: Math.min(100, Math.round(energy * 100)),
-          depth: Math.round((mid + treble) * 50),
-          intensity: Math.min(1, energy * 2),
-          synestheticColors: [color, '#FF69B4', '#4ECDC4'],
-          features: { energy, spectralCentroid, bass, mid, treble }
-        };
-        console.log('[startFileAnalysis] Real analysis result:', realState);
-        window.synestheticCore.updateEmotionalConsciousness(realState);
-      });
+    
+    // Also trigger visual feedback immediately with a basic emotion
+    const uploadEmotion = {
+      primary: 'Upload Processing',
+      confidence: 85,
+      depth: 60,
+      intensity: 0.7,
+      synestheticColors: ['#4ECDC4', '#44A08D', '#093637'],
+      features: { energy: 0.7, bass: 50, mid: 60, treble: 40 }
     };
-    reader.readAsArrayBuffer(blob);
-  };
+    
+    // Trigger visual feedback
+    if (window.synestheticCore?.updateEmotionalConsciousness) {
+      window.synestheticCore.updateEmotionalConsciousness(uploadEmotion);
+    }
+    
+    console.log('[Upload] File upload and analysis initiated');
+    
+  } catch (error) {
+    console.error('[Upload] Error processing file:', error);
+    alert('Error processing audio file: ' + error.message);
+  }
+}
+
+// === MIC FUNCTIONALITY ===
+export async function startMicAnalysis() {
+  console.log('[Mic] startMicAnalysis called, current state:', isListening);
+  
+  if (isListening) {
+    // Stop listening
+    stopMicAnalysis();
+    return;
+  }
+  
+  // Start listening
+  console.log('[Mic] Starting microphone analysis...');
+  
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      micStream = stream;
+      isListening = true;
+      
+      // Update button state
+      const micBtn = document.getElementById('micButton');
+      if (micBtn) {
+        micBtn.textContent = '🛑 Stop';
+        micBtn.classList.add('active');
+      }
+      
+      // Set up audio analysis
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContext.createMediaStreamSource(stream);
+      micAnalyzer = audioContext.createAnalyser();
+      micAnalyzer.fftSize = 2048;
+      source.connect(micAnalyzer);
+      
+      // Create data array
+      const dataArray = new Uint8Array(micAnalyzer.frequencyBinCount);
+      
+      // Start analysis loop
+      function analyzeMic() {
+        if (!isListening) return;
+        
+        micAnalyzer.getByteFrequencyData(dataArray);
+        
+        // Calculate basic features
+        let energy = 0;
+        let bass = 0, mid = 0, treble = 0;
+        
+        for (let i = 0; i < dataArray.length; i++) {
+          energy += dataArray[i];
+          if (i < dataArray.length * 0.15) bass += dataArray[i];
+          else if (i < dataArray.length * 0.5) mid += dataArray[i];
+          else treble += dataArray[i];
+        }
+        
+        energy /= dataArray.length;
+        bass /= (dataArray.length * 0.15);
+        mid /= (dataArray.length * 0.35);
+        treble /= (dataArray.length * 0.5);
+        
+        // Only process if there's significant audio
+        if (energy > 10) {
+          // 🧠 PHASE 1: USE REAL EMOTION ENGINE INSTEAD OF PRIMITIVE LOGIC
+          let micState;
+          
+          if (window.emotionEngine && window.emotionEngine.analyze) {
+            // Use advanced AI emotion detection
+            console.log('[Soul Awakening] Using EmotionEngine for mic analysis');
+            try {
+              micState = window.emotionEngine.analyze(dataArray);
+              console.log('[Soul Awakening] EmotionEngine result:', micState);
+            } catch (error) {
+              console.warn('[Soul Awakening] EmotionEngine failed, falling back to primitive logic:', error);
+              micState = null;
+            }
+          }
+          
+          // Fallback to primitive logic if EmotionEngine not available
+          if (!micState) {
+            console.log('[Soul Awakening] Using primitive emotion detection (fallback)');
+            let primary = 'Listening', color = '#4ECDC4';
+            
+            if (energy > 100) {
+              primary = 'Energetic'; color = '#FF6B6B';
+            } else if (energy > 50) {
+              primary = 'Active'; color = '#FFD700';
+            } else if (bass > mid && bass > treble) {
+              primary = 'Deep'; color = '#667eea';
+            }
+            
+            micState = {
+              primary,
+              confidence: Math.min(100, Math.round(energy)),
+              depth: Math.round((mid + treble) * 2),
+              intensity: Math.min(1, energy / 100),
+              synestheticColors: [color, '#FF69B4', '#4ECDC4'],
+              features: { energy: energy / 255, bass, mid, treble }
+            };
+          }
+          
+          // Trigger visual feedback
+          if (window.synestheticCore?.updateEmotionalConsciousness && micState) {
+            window.synestheticCore.updateEmotionalConsciousness(micState);
+          }
+        }
+        
+        // Continue analysis
+        requestAnimationFrame(analyzeMic);
+      }
+      
+      analyzeMic();
+      console.log('[Mic] Microphone analysis started successfully');
+      
+    })
+    .catch(error => {
+      console.error('[Mic] Error accessing microphone:', error);
+      alert('Error accessing microphone. Please ensure microphone permissions are granted.');
+    });
+}
+
+export function stopMicAnalysis() {
+  console.log('[Mic] Stopping microphone analysis...');
+  
+  isListening = false;
+  
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+  }
+  
+  micAnalyzer = null;
+  
+  // Update button state
+  const micBtn = document.getElementById('micButton');
+  if (micBtn) {
+    micBtn.textContent = '🎤 Live';
+    micBtn.classList.remove('active');
+  }
+  
+  console.log('[Mic] Microphone analysis stopped');
+}
+
+// Ensure particles are created on DOM ready with multiple safety checks
+function ensureParticlesExist() {
+    const container = document.getElementById('emotionParticles');
+    if (!container) {
+        console.warn('[Particles] Container not found, retrying...');
+        return false;
+    }
+    
+    const existingParticles = container.querySelectorAll('.particle');
+    if (existingParticles.length === 0) {
+        console.log('[Particles] No particles found, creating them...');
+        createParticles();
+        return true;
+    } else {
+        console.log(`[Particles] ${existingParticles.length} particles already exist`);
+        return true;
+    }
+}
+
+// Multiple checks to ensure particles are created
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => ensureParticlesExist(), 100);
+    setTimeout(() => ensureParticlesExist(), 500);
+    setTimeout(() => ensureParticlesExist(), 1000);
+});
+
+// Also check when the app loads
+if (document.readyState !== 'loading') {
+    setTimeout(() => ensureParticlesExist(), 100);
+}
+
+// Create window.app assignments AFTER DOM is ready to avoid module loading issues
+function setupWindowApp() {
+    // Ensure all app.js exports are available on window.app for button handlers
+    window.app = {
+        updateSynestheticDisplay,
+        updateParticles,
+        updateBackgroundColors,
+        createParticles,
+        togglePlayPause,
+        seekTo,
+        toggleLoop,
+        closePlayer,
+        updateTimeDisplay,
+        formatTime,
+        showUploadSection,
+        handleUploadClick,
+        handleFileUpload,
+        startMicAnalysis,
+        stopMicAnalysis,
+        toggleTVMode,
+        loadTVMode,
+        // Add startFileAnalysis as a proxy to audioAnalyzer
+        startFileAnalysis: async (audioUrl, fileName) => {
+            if (window.audioAnalyzer && window.audioAnalyzer.startFileAnalysis) {
+                return await window.audioAnalyzer.startFileAnalysis(audioUrl, fileName);
+            } else {
+                console.warn('[App] AudioAnalyzer not available');
+                throw new Error('AudioAnalyzer not available');
+            }
+        }
+    };
+    console.log('[App] window.app initialized successfully');
+}
+
+// Setup window.app when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupWindowApp);
+} else {
+    setupWindowApp();
 }

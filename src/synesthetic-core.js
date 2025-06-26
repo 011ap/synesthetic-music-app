@@ -285,9 +285,9 @@ class SynestheticCore {
      * Optimize interface for mobile devices
      */
     optimizeForMobile() {
-        const interface = document.getElementById('consciousnessInterface');
-        if (interface) {
-            interface.classList.toggle('mobile-optimized', this.mobileView);
+        const interfaceElement = document.getElementById('consciousnessInterface');
+        if (interfaceElement) {
+            interfaceElement.classList.toggle('mobile-optimized', this.mobileView);
         }
         
         if (this.mobileView) {
@@ -555,37 +555,36 @@ class SynestheticCore {
      * Update the emotional consciousness display
      */
     updateEmotionalConsciousness(emotionalState) {
-        console.log('[SoulEngine] updateEmotionalConsciousness called:', emotionalState);
+        console.log('[DEBUG] updateEmotionalConsciousness called', emotionalState);
         this.currentEmotionalState = emotionalState;
         // Update primary emotion UI
         this.updateElement('primaryEmotion', emotionalState.primary);
         this.updateElement('emotionDescription', this.getEmotionDescription(emotionalState.primary));
         this.updateElement('primaryConfidence', `${Math.round(emotionalState.confidence)}%`);
         this.updateElement('emotionalDepth', this.getDepthDescription(emotionalState.depth));
+        
+        // 🧠 PHASE 2: Trigger learning feedback system
+        if (window.emotionFeedbackSystem && !emotionalState.learnedFromUser) {
+            window.emotionFeedbackSystem.maybeShowFeedback(emotionalState);
+        }
+        
         // Call expressive visualizations from app.js
         if (window.app) {
+            // Prepare emotion and features objects
+            const emotion = {
+                colors: emotionalState.synestheticColors,
+                key: emotionalState.primary,
+                colorsVibrant: emotionalState.synestheticColors // fallback
+            };
+            const features = emotionalState.features || { energy: emotionalState.intensity || 0.7 };
+            console.log('[SoulEngine] updateSynestheticDisplay args:', emotion, features);
             if (window.app.updateSynestheticDisplay && emotionalState.synestheticColors && emotionalState.synestheticColors.length) {
-                console.log('[SoulEngine] Calling updateSynestheticDisplay', emotionalState.synestheticColors);
-                window.app.updateSynestheticDisplay({
-                    colors: emotionalState.synestheticColors,
-                    key: emotionalState.primary,
-                    colorsVibrant: emotionalState.synestheticColors // fallback
-                }, {
-                    energy: emotionalState.intensity || 0.7
-                });
+                window.app.updateSynestheticDisplay(emotion, features);
             }
             if (window.app.updateParticles && emotionalState.synestheticColors && emotionalState.synestheticColors.length) {
-                console.log('[SoulEngine] Calling updateParticles', emotionalState.synestheticColors);
-                window.app.updateParticles({
-                    colors: emotionalState.synestheticColors,
-                    key: emotionalState.primary,
-                    colorsVibrant: emotionalState.synestheticColors
-                }, {
-                    energy: emotionalState.intensity || 0.7
-                });
+                window.app.updateParticles(emotion, features);
             }
             if (window.app.updateBackgroundColors && emotionalState.synestheticColors && emotionalState.synestheticColors.length) {
-                console.log('[SoulEngine] Calling updateBackgroundColors', emotionalState.synestheticColors);
                 window.app.updateBackgroundColors(emotionalState.synestheticColors);
             }
         }
@@ -1075,7 +1074,36 @@ window.addEventListener('error', (event) => {
     }
 });
 
+// Initialize the global synesthetic consciousness
+window.addEventListener('DOMContentLoaded', () => {
+    // Add a small delay to ensure all modules are loaded
+    setTimeout(() => {
+        if (!window.synestheticCore) {
+            try {
+                window.synestheticCore = new SynestheticCore();
+                console.log('🧠 Global synesthetic consciousness initialized from core');
+            } catch (error) {
+                console.error('❌ Failed to initialize SynestheticCore:', error);
+                // Create minimal fallback
+                window.synestheticCore = {
+                    updateEmotionalConsciousness: (emotionalState) => {
+                        console.log('📊 Fallback: Updating emotional consciousness', emotionalState);
+                        // Basic UI updates
+                        if (document.getElementById('primaryEmotion')) {
+                            document.getElementById('primaryEmotion').textContent = emotionalState.primary;
+                        }
+                        if (document.getElementById('primaryConfidence')) {
+                            document.getElementById('primaryConfidence').textContent = `${emotionalState.confidence}%`;
+                        }
+                    }
+                };
+            }
+        }
+    }, 200);
+});
+
+// Also make SynestheticCore available globally
+window.SynestheticCore = SynestheticCore;
+
 // Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SynestheticCore;
-}
+export default SynestheticCore;

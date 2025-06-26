@@ -996,7 +996,6 @@ class SupabaseClient {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SupabaseClient;
-}
+// Make available globally
+window.SupabaseClient = SupabaseClient;
+export default SupabaseClient;

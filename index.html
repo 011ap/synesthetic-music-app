@@ -911,11 +911,37 @@
     <audio id="audioElement" crossorigin="anonymous"></audio>
 
     <!-- Load our scripts as ES modules in correct order -->
+    
+    <!-- Core consciousness engine components -->
+    <script type="module" src="src/emotion-engine.js"></script>
+    <script type="module" src="components/audio-analyzer.js"></script>
+    <script type="module" src="components/color-visualizer.js"></script>
+    <script type="module" src="components/social-consciousness.js"></script>
+    <script type="module" src="src/consciousness-interface.js"></script>
+    <script type="module" src="src/synesthetic-core.js"></script>
+    
+    <!-- Authentication and services -->
+    <script type="module" src="services/supabase-client.js"></script>
+    <script type="module" src="services/smart-lights.js"></script>
     <script type="module" src="auth.js"></script>
     <script type="module" src="premium.js"></script>
     <script type="module" src="lights.js"></script>
+    
+    <!-- Application logic -->
     <script type="module" src="app.js"></script>
     <script type="module" src="components/sidebar-dashboard.js"></script>
+    
+    <!-- Initialization orchestrator -->
+    <script type="module" src="init.js"></script>
     <script type="module" src="main.js"></script>
+    
+    <!-- Development testing utility -->
+    <script src="utils/test-visual-feedback.js"></script>
+    <script src="utils/auto-demo.js"></script>
+    <script src="test-soul-awakening.js"></script>
+    <script src="visual-soul-test.js"></script>
+    
+    <!-- Phase 2: Learning and Memory -->
+    <script src="emotion-feedback-system.js"></script>
 </body>
 </html>

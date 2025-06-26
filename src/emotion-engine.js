@@ -72,8 +72,12 @@ class EmotionEngine {
             // Load personal emotional model if available
             await this.loadPersonalModel();
             
-            // Initialize TensorFlow.js model (placeholder for future AI model)
-            await this.initializeAIModel();
+            // Initialize TensorFlow.js model (optional - will work without it for basic functionality)
+            this.initializeAIModel().catch(error => {
+                console.warn('⚠️ TensorFlow.js model initialization failed - using rule-based analysis:', error);
+                this.model = null;
+                this.isModelTrained = false;
+            });
             
             this.isInitialized = true;
             console.log('✨ Emotion Engine fully operational');
@@ -638,22 +642,88 @@ class EmotionEngine {
      * Apply personal learning adjustments
      */
     applyPersonalLearning(detectedEmotions) {
-        if (!this.personalModel.personalityProfile) {
+        if (!this.personalModel.emotionCorrections || this.personalModel.emotionCorrections.length === 0) {
             return detectedEmotions;
         }
         
-        // Apply user-specific adjustments based on learning history
-        const adjustedEmotions = { ...detectedEmotions };
+        console.log('🧠 Phase 2: Applying personal learning with', this.personalModel.emotionCorrections.length, 'corrections');
         
-        // Check for user corrections in similar contexts
-        const relevantCorrections = this.findRelevantCorrections(detectedEmotions);
+        // Find similar audio patterns in corrections
+        const similarCorrections = this.findSimilarCorrections(detectedEmotions);
         
-        if (relevantCorrections.length > 0) {
-            adjustedEmotions.confidence *= (1 + this.personalModel.adaptationRate);
-            // Apply specific adjustments based on corrections
+        if (similarCorrections.length > 0) {
+            console.log('🧠 Phase 2: Found', similarCorrections.length, 'similar corrections');
+            
+            // Apply the most relevant correction
+            const mostRelevant = similarCorrections[0];
+            const correctedEmotion = this.emotionCategories.primary[mostRelevant.correctEmotion] || 
+                                   this.emotionCategories.complex[mostRelevant.correctEmotion];
+            
+            if (correctedEmotion) {
+                console.log('🧠 Phase 2: Applying learned correction:', mostRelevant.correctEmotion);
+                
+                // Blend original detection with learned correction
+                const blendFactor = this.personalModel.adaptationRate * mostRelevant.weight;
+                
+                return {
+                    primary: { 
+                        key: mostRelevant.correctEmotion, 
+                        emotion: correctedEmotion, 
+                        type: correctedEmotion.components ? 'complex' : 'primary' 
+                    },
+                    confidence: Math.min(1.0, detectedEmotions.confidence + blendFactor),
+                    dimensions: detectedEmotions.dimensions,
+                    alternativeMatches: detectedEmotions.alternativeMatches,
+                    learnedFromUser: true  // Mark as user-learned
+                };
+            }
         }
         
-        return adjustedEmotions;
+        return detectedEmotions;
+    }
+
+    /**
+     * Find similar audio corrections
+     */
+    findSimilarCorrections(detectedEmotions) {
+        if (!this.personalModel.emotionCorrections) return [];
+        
+        const audioFeatures = detectedEmotions.primary?.emotion?.features || {};
+        
+        const similarities = this.personalModel.emotionCorrections.map(correction => {
+            const similarity = this.calculateAudioSimilarity(audioFeatures, correction.features);
+            return {
+                ...correction,
+                similarity: similarity
+            };
+        });
+        
+        // Sort by similarity and return top matches
+        return similarities
+            .filter(item => item.similarity > 0.6)  // Minimum similarity threshold
+            .sort((a, b) => b.similarity - a.similarity)
+            .slice(0, 3);  // Top 3 matches
+    }
+
+    /**
+     * Calculate audio feature similarity
+     */
+    calculateAudioSimilarity(features1, features2) {
+        if (!features1 || !features2) return 0;
+        
+        const keys = ['energy', 'bass', 'mid', 'treble'];
+        let similarity = 0;
+        let validKeys = 0;
+        
+        keys.forEach(key => {
+            if (features1[key] !== undefined && features2[key] !== undefined) {
+                const diff = Math.abs(features1[key] - features2[key]);
+                similarity += Math.max(0, 1 - diff);
+                validKeys++;
+            }
+        });
+        
+        return validKeys > 0 ? similarity / validKeys : 0;
     }
 
     /**
@@ -701,6 +771,13 @@ class EmotionEngine {
             complexity: emotions.dimensions.complexity,
             alternatives: emotions.alternativeMatches,
             audioFeatures: features,
+            // Legacy compatibility features for existing visualizations
+            features: {
+                energy: emotions.dimensions.arousal,
+                bass: features.bassLevel / 255,
+                mid: features.midLevel / 255,
+                treble: features.trebleLevel / 255
+            },
             timestamp: Date.now()
         };
     }
@@ -885,25 +962,37 @@ class EmotionEngine {
      * Initialize AI model (TensorFlow.js neural network) with dynamic output size
      */
     async initializeAIModel() {
-        if (typeof tf === 'undefined') {
-            // Load TensorFlow.js if not loaded
-            await new Promise((resolve) => {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js';
-                script.onload = resolve;
-                document.head.appendChild(script);
-            });
+        try {
+            if (typeof tf === 'undefined') {
+                // Load TensorFlow.js if not loaded
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                    
+                    // Timeout after 10 seconds
+                    setTimeout(() => reject(new Error('TensorFlow.js load timeout')), 10000);
+                });
+            }
+            
+            // Dynamically determine output size
+            this.emotionKeys = this.getAllEmotionKeys();
+            const outputSize = this.emotionKeys.length;
+            this.model = tf.sequential();
+            this.model.add(tf.layers.dense({ inputShape: [8], units: 24, activation: 'relu' }));
+            this.model.add(tf.layers.dense({ units: 24, activation: 'relu' }));
+            this.model.add(tf.layers.dense({ units: outputSize, activation: 'softmax' }));
+            this.model.compile({ optimizer: 'adam', loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+            this.isModelTrained = false;
+            console.log('🤖 Neural network model initialized with', outputSize, 'emotions');
+            
+        } catch (error) {
+            console.warn('⚠️ Neural network initialization failed - using rule-based analysis:', error);
+            this.model = null;
+            this.isModelTrained = false;
         }
-        // Dynamically determine output size
-        this.emotionKeys = this.getAllEmotionKeys();
-        const outputSize = this.emotionKeys.length;
-        this.model = tf.sequential();
-        this.model.add(tf.layers.dense({ inputShape: [8], units: 24, activation: 'relu' }));
-        this.model.add(tf.layers.dense({ units: 24, activation: 'relu' }));
-        this.model.add(tf.layers.dense({ units: outputSize, activation: 'softmax' }));
-        this.model.compile({ optimizer: 'adam', loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
-        this.isModelTrained = false;
-        console.log('🤖 Neural network model initialized with', outputSize, 'emotions');
     }
 
     /**
@@ -1017,6 +1106,105 @@ class EmotionEngine {
     }
 
     /**
+     * PHASE 2: Learn from user feedback
+     */
+    learnFromUserFeedback(feedbackData) {
+        console.log('🧠 Phase 2: Learning from user feedback:', feedbackData);
+        
+        // Add to user corrections for immediate learning
+        this.personalModel.userCorrections.push({
+            original: feedbackData.detected,
+            corrected: feedbackData.correctedTo,
+            wasCorrect: feedbackData.wasCorrect,
+            audioFeatures: feedbackData.audioFeatures,
+            timestamp: feedbackData.timestamp,
+            confidence: feedbackData.confidence
+        });
+        
+        // If soul was wrong, adjust future predictions
+        if (!feedbackData.wasCorrect) {
+            console.log('🧠 Phase 2: Soul was wrong - learning correction from', 
+                       feedbackData.detected, 'to', feedbackData.correctedTo);
+            
+            // Store feature-emotion correction mapping
+            this.addEmotionCorrection(feedbackData.audioFeatures, feedbackData.correctedTo);
+        } else {
+            console.log('🧠 Phase 2: Soul was correct - reinforcing', feedbackData.detected);
+            
+            // Reinforce correct prediction
+            this.reinforceCorrectPrediction(feedbackData.audioFeatures, feedbackData.detected);
+        }
+        
+        // Update adaptation rate based on learning progress
+        this.updateAdaptationRate();
+        
+        // Save personal model
+        this.savePersonalModel();
+    }
+
+    /**
+     * Add emotion correction mapping
+     */
+    addEmotionCorrection(audioFeatures, correctEmotion) {
+        if (!this.personalModel.emotionCorrections) {
+            this.personalModel.emotionCorrections = [];
+        }
+        
+        this.personalModel.emotionCorrections.push({
+            features: audioFeatures,
+            correctEmotion: correctEmotion,
+            timestamp: Date.now(),
+            weight: 1.0
+        });
+        
+        // Keep only last 100 corrections to prevent memory bloat
+        if (this.personalModel.emotionCorrections.length > 100) {
+            this.personalModel.emotionCorrections = this.personalModel.emotionCorrections.slice(-100);
+        }
+    }
+
+    /**
+     * Reinforce correct prediction
+     */
+    reinforceCorrectPrediction(audioFeatures, emotion) {
+        if (!this.personalModel.reinforcements) {
+            this.personalModel.reinforcements = [];
+        }
+        
+        this.personalModel.reinforcements.push({
+            features: audioFeatures,
+            emotion: emotion,
+            timestamp: Date.now(),
+            weight: 0.5  // Lower weight than corrections
+        });
+        
+        // Keep only last 50 reinforcements
+        if (this.personalModel.reinforcements.length > 50) {
+            this.personalModel.reinforcements = this.personalModel.reinforcements.slice(-50);
+        }
+    }
+
+    /**
+     * Update adaptation rate based on learning progress
+     */
+    updateAdaptationRate() {
+        const totalFeedback = this.personalModel.userCorrections.length;
+        const recentFeedback = this.personalModel.userCorrections.filter(
+            correction => Date.now() - correction.timestamp < 24 * 60 * 60 * 1000 // Last 24 hours
+        );
+        
+        // Increase adaptation rate if getting frequent corrections
+        if (recentFeedback.length > 5) {
+            this.personalModel.adaptationRate = Math.min(0.3, this.personalModel.adaptationRate + 0.05);
+        } else {
+            // Decrease adaptation rate if predictions are stable
+            this.personalModel.adaptationRate = Math.max(0.05, this.personalModel.adaptationRate - 0.01);
+        }
+        
+        console.log('🧠 Phase 2: Adaptation rate updated to', this.personalModel.adaptationRate);
+    }
+
+    /**
      * Get emotion analysis statistics
      */
     getAnalysisStatistics() {
@@ -1054,4 +1242,6 @@ class EmotionEngine {
     }
 }
 
+// Make available globally
+window.EmotionEngine = EmotionEngine;
 export default EmotionEngine;

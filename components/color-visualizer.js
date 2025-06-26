@@ -1052,7 +1052,6 @@ class ColorVisualizer {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ColorVisualizer;
-}
+// Make available globally
+window.ColorVisualizer = ColorVisualizer;
+export default ColorVisualizer;

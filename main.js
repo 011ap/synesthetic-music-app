@@ -8,6 +8,17 @@ initSidebarDashboard();
 // Ensure all app.js exports are available on window.app for button handlers
 window.app = app;
 
+// Ensure the synesthetic core initializes after all components are loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait a bit for all modules to load
+    setTimeout(() => {
+        if (!window.synestheticCore && window.SynestheticCore) {
+            window.synestheticCore = new window.SynestheticCore();
+            console.log('🧠 Synesthetic consciousness manually initialized from main.js');
+        }
+    }, 100);
+});
+
 // --- Restore particles and TV mode button functionality ---
 function attachMainAppListeners() {
   const micBtn = document.getElementById('micButton');
@@ -34,17 +45,40 @@ function attachMainAppListeners() {
   if (tvBtn) {
     tvBtn.addEventListener('click', () => { console.log('[Main] tvModeBtn clicked'); if (window.app && window.app.toggleTVMode) window.app.toggleTVMode(); });
   }
+  
+  // Add player control listeners
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const loopBtn = document.getElementById('loopBtn');
+  const closePlayer = document.getElementById('closePlayer');
+  const progressBar = document.getElementById('progressBar');
+  
+  if (playPauseBtn) {
+    playPauseBtn.onclick = () => { if (window.app && window.app.togglePlayPause) window.app.togglePlayPause(); };
+  }
+  if (loopBtn) {
+    loopBtn.onclick = () => { if (window.app && window.app.toggleLoop) window.app.toggleLoop(); };
+  }
+  if (closePlayer) {
+    closePlayer.onclick = () => { if (window.app && window.app.closePlayer) window.app.closePlayer(); };
+  }
+  if (progressBar) {
+    progressBar.onclick = (event) => { if (window.app && window.app.seekTo) window.app.seekTo(event); };
+  }
 }
 
 // Ensure particles are created on load
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      createParticles();
+      loadTVMode();
+      attachMainAppListeners();
+    }, 100);
+  });
+} else {
+  setTimeout(() => {
     createParticles();
     loadTVMode();
     attachMainAppListeners();
-  });
-} else {
-  createParticles();
-  loadTVMode();
-  attachMainAppListeners();
+  }, 100);
 }
