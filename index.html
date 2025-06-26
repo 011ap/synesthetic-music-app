@@ -743,7 +743,12 @@
                         <button type="submit" id="submitTrainingDataBtn" style="background:var(--synesthetic-teal);color:#111;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Add Training Example</button>
                     </form>
                     <button id="trainSoulBtn" style="margin-top:1em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Train Neural Net</button>
+                    <button id="downloadTrainingDataBtn" style="margin-top:0.7em;background:var(--synesthetic-gold);color:#222;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Download My Training Data</button>
+                    <button id="clearTrainingDataBtn" style="margin-top:0.5em;background:var(--synesthetic-red);color:#fff;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Clear Training Data</button>
                     <div id="trainSoulStatus" style="margin-top:0.7em;font-size:0.95em;color:var(--text-tertiary);"></div>
+                    
+                    <!-- Training Examples List Preview -->
+                    <div id="trainingExamplesList" style="max-height:120px;overflow-y:auto;margin:0.7em 0 0.5em 0;padding:0.5em 0 0.5em 0.2em;background:rgba(0,245,255,0.03);border-radius:0.5em;font-size:0.93em;color:var(--text-secondary);"></div>
                 </div>
             </section>
             <section class="sidebar-section">
@@ -1611,8 +1616,58 @@ if (window.authManager && window.authManager.currentRoomCode) {
                 trainSoulForm.reset();
             });
 
-            // Wire up trainSoulBtn to trigger neural net training
-            const trainSoulBtn = document.getElementById('trainSoulBtn');
+            // Training Examples List Preview
+            const trainingExamplesList = document.getElementById('trainingExamplesList');
+            function updateTrainingExamplesList() {
+                if (!trainingExamples.length) {
+                    trainingExamplesList.innerHTML = '<span style="opacity:0.6;">No training examples yet.</span>';
+                    return;
+                }
+                trainingExamplesList.innerHTML = trainingExamples.map((ex, i) => {
+                    const keys = Object.keys(ex.features).slice(0,2);
+                    const preview = keys.map(k => `${k}: ${JSON.stringify(ex.features[k])}`).join(', ');
+                    return `<div style='margin-bottom:0.3em;'><b>${i+1}.</b> <span style='color:var(--synesthetic-teal);'>${ex.label}</span> <span style='opacity:0.7;'>(${preview}${Object.keys(ex.features).length>2?', ...':''})</span></div>`;
+                }).join('');
+            }
+            // Call after add/clear/train
+            function safeUpdateListAndStatus(fn) {
+                fn();
+                updateTrainingExamplesList();
+            }
+            // Patch form/clear/train handlers to update list
+            trainSoulForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const label = emotionLabelInput.value.trim();
+                let features;
+                try {
+                    features = JSON.parse(featuresInput.value);
+                } catch (err) {
+                    trainSoulStatus.textContent = 'Invalid JSON in features.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                if (!label || typeof features !== 'object') {
+                    trainSoulStatus.textContent = 'Please provide both a label and valid features.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                safeUpdateListAndStatus(() => trainingExamples.push({ label, features }));
+                trainSoulStatus.textContent = `Added! Total examples: ${trainingExamples.length}`;
+                trainSoulStatus.style.color = 'var(--synesthetic-green)';
+                trainSoulForm.reset();
+            });
+            clearTrainingDataBtn.addEventListener('click', () => {
+                if (!trainingExamples.length) {
+                    trainSoulStatus.textContent = 'No training examples to clear.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                if (confirm('Are you sure you want to clear all training examples? This cannot be undone.')) {
+                    safeUpdateListAndStatus(() => trainingExamples = []);
+                    trainSoulStatus.textContent = 'Training examples cleared.';
+                    trainSoulStatus.style.color = 'var(--synesthetic-red)';
+                }
+            });
             trainSoulBtn.addEventListener('click', async () => {
                 if (!window.emotionEngine || typeof window.emotionEngine.trainOnUserData !== 'function') {
                     trainSoulStatus.textContent = 'Neural net not loaded.';
@@ -1628,14 +1683,36 @@ if (window.authManager && window.authManager.currentRoomCode) {
                 trainSoulStatus.style.color = 'var(--synesthetic-blue)';
                 try {
                     await window.emotionEngine.trainOnUserData(trainingExamples);
+                    safeUpdateListAndStatus(() => trainingExamples = []);
                     trainSoulStatus.textContent = 'Training complete! Your soul is smarter.';
                     trainSoulStatus.style.color = 'var(--synesthetic-green)';
-                    trainingExamples = [];
                 } catch (err) {
                     trainSoulStatus.textContent = 'Training failed: ' + (err && err.message ? err.message : err);
                     trainSoulStatus.style.color = '#ff006e';
                 }
             });
+            downloadTrainingDataBtn.addEventListener('click', () => {
+                if (!trainingExamples.length) {
+                    trainSoulStatus.textContent = 'No training examples to download.';
+                    trainSoulStatus.style.color = '#ff006e';
+                    return;
+                }
+                const blob = new Blob([JSON.stringify(trainingExamples, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'my-soul-training-data.json';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+                trainSoulStatus.textContent = 'Training data downloaded!';
+                trainSoulStatus.style.color = 'var(--synesthetic-gold)';
+            });
+            // Initial render
+            updateTrainingExamplesList();
         });
 
         // === EMOTION ENGINE (NEURAL NETWORK BRAIN) ===
