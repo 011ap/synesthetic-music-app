@@ -102,9 +102,13 @@ function stopAutoDemo() {
 }
 
 /**
- * Add demo control button
+ * Add demo control button - DISABLED (using unified dashboard)
  */
 function addDemoButton() {
+    // Disabled - using unified test dashboard instead
+    console.log('🎵 Auto demo available via unified test dashboard');
+    return;
+    
     const button = document.createElement('button');
     button.textContent = '🎵 Auto Demo';
     button.id = 'autoDemoBtn';

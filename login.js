@@ -63,128 +63,16 @@ function createAuthModal() {
 
 // Create user dashboard HTML
 function createUserDashboard() {
-    // Remove any existing dashboard to avoid duplicate nodes and listeners
-    document.getElementById('userDashboard')?.remove();
-    const dashboardHTML = `
-        <div id="userDashboard" class="user-dashboard hidden">
-            <div class="dashboard-header">
-                <div class="user-info">
-                    <span class="user-icon">👤</span>
-                    <span class="username" id="displayUsername">Guest</span>
-                </div>
-                <button class="dashboard-btn" id="historyBtn">
-                    <span class="btn-icon">📊</span>
-                    <span>My History</span>
-                </button>
-                <button class="dashboard-btn" id="playlistsBtn">
-                    <span class="btn-icon">🎵</span>
-                    <span>Playlists</span>
-                </button>
-                <button class="dashboard-btn" id="roomBtn">
-                    <span class="btn-icon">🏠</span>
-                    <span>Create Room</span>
-                </button>
-                <button class="dashboard-btn logout" id="logoutBtn">
-                    <span class="btn-icon">🔪</span>
-                    <span>Logout</span>
-                </button>
-            </div>
-            <div class="emotional-stats hidden" id="emotionalStats">
-                <h3>Your Emotional DNA</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalSongs">0</div>
-                        <div class="stat-label">Songs Analyzed</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="favoriteEmotion">-</div>
-                        <div class="stat-label">Dominant Emotion</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="emotionalRange">-</div>
-                        <div class="stat-label">Emotional Range</div>
-                    </div>
-                </div>
-                <div class="emotion-history" id="emotionHistory"></div>
-            </div>
-            <div class="playlists-section hidden" id="playlistsSection">
-                <h3>Your Emotional Playlists</h3>
-                <button class="create-playlist-btn" id="createPlaylistBtn">+ Create New Playlist</button>
-                <div class="playlists-grid" id="playlistsGrid"></div>
-            </div>
-            <div class="room-section hidden" id="roomSection">
-                <h3>Emotion Sharing Room</h3>
-                <div class="room-create">
-                    <input type="text" id="roomName" placeholder="Room name...">
-                    <button id="createRoomBtn">Create Room</button>
-                </div>
-                <div class="room-join">
-                    <input type="text" id="roomCode" placeholder="Enter room code...">
-                    <button id="joinRoomBtn">Join Room</button>
-                </div>
-                <div class="active-room hidden" id="activeRoom">
-                    <h4>Active Room: <span id="activeRoomName"></span></h4>
-                    <p>Room Code: <span id="activeRoomCode"></span></p>
-                    <p>Participants: <span id="roomParticipants"></span></p>
-                    <button id="leaveRoomBtn">Leave Room</button>
-                </div>
-            </div>
-        </div>
-    `;
-    const header = document.querySelector('.header');
-    header.insertAdjacentHTML('afterend', dashboardHTML);
-    // Always start with all dashboard sections hidden except header
-    setTimeout(() => {
-      document.getElementById('emotionalStats')?.classList.add('hidden');
-      document.getElementById('playlistsSection')?.classList.add('hidden');
-      document.getElementById('roomSection')?.classList.add('hidden');
-      // Attach event listeners programmatically ONLY (prevent duplicates)
-      const historyBtn = document.getElementById('historyBtn');
-      const playlistsBtn = document.getElementById('playlistsBtn');
-      const roomBtn = document.getElementById('roomBtn');
-      const logoutBtn = document.getElementById('logoutBtn');
-      
-      // Remove existing listeners first
-      if (historyBtn && !historyBtn.hasAttribute('data-listener-attached')) {
-        historyBtn.addEventListener('click', () => {
-          console.log('[Dashboard] showEmotionalHistory called');
-          document.getElementById('emotionalStats')?.classList.remove('hidden');
-          document.getElementById('playlistsSection')?.classList.add('hidden');
-          document.getElementById('roomSection')?.classList.add('hidden');
-        });
-        historyBtn.setAttribute('data-listener-attached', 'true');
-      }
-      if (playlistsBtn) playlistsBtn.addEventListener('click', () => {
-        console.log('[Dashboard] showPlaylists called');
-        document.getElementById('emotionalStats')?.classList.add('hidden');
-        document.getElementById('playlistsSection')?.classList.remove('hidden');
-        document.getElementById('roomSection')?.classList.add('hidden');
-      });
-      if (roomBtn) roomBtn.addEventListener('click', () => {
-        console.log('[Dashboard] createRoom called');
-        document.getElementById('emotionalStats')?.classList.add('hidden');
-        document.getElementById('playlistsSection')?.classList.add('hidden');
-        document.getElementById('roomSection')?.classList.remove('hidden');
-      });
-      if (logoutBtn) logoutBtn.addEventListener('click', () => {
-        console.log('[Dashboard] handleLogout called');
-        handleLogout();
-      });
-    }, 0);
+    // Skip creating dashboard - using clean interface
+    console.log('📱 Skipping dashboard creation - using clean interface');
+    return;
 }
 
 // Add auth button to header (if not already present)
 function addAuthButton() {
-    if (document.getElementById('authButton')) return;
-    const authButtonHTML = `
-        <button id="authButton" class="auth-button">
-            <span class="auth-icon">👤</span>
-            <span>Sign In</span>
-        </button>
-    `;
-    const header = document.querySelector('.header');
-    header.insertAdjacentHTML('beforeend', authButtonHTML);
-    document.getElementById('authButton').onclick = showAuthModal;
+    // Skip creating auth button - using custom auth button in new interface
+    console.log('📱 Skipping auth button creation - using custom interface');
+    return;
 }
 
 // Handle login
@@ -248,43 +136,57 @@ async function handleLogout() {
 
 // Update UI for logged in user
 function updateUIForUser(user) {
-    // Always (re)create dashboard to guarantee listeners are attached
-    createUserDashboard();
-    // Hide auth button
-    const authBtn = document.getElementById('authButton');
-    if (authBtn) authBtn.style.display = 'none';
-    // Show dashboard
-    const dashboard = document.getElementById('userDashboard');
-    if (dashboard) {
-        dashboard.classList.remove('hidden');
-        // Update username
-        const usernameSpan = document.getElementById('displayUsername');
-        if (usernameSpan && user && (user.username || user.email)) {
-            usernameSpan.textContent = user.username || user.email;
-        }
-        // Always start with all dashboard sections hidden except header
-        setTimeout(() => {
-            document.getElementById('emotionalStats')?.classList.add('hidden');
-            document.getElementById('playlistsSection')?.classList.add('hidden');
-            document.getElementById('roomSection')?.classList.add('hidden');
-        }, 0);
-    } else {
-        console.warn('[updateUIForUser] Dashboard not found!');
+    // Hide sign in button and show user profile
+    const authBtn = document.getElementById('authBtn');
+    const userProfile = document.getElementById('userProfile');
+    const userDisplayName = document.getElementById('userDisplayName');
+    
+    if (authBtn && userProfile && userDisplayName) {
+        authBtn.style.display = 'none';
+        userProfile.style.display = 'block';
+        userDisplayName.textContent = user.username || user.email.split('@')[0];
     }
+    
+    // Set up user dropdown functionality
+    setupUserDropdown();
+    
+    // Check if admin user and show admin options + Neural Interface
+    if (user && user.email === 'memoire.product@gmail.com') {
+        showAdminOptions();
+        showNeuralInterfaceButton();
+    }
+    
+    // Update status to show authenticated state
+    const statusText = document.getElementById('statusText');
+    if (statusText) {
+        statusText.textContent = 'Welcome back! Ready to Feel Music';
+    }
+    
+    console.log('👤 UI updated for user:', user.email);
 }
 
 // Update UI for guest
 function updateUIForGuest() {
-    // Show auth button
-    document.getElementById('authButton').style.display = 'flex';
+    // Show auth button and hide user profile
+    const authBtn = document.getElementById('authBtn');
+    const userProfile = document.getElementById('userProfile');
     
-    // Hide dashboard
-    document.getElementById('userDashboard').classList.add('hidden');
+    if (authBtn && userProfile) {
+        authBtn.style.display = 'block';
+        authBtn.textContent = 'Sign In';
+        authBtn.classList.remove('authenticated');
+        userProfile.style.display = 'none';
+    }
     
-    // Hide all sections
-    document.getElementById('emotionalStats').classList.add('hidden');
-    document.getElementById('playlistsSection').classList.add('hidden');
-    document.getElementById('roomSection').classList.add('hidden');
+    // Hide admin options and Neural Interface
+    hideAdminOptions();
+    hideNeuralInterfaceButton();
+    
+    // Update status to show guest mode
+    const statusText = document.getElementById('statusText');
+    if (statusText) {
+        statusText.textContent = 'Ready to Feel Music';
+    }
 }
 
 // Show auth modal
@@ -513,60 +415,128 @@ async function joinRoom() {
     }
 }
 
-// Global error handler for debugging
-window.onerror = function(message, source, lineno, colno, error) {
-  console.error('[Global Error]', message, 'at', source + ':' + lineno + ':' + colno, error);
-};
+// Set up user dropdown functionality
+function setupUserDropdown() {
+    const userBtn = document.getElementById('userBtn');
+    const userDropdown = document.getElementById('userDropdown');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const profileOption = document.getElementById('profileOption');
+    
+    if (userBtn && userDropdown) {
+        // Toggle dropdown on click
+        userBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+            userBtn.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show');
+                userBtn.classList.remove('active');
+            }
+        });
+    }
+    
+    // Handle logout
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            handleLogout();
+        });
+    }
+    
+    // Handle profile (placeholder for now)
+    if (profileOption) {
+        profileOption.addEventListener('click', () => {
+            console.log('Profile clicked - feature coming soon');
+            userDropdown.classList.remove('show');
+            userBtn.classList.remove('active');
+        });
+    }
+}
 
-// Attach global functions for modal/tab switching (for HTML event handlers)
-window.closeAuthModal = closeAuthModal;
-window.showAuthModal = showAuthModal;
-window.switchTab = switchTab;
-// Attach dashboard handlers to window for robust event binding
-window.handleLogout = function() {
-  console.log('[Dashboard] handleLogout called');
-  return handleLogout();
-};
-window.showEmotionalHistory = function() {
-  console.log('[Dashboard] showEmotionalHistory called');
-  document.getElementById('emotionalStats')?.classList.remove('hidden');
-  document.getElementById('playlistsSection')?.classList.add('hidden');
-  document.getElementById('roomSection')?.classList.add('hidden');
-};
-window.showPlaylists = function() {
-  console.log('[Dashboard] showPlaylists called');
-  document.getElementById('emotionalStats')?.classList.add('hidden');
-  document.getElementById('playlistsSection')?.classList.remove('hidden');
-  document.getElementById('roomSection')?.classList.add('hidden');
-};
-window.createRoom = function() {
-  console.log('[Dashboard] createRoom called');
-  document.getElementById('emotionalStats')?.classList.add('hidden');
-  document.getElementById('playlistsSection')?.classList.add('hidden');
-  document.getElementById('roomSection')?.classList.remove('hidden');
-};
+// Show admin options in dropdown
+function showAdminOptions() {
+    const adminItems = document.querySelectorAll('.admin-only');
+    adminItems.forEach(item => {
+        item.classList.add('visible');
+    });
+}
 
-// Convert to ES module: export all major functions
-export {
-  createAuthModal,
-  createUserDashboard,
-  addAuthButton,
-  handleLogin,
-  handleSignup,
-  handleLogout,
-  updateUIForUser,
-  updateUIForGuest,
-  showAuthModal,
-  closeAuthModal,
-  switchTab,
-  showAuthError,
-  showAuthSuccess,
-  showAuthLoading,
-  showPlaylists,
-  createRoom,
-  createEmotionRoom,
-  joinRoom
-};
+// Hide admin options in dropdown
+function hideAdminOptions() {
+    const adminItems = document.querySelectorAll('.admin-only');
+    adminItems.forEach(item => {
+        item.classList.remove('visible');
+    });
+}
 
-// Remove global window assignments and DOMContentLoaded block
-// Instead, export all functions for import elsewhere
+// Show Neural Interface button for admin
+function showNeuralInterfaceButton() {
+    let neuralBtn = document.getElementById('neuralInterfaceBtn');
+    if (!neuralBtn) {
+        // Create button if it doesn't exist - call the global function
+        if (typeof window.addNeuralInterfaceButton === 'function') {
+            neuralBtn = window.addNeuralInterfaceButton();
+        } else {
+            // Create it manually if the function isn't available yet
+            neuralBtn = document.createElement('button');
+            neuralBtn.id = 'neuralInterfaceBtn';
+            neuralBtn.className = 'neural-interface-btn';
+            neuralBtn.innerHTML = '🧠 Neural Interface';
+            neuralBtn.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                background: linear-gradient(135deg, #8a2be2, #4169e1);
+                border: none;
+                border-radius: 25px;
+                padding: 15px 25px;
+                color: white;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                z-index: 1000;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+                backdrop-filter: blur(20px);
+            `;
+            
+            neuralBtn.addEventListener('click', () => {
+                console.log('🧠 Neural Interface activated');
+                if (typeof window.showRevolutionaryInterface === 'function') {
+                    window.showRevolutionaryInterface();
+                } else {
+                    // Fallback to auth manager admin mode
+                    if (window.authManager && typeof window.authManager.switchToAdminMode === 'function') {
+                        window.authManager.switchToAdminMode();
+                    }
+                }
+            });
+            
+            neuralBtn.addEventListener('mouseenter', () => {
+                neuralBtn.style.transform = 'translateY(-5px) scale(1.05)';
+                neuralBtn.style.boxShadow = '0 15px 35px rgba(138, 43, 226, 0.6)';
+            });
+            
+            neuralBtn.addEventListener('mouseleave', () => {
+                neuralBtn.style.transform = 'translateY(0) scale(1)';
+                neuralBtn.style.boxShadow = '0 8px 25px rgba(138, 43, 226, 0.4)';
+            });
+            
+            document.body.appendChild(neuralBtn);
+        }
+    }
+    if (neuralBtn) {
+        neuralBtn.style.display = 'block';
+    }
+}
+
+// Hide Neural Interface button
+function hideNeuralInterfaceButton() {
+    const neuralBtn = document.getElementById('neuralInterfaceBtn');
+    if (neuralBtn) {
+        neuralBtn.style.display = 'none';
+    }
+}

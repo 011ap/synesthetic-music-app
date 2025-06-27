@@ -2,8 +2,15 @@ import * as app from './app.js';
 import { createParticles, toggleTVMode, loadTVMode } from './app.js';
 import { initSidebarDashboard } from './components/sidebar-dashboard.js';
 
-// Only initialize sidebar/dashboard here. Auth UI is handled by auth.js for stability.
-initSidebarDashboard();
+// Only initialize sidebar/dashboard here if elements exist. Auth UI is handled by auth.js for stability.
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if sidebar elements exist before initializing
+    if (document.getElementById('sidebarDashboard')) {
+        initSidebarDashboard();
+    } else {
+        console.log('📱 Sidebar not found - running in clean interface mode');
+    }
+});
 
 // Ensure all app.js exports are available on window.app for button handlers
 window.app = app;

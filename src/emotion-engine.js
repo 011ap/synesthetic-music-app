@@ -336,6 +336,11 @@ class EmotionEngine {
         // Create final emotional state
         const emotionalState = this.createEmotionalState(personalizedEmotions, features);
         
+        // Update soul commentary with real-time thoughts
+        if (window.soulCommentary && window.soulCommentary.isActive) {
+            window.soulCommentary.updateCommentary(emotionalState, features);
+        }
+        
         // Store for learning
         this.storeEmotionalDataPoint(emotionalState, features);
         
@@ -1601,6 +1606,12 @@ class EmotionEngine {
         this.currentAnalysisSource = source;
         this.sessionStartTime = Date.now();
         this.currentSessionDuration = 0;
+        
+        // Start soul commentary
+        if (window.soulCommentary) {
+            window.soulCommentary.startCommentary(source);
+        }
+        
         console.log(`🎭 Starting ${source} analysis session`);
     }
 
@@ -1623,6 +1634,11 @@ class EmotionEngine {
     endAnalysisSession() {
         this.updateSessionDuration();
         console.log(`🎭 Ending analysis session after ${this.currentSessionDuration}ms`);
+        
+        // Stop soul commentary
+        if (window.soulCommentary) {
+            window.soulCommentary.stopCommentary();
+        }
         
         // Reset context for next session
         this.currentAnalysisSource = null;

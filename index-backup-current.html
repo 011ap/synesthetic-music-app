@@ -1,0 +1,4647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Synesthetic - Digital Consciousness Engine</title>
+    <meta name="description" content="Revolutionary music emotion analysis with synesthetic experiences. Feel music, share souls.">
+    
+    <!-- Add our custom styles -->
+    <link rel="stylesheet" href="auth-styles.css">
+    
+    <style>
+        /* === CSS VARIABLES FOR EMOTIONAL THEMES === */
+        :root {
+            /* Dark theme - matching your screenshot */
+            --bg-dark: #0f0f14;
+            --bg-darker: #08080c;
+            --glass-overlay: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            
+            /* Synesthetic Color Palette - Vibrant for contrast */
+            --synesthetic-red: #ff006e;
+            --synesthetic-blue: #0096ff;
+            --synesthetic-teal: #00f5ff;
+            --synesthetic-green: #00ff88;
+            --synesthetic-purple: #ff00ff;
+            --synesthetic-gold: #ffd700;
+            --synesthetic-orange: #ff6b00;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+            
+            /* Transitions */
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-quick: all 0.2s ease;
+            
+            /* Glass Effect */
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 40px rgba(0, 245, 255, 0.5);
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 1rem;
+            --radius-lg: 1.5rem;
+            --radius-full: 9999px;
+        }
+
+        /* === RESET AND BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        /* === ANIMATED BACKGROUND - SUBTLE FOR DARK THEME === */
+        .emotional-background {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: -1;
+            opacity: 0.3;
+            background: radial-gradient(circle at 20% 50%, var(--synesthetic-red), transparent 40%),
+                        radial-gradient(circle at 80% 80%, var(--synesthetic-blue), transparent 40%),
+                        radial-gradient(circle at 40% 20%, var(--synesthetic-teal), transparent 40%);
+            filter: blur(120px);
+            animation: emotionalShift 20s ease-in-out infinite;
+            transform: scale(1.5);
+        }
+
+        /* TV Mode - Extra bright for living rooms */
+        body.tv-mode .emotional-background {
+            opacity: 0.8;
+            filter: blur(80px) saturate(2);
+            transform: scale(2);
+        }
+
+        @keyframes emotionalShift {
+            0%, 100% { transform: scale(1.5) rotate(0deg); }
+            33% { transform: scale(2) rotate(120deg); }
+            66% { transform: scale(1.3) rotate(240deg); }
+        }
+
+        /* === CONTAINER === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* === HEADER - ELEGANT DARK === */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xxl) 0 var(--spacing-xl);
+            position: relative;
+        }
+
+        .logo {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 200;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoShift 15s ease-in-out infinite;
+        }
+
+        @keyframes logoShift {
+            0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+            50% { filter: hue-rotate(20deg) brightness(1.1); }
+        }
+
+        .tagline {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--text-tertiary);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        /* === STATUS INDICATOR === */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xs) var(--spacing-lg);
+            background: var(--glass-overlay);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-red);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--synesthetic-red);
+        }
+
+        .status-indicator.active {
+            background: var(--synesthetic-green);
+            box-shadow: 0 0 15px var(--synesthetic-green);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        /* === PRIMARY CONTROLS - MINIMAL ICON STYLE === */
+        .primary-controls {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .control-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .icon-button {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-lg);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-button:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
+        }
+
+        .icon-button.active {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 150, 255, 0.15));
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 25px rgba(0, 245, 255, 0.3);
+        }
+
+        .icon-button .icon {
+            font-size: 1.8rem;
+            transition: transform var(--transition-quick);
+        }
+
+        .icon-button:hover .icon {
+            transform: scale(1.1);
+        }
+
+        .icon-button .label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Tooltip */
+        .icon-button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--transition-quick);
+        }
+
+        .icon-button:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        /* === AUDIO PLAYER - DARK ELEGANT === */
+        .audio-player {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            display: none;
+            position: relative;
+        }
+
+        .audio-player.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .track-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .close-player {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: var(--radius-full);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-quick);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+
+        .close-player:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--text-primary);
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-full);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-quick);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: scale(1.1);
+        }
+
+        .control-btn.play-pause {
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+            background: rgba(0, 245, 255, 0.08);
+        }
+
+        .control-btn.loop.active {
+            color: var(--synesthetic-teal);
+            background: rgba(0, 245, 255, 0.1);
+        }
+
+        .progress-container {
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px var(--synesthetic-teal);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* === EMOTIONAL INTELLIGENCE DISPLAY === */
+        .emotional-intelligence {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .section-title {
+            font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+            font-weight: 200;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        /* === EMOTION VISUALIZATION - CRYSTAL CLEAR === */
+        .emotion-visualization {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(135deg, rgba(10, 15, 25, 0.9), rgba(20, 25, 35, 0.9));
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+            border: 2px solid rgba(0, 245, 255, 0.4);
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.7),
+                0 0 30px rgba(0, 245, 255, 0.3),
+                0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .emotion-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--synesthetic-teal);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+            box-shadow: 0 0 6px currentColor;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1); 
+                opacity: 0;
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            50% { 
+                transform: translate(100px, -100px) scale(1.5);
+                filter: blur(1px);
+            }
+        }
+
+        /* === CONSCIOUSNESS GRID === */
+        .consciousness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .consciousness-layer {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: var(--spacing-md);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .consciousness-layer:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glass);
+            border-color: rgba(0, 245, 255, 0.2);
+        }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .layer-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .layer-confidence {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            background: rgba(0, 245, 255, 0.08);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        .emotion-name {
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
+        .emotion-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            font-weight: 400;
+        }
+
+        /* === UPLOAD AREA === */
+        .upload-section {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .upload-area {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 2px dashed rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: all var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(0, 245, 255, 0.3);
+            background: rgba(0, 245, 255, 0.02);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--synesthetic-blue);
+            background: rgba(0, 150, 255, 0.05);
+            transform: scale(1.01);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.7;
+        }
+
+        .upload-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .upload-subtext {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* === TV MODE BUTTON === */
+        .tv-mode-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            padding: var(--spacing-xs) var(--spacing-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            z-index: 100;
+            font-size: 0.85rem;
+        }
+
+        .tv-mode-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .tv-mode-btn.active {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(0, 150, 255, 0.2));
+            color: var(--synesthetic-teal);
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
+        /* === SIDEBAR DASHBOARD === */
+        .sidebar-dashboard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 340px;
+            max-width: 90vw;
+            height: 100vh;
+            background: rgba(20, 24, 32, 0.98);
+            box-shadow: 4px 0 32px rgba(0,0,0,0.45);
+            border-right: 1.5px solid var(--glass-border);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            transform: translateX(-100%);
+        }
+        .sidebar-dashboard:not(.hidden) {
+            transform: translateX(0);
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--synesthetic-teal);
+            letter-spacing: 0.04em;
+        }
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: var(--radius-full);
+            padding: 0.2em 0.6em;
+            transition: background 0.2s;
+        }
+        .sidebar-close:hover {
+            background: rgba(0,245,255,0.08);
+            color: var(--synesthetic-teal);
+        }
+        .sidebar-sections {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+        }
+        .sidebar-section {
+            margin-bottom: var(--spacing-lg);
+            background: rgba(255,255,255,0.01);
+            border-radius: var(--radius-md);
+            box-shadow: 0 2px 12px rgba(0,245,255,0.03);
+        }
+        .section-toggle {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            transition: background 0.2s;
+        }
+        .section-toggle:hover {
+            background: rgba(0,245,255,0.07);
+        }
+        .section-icon {
+            font-size: 1.3em;
+        }
+        .section-label {
+            flex: 1;
+            text-align: left;
+        }
+        .section-content {
+            padding: var(--spacing-md);
+            background: rgba(255,255,255,0.02);
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            border-top: 1px solid var(--glass-border);
+        }
+        .section-placeholder {
+            color: var(--text-tertiary);
+            font-size: 0.95em;
+            text-align: center;
+            padding: 1.5em 0;
+        }
+        /* Sidebar Toggle Button */
+        .sidebar-toggle-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 210;
+            background: rgba(0,245,255,0.10);
+            border: none;
+            border-radius: var(--radius-full);
+            color: var(--synesthetic-teal);
+            font-size: 1.6rem;
+            padding: 0.4em 0.8em;
+            box-shadow: 0 2px 12px rgba(0,245,255,0.08);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .sidebar-toggle-btn:hover {
+            background: rgba(0,245,255,0.18);
+            transform: scale(1.08);
+        }
+
+        /* === REVOLUTIONARY MODE OVERLAY === */
+        .revolutionary-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: var(--neural-void);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            backdrop-filter: blur(0px);
+        }
+        
+        .revolutionary-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            backdrop-filter: blur(20px);
+        }
+        
+        /* Revolutionary mode uses the neural design system */
+        .revolutionary-overlay .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            z-index: 10000;
+            transition: width var(--transition-smooth);
+            overflow: hidden;
+        }
+        
+        .revolutionary-overlay .neural-sidebar:hover {
+            width: 280px;
+        }
+        
+        .revolutionary-overlay .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: var(--neural-void);
+        }
+        
+        .revolutionary-overlay .neural-header {
+            height: 64px;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-lg);
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+        }
+        
+        .revolutionary-overlay .consciousness-dashboard {
+            padding: var(--space-xl);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Revolutionary mode button styles */
+        .revolutionary-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10002;
+            background: var(--synesthetic-accent);
+            color: var(--neural-void);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+        }
+        
+        .revolutionary-mode-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
+        }
+        
+        /* Exit button for revolutionary mode */
+        .exit-revolutionary {
+            background: var(--synesthetic-red);
+            color: var(--text-primary);
+        }
+        
+        .exit-revolutionary:hover {
+            background: #e62e5c;
+        }
+        
+        /* === NEURAL DESIGN SYSTEM FOR REVOLUTIONARY MODE === */
+        .revolutionary-overlay {
+            /* Neural variables */
+            --neural-void: #000000;
+            --neural-deep: #0a0a0f; 
+            --neural-dark: #141419;
+            --neural-medium: #1e1e26;
+            --neural-light: #2a2a34;
+            --neural-surface: #363642;
+            
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-xxl: 3rem;
+            
+            --radius-xs: 0.25rem;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 50rem;
+            
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-neural: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-medium: rgba(255, 255, 255, 0.08);
+            --glass-strong: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        .revolutionary-overlay .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-primary);
+            border-radius: var(--radius-md);
+            font-size: 1.5rem;
+            color: var(--neural-void);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .revolutionary-overlay .brand-text {
+            margin-left: var(--space-md);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .revolutionary-overlay .neural-sidebar:hover .brand-text {
+            opacity: 1;
+        }
+        
+        .revolutionary-overlay .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .revolutionary-overlay .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .revolutionary-overlay .sidebar-nav {
+            flex: 1;
+            padding: var(--space-md) 0;
+        }
+        
+        .revolutionary-overlay .nav-section {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .revolutionary-overlay .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-quaternary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 var(--space-md);
+            margin-bottom: var(--space-sm);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .revolutionary-overlay .neural-sidebar:hover .nav-section-title {
+            opacity: 1;
+        }
+        
+        .revolutionary-overlay .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-smooth);
+            margin: 0 var(--space-sm);
+            border-radius: var(--radius-md);
+        }
+        
+        .revolutionary-overlay .nav-item:hover {
+            background: var(--glass-light);
+            color: var(--text-primary);
+        }
+        
+        .revolutionary-overlay .nav-item.active {
+            background: var(--synesthetic-primary);
+            color: var(--neural-void);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .revolutionary-overlay .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .revolutionary-overlay .nav-item-text {
+            opacity: 0;
+            margin-left: var(--space-sm);
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .revolutionary-overlay .neural-sidebar:hover .nav-item-text {
+            opacity: 1;
+        }
+        
+        .revolutionary-overlay .consciousness-status {
+            padding: var(--space-md);
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        .revolutionary-overlay .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .revolutionary-overlay .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: var(--synesthetic-tertiary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .revolutionary-overlay .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .revolutionary-overlay .neural-sidebar:hover .status-text {
+            opacity: 1;
+        }
+        
+        /* Revolutionary Controls */
+        .revolutionary-overlay .primary-controls {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .revolutionary-overlay .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all var(--transition-neural);
+            cursor: pointer;
+            color: inherit;
+        }
+        
+        .revolutionary-overlay .primary-action:hover {
+            background: var(--glass-medium);
+            border-color: var(--synesthetic-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .revolutionary-overlay .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-secondary);
+        }
+        
+        .revolutionary-overlay .action-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+            color: var(--synesthetic-primary);
+        }
+        
+        .revolutionary-overlay .primary-action--live .action-icon {
+            color: var(--synesthetic-secondary);
+        }
+        
+        .revolutionary-overlay .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .revolutionary-overlay .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* Revolutionary Visualization */
+        .revolutionary-overlay .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .revolutionary-overlay .neural-visualizer {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .revolutionary-overlay .visualizer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .revolutionary-overlay .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .revolutionary-overlay .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--neural-deep);
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .revolutionary-overlay .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-primary) 0%, transparent 70%);
+            opacity: 0.3;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* Revolutionary Panel */
+        .revolutionary-overlay .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        
+        .revolutionary-overlay .consciousness-card {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: all var(--transition-neural);
+        }
+        
+        .revolutionary-overlay .consciousness-card:hover {
+            background: var(--glass-medium);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .revolutionary-overlay .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .revolutionary-overlay .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--synesthetic-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--neural-void);
+        }
+        
+        .revolutionary-overlay .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .revolutionary-overlay .card-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .revolutionary-overlay .emotion-display {
+            text-align: center;
+            padding: var(--space-md) 0;
+        }
+        
+        .revolutionary-overlay .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--synesthetic-primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .revolutionary-overlay .emotion-confidence {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .neural-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .neural-header {
+                padding: 0 1rem;
+            }
+            
+            .neural-search {
+                width: 200px;
+            }
+            
+            .consciousness-dashboard {
+                padding: 1.5rem;
+            }
+            
+            .primary-controls {
+                flex-direction: column;
+            }
+            
+            .primary-action {
+                min-width: 100%;
+                max-width: none;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* === REVOLUTIONARY ADMIN INTERFACE === */
+        .revolutionary-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: var(--neural-void);
+        }
+        
+        /* Neural Background */
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+                linear-gradient(135deg, var(--neural-void) 0%, var(--neural-deep) 100%);
+            animation: neuralPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1.05); }
+            66% { opacity: 0.9; transform: scale(0.98); }
+        }
+        
+        /* Neural Sidebar */
+        .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .neural-sidebar:hover,
+        .neural-sidebar.expanded {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-teal);
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .brand-text {
+            margin-left: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .brand-text,
+        .neural-sidebar.expanded .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-section-title,
+        .neural-sidebar.expanded .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin: 0 0.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--synesthetic-teal);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-text {
+            opacity: 0;
+            margin-left: 0.5rem;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-item-text,
+        .neural-sidebar.expanded .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .status-text,
+        .neural-sidebar.expanded .status-text {
+            opacity: 1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: transparent;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Neural Header */
+        .neural-header {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .neural-search {
+            width: 300px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0 1rem 0 2.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .neural-search:focus {
+            outline: none;
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .neural-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            user-select: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .neural-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .neural-button--ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .neural-button--ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--synesthetic-teal);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--synesthetic-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+        }
+        
+        /* Consciousness Dashboard */
+        .consciousness-dashboard {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* Primary Controls */
+        .revolutionary-interface .primary-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+        }
+        
+        .primary-action:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-red);
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-red);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.2);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--synesthetic-teal);
+        }
+        
+        .primary-action--live .action-icon {
+            color: var(--synesthetic-red);
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* Visualization Grid */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .neural-visualizer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualizer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-darker);
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-teal) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: emotionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* Consciousness Panel */
+        .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .consciousness-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .consciousness-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--synesthetic-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--neural-void);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .emotion-display {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        
+        .revolutionary-interface .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--synesthetic-teal);
+            margin-bottom: 0.25rem;
+        }
+        
+        .revolutionary-interface .emotion-confidence {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .neural-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .neural-header {
+                padding: 0 1rem;
+            }
+            
+            .neural-search {
+                width: 200px;
+            }
+            
+            .consciousness-dashboard {
+                padding: 1.5rem;
+            }
+            
+            .primary-controls {
+                flex-direction: column;
+            }
+            
+            .primary-action {
+                min-width: 100%;
+                max-width: none;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* === REVOLUTIONARY ADMIN INTERFACE === */
+        .revolutionary-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: var(--neural-void);
+        }
+        
+        /* Neural Background */
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+                linear-gradient(135deg, var(--neural-void) 0%, var(--neural-deep) 100%);
+            animation: neuralPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1.05); }
+            66% { opacity: 0.9; transform: scale(0.98); }
+        }
+        
+        /* Neural Sidebar */
+        .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .neural-sidebar:hover,
+        .neural-sidebar.expanded {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-teal);
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .brand-text {
+            margin-left: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .brand-text,
+        .neural-sidebar.expanded .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-section-title,
+        .neural-sidebar.expanded .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin: 0 0.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--synesthetic-teal);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-text {
+            opacity: 0;
+            margin-left: 0.5rem;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-item-text,
+        .neural-sidebar.expanded .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .status-text,
+        .neural-sidebar.expanded .status-text {
+            opacity: 1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: transparent;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Neural Header */
+        .neural-header {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .neural-search {
+            width: 300px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0 1rem 0 2.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .neural-search:focus {
+            outline: none;
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .neural-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            user-select: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .neural-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .neural-button--ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .neural-button--ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--synesthetic-teal);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--synesthetic-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+        }
+        
+        /* Consciousness Dashboard */
+        .consciousness-dashboard {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* Primary Controls */
+        .revolutionary-interface .primary-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+        }
+        
+        .primary-action:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-red);
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-red);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.2);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--synesthetic-teal);
+        }
+        
+        .primary-action--live .action-icon {
+            color: var(--synesthetic-red);
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* Visualization Grid */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .neural-visualizer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualizer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-darker);
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-teal) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: emotionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* Consciousness Panel */
+        .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .consciousness-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .consciousness-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--synesthetic-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--neural-void);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .emotion-display {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        
+        .revolutionary-interface .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--synesthetic-teal);
+            margin-bottom: 0.25rem;
+        }
+        
+        .revolutionary-interface .emotion-confidence {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .neural-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .neural-header {
+                padding: 0 1rem;
+            }
+            
+            .neural-search {
+                width: 200px;
+            }
+            
+            .consciousness-dashboard {
+                padding: 1.5rem;
+            }
+            
+            .primary-controls {
+                flex-direction: column;
+            }
+            
+            .primary-action {
+                min-width: 100%;
+                max-width: none;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* === REVOLUTIONARY ADMIN INTERFACE === */
+        .revolutionary-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: var(--neural-void);
+        }
+        
+        /* Neural Background */
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+                linear-gradient(135deg, var(--neural-void) 0%, var(--neural-deep) 100%);
+            animation: neuralPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1.05); }
+            66% { opacity: 0.9; transform: scale(0.98); }
+        }
+        
+        /* Neural Sidebar */
+        .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .neural-sidebar:hover,
+        .neural-sidebar.expanded {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-teal);
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .brand-text {
+            margin-left: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .brand-text,
+        .neural-sidebar.expanded .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-section-title,
+        .neural-sidebar.expanded .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin: 0 0.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--synesthetic-teal);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-text {
+            opacity: 0;
+            margin-left: 0.5rem;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-item-text,
+        .neural-sidebar.expanded .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .status-text,
+        .neural-sidebar.expanded .status-text {
+            opacity: 1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: transparent;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Neural Header */
+        .neural-header {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .neural-search {
+            width: 300px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0 1rem 0 2.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .neural-search:focus {
+            outline: none;
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .neural-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            user-select: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .neural-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .neural-button--ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .neural-button--ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--synesthetic-teal);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--synesthetic-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+        }
+        
+        /* Consciousness Dashboard */
+        .consciousness-dashboard {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* Primary Controls */
+        .revolutionary-interface .primary-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+        }
+        
+        .primary-action:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-red);
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-red);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.2);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--synesthetic-teal);
+        }
+        
+        .primary-action--live .action-icon {
+            color: var(--synesthetic-red);
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* Visualization Grid */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .neural-visualizer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualizer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-darker);
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-teal) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: emotionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* Consciousness Panel */
+        .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .consciousness-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .consciousness-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--synesthetic-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--neural-void);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .emotion-display {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        
+        .revolutionary-interface .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--synesthetic-teal);
+            margin-bottom: 0.25rem;
+        }
+        
+        .revolutionary-interface .emotion-confidence {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .neural-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .neural-header {
+                padding: 0 1rem;
+            }
+            
+            .neural-search {
+                width: 200px;
+            }
+            
+            .consciousness-dashboard {
+                padding: 1.5rem;
+            }
+            
+            .primary-controls {
+                flex-direction: column;
+            }
+            
+            .primary-action {
+                min-width: 100%;
+                max-width: none;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* === REVOLUTIONARY ADMIN INTERFACE === */
+        .revolutionary-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: var(--neural-void);
+        }
+        
+        /* Neural Background */
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+                linear-gradient(135deg, var(--neural-void) 0%, var(--neural-deep) 100%);
+            animation: neuralPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1.05); }
+            66% { opacity: 0.9; transform: scale(0.98); }
+        }
+        
+        /* Neural Sidebar */
+        .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .neural-sidebar:hover,
+        .neural-sidebar.expanded {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-teal);
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .brand-text {
+            margin-left: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .brand-text,
+        .neural-sidebar.expanded .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-section-title,
+        .neural-sidebar.expanded .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin: 0 0.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--synesthetic-teal);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-text {
+            opacity: 0;
+            margin-left: 0.5rem;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-item-text,
+        .neural-sidebar.expanded .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .status-text,
+        .neural-sidebar.expanded .status-text {
+            opacity: 1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: transparent;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Neural Header */
+        .neural-header {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .neural-search {
+            width: 300px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0 1rem 0 2.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .neural-search:focus {
+            outline: none;
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .neural-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            user-select: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .neural-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .neural-button--ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .neural-button--ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--synesthetic-teal);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--synesthetic-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+        }
+        
+        /* Consciousness Dashboard */
+        .consciousness-dashboard {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* Primary Controls */
+        .revolutionary-interface .primary-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+        }
+        
+        .primary-action:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-red);
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-red);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.2);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--synesthetic-teal);
+        }
+        
+        .primary-action--live .action-icon {
+            color: var(--synesthetic-red);
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* Visualization Grid */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .neural-visualizer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualizer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-darker);
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-teal) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: emotionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* Consciousness Panel */
+        .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .consciousness-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .consciousness-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--synesthetic-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--neural-void);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .emotion-display {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        
+        .revolutionary-interface .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--synesthetic-teal);
+            margin-bottom: 0.25rem;
+        }
+        
+        .revolutionary-interface .emotion-confidence {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .neural-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .neural-header {
+                padding: 0 1rem;
+            }
+            
+            .neural-search {
+                width: 200px;
+            }
+            
+            .consciousness-dashboard {
+                padding: 1.5rem;
+            }
+            
+            .primary-controls {
+                flex-direction: column;
+            }
+            
+            .primary-action {
+                min-width: 100%;
+                max-width: none;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* === REVOLUTIONARY ADMIN INTERFACE === */
+        .revolutionary-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: var(--neural-void);
+        }
+        
+        /* Neural Background */
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+                linear-gradient(135deg, var(--neural-void) 0%, var(--neural-deep) 100%);
+            animation: neuralPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1.05); }
+            66% { opacity: 0.9; transform: scale(0.98); }
+        }
+        
+        /* Neural Sidebar */
+        .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .neural-sidebar:hover,
+        .neural-sidebar.expanded {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-teal);
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .brand-text {
+            margin-left: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .brand-text,
+        .neural-sidebar.expanded .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-section-title,
+        .neural-sidebar.expanded .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin: 0 0.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--synesthetic-teal);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-text {
+            opacity: 0;
+            margin-left: 0.5rem;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-item-text,
+        .neural-sidebar.expanded .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .status-text,
+        .neural-sidebar.expanded .status-text {
+            opacity: 1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: transparent;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Neural Header */
+        .neural-header {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .neural-search {
+            width: 300px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0 1rem 0 2.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .neural-search:focus {
+            outline: none;
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .neural-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            user-select: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .neural-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .neural-button--ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .neural-button--ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--synesthetic-teal);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--synesthetic-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+        }
+        
+        /* Consciousness Dashboard */
+        .consciousness-dashboard {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* Primary Controls */
+        .revolutionary-interface .primary-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+        }
+        
+        .primary-action:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-red);
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-red);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.2);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--synesthetic-teal);
+        }
+        
+        .primary-action--live .action-icon {
+            color: var(--synesthetic-red);
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* Visualization Grid */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .neural-visualizer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualizer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-darker);
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-teal) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: emotionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* Consciousness Panel */
+        .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .consciousness-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .consciousness-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--synesthetic-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--neural-void);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .emotion-display {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        
+        .revolutionary-interface .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--synesthetic-teal);
+            margin-bottom: 0.25rem;
+        }
+        
+        .revolutionary-interface .emotion-confidence {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .neural-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .neural-header {
+                padding: 0 1rem;
+            }
+            
+            .neural-search {
+                width: 200px;
+            }
+            
+            .consciousness-dashboard {
+                padding: 1.5rem;
+            }
+            
+            .primary-controls {
+                flex-direction: column;
+            }
+            
+            .primary-action {
+                min-width: 100%;
+                max-width: none;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* === REVOLUTIONARY ADMIN INTERFACE === */
+        .revolutionary-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: var(--neural-void);
+        }
+        
+        /* Neural Background */
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+                linear-gradient(135deg, var(--neural-void) 0%, var(--neural-deep) 100%);
+            animation: neuralPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1.05); }
+            66% { opacity: 0.9; transform: scale(0.98); }
+        }
+        
+        /* Neural Sidebar */
+        .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .neural-sidebar:hover,
+        .neural-sidebar.expanded {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-teal);
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .brand-text {
+            margin-left: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .brand-text,
+        .neural-sidebar.expanded .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-section-title,
+        .neural-sidebar.expanded .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin: 0 0.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--synesthetic-teal);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-text {
+            opacity: 0;
+            margin-left: 0.5rem;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-item-text,
+        .neural-sidebar.expanded .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .status-text,
+        .neural-sidebar.expanded .status-text {
+            opacity: 1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: transparent;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Neural Header */
+        .neural-header {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .neural-search {
+            width: 300px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0 1rem 0 2.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .neural-search:focus {
+            outline: none;
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .neural-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            user-select: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .neural-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .neural-button--ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .neural-button--ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--synesthetic-teal);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--synesthetic-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+        }
+        
+        /* Consciousness Dashboard */
+        .consciousness-dashboard {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* Primary Controls */
+        .revolutionary-interface .primary-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+        }
+        
+        .primary-action:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-red);
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-red);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.2);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--synesthetic-teal);
+        }
+        
+        .primary-action--live .action-icon {
+            color: var(--synesthetic-red);
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* Visualization Grid */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .neural-visualizer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualizer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-darker);
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-teal) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: emotionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* Consciousness Panel */
+        .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .consciousness-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .consciousness-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items:

@@ -4,6 +4,10 @@
  */
 
 function createSoulTestButton() {
+    // Old test button creation disabled - now using unified dashboard
+    console.log('🧪 Soul test functions available via unified test dashboard');
+    return; // Skip button creation
+    
     // Create test button
     const testButton = document.createElement('button');
     testButton.textContent = '🧠 Test Soul Awakening';

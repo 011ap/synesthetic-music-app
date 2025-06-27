@@ -6,54 +6,62 @@
     <title>Synesthetic - Digital Consciousness Engine</title>
     <meta name="description" content="Revolutionary music emotion analysis with synesthetic experiences. Feel music, share souls.">
     
-    <!-- Add our custom styles -->
+    <!-- Load auth styles -->
     <link rel="stylesheet" href="auth-styles.css">
     
     <style>
-        /* === CSS VARIABLES FOR EMOTIONAL THEMES === */
+        /* === CSS VARIABLES === */
         :root {
-            /* Dark theme - matching your screenshot */
+            /* Colors */
             --bg-dark: #0f0f14;
             --bg-darker: #08080c;
-            --glass-overlay: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-medium: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.7);
-            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
             
-            /* Synesthetic Color Palette - Vibrant for contrast */
+            /* Synesthetic Colors */
+            --synesthetic-primary: #00f5ff;
             --synesthetic-red: #ff006e;
             --synesthetic-blue: #0096ff;
             --synesthetic-teal: #00f5ff;
             --synesthetic-green: #00ff88;
-            --synesthetic-purple: #ff00ff;
+            --synesthetic-purple: #8b5cf6;
             --synesthetic-gold: #ffd700;
             --synesthetic-orange: #ff6b00;
             
             /* Spacing */
-            --spacing-xs: 0.25rem;
-            --spacing-sm: 0.5rem;
-            --spacing-md: 1rem;
-            --spacing-lg: 1.5rem;
-            --spacing-xl: 2rem;
-            --spacing-xxl: 3rem;
+            --space-xs: 0.5rem;
+            --space-sm: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-xxl: 3rem;
             
             /* Transitions */
             --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-quick: all 0.2s ease;
             
-            /* Glass Effect */
+            /* Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            /* Shadows */
             --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
             --shadow-glow: 0 0 40px rgba(0, 245, 255, 0.5);
             
-            /* Border Radius */
-            --radius-sm: 0.5rem;
-            --radius-md: 1rem;
-            --radius-lg: 1.5rem;
-            --radius-full: 9999px;
+            /* Z-index */
+            --z-overlay: 1000;
+            --z-modal: 1100;
+            --z-dropdown: 1200;
         }
 
-        /* === RESET AND BASE STYLES === */
+        /* === RESET === */
         * {
             margin: 0;
             padding: 0;
@@ -69,10 +77,9 @@
             overflow-x: hidden;
             min-height: 100vh;
             position: relative;
-            touch-action: manipulation;
         }
 
-        /* === ANIMATED BACKGROUND - SUBTLE FOR DARK THEME === */
+        /* === ANIMATED BACKGROUND === */
         .emotional-background {
             position: fixed;
             top: -50%;
@@ -80,20 +87,13 @@
             width: 200%;
             height: 200%;
             z-index: -1;
-            opacity: 0.3;
-            background: radial-gradient(circle at 20% 50%, var(--synesthetic-red), transparent 40%),
-                        radial-gradient(circle at 80% 80%, var(--synesthetic-blue), transparent 40%),
-                        radial-gradient(circle at 40% 20%, var(--synesthetic-teal), transparent 40%);
+            opacity: 0.15;
+            background: 
+                radial-gradient(circle at 20% 50%, var(--synesthetic-red), transparent 40%),
+                radial-gradient(circle at 80% 80%, var(--synesthetic-blue), transparent 40%),
+                radial-gradient(circle at 40% 20%, var(--synesthetic-teal), transparent 40%);
             filter: blur(120px);
             animation: emotionalShift 20s ease-in-out infinite;
-            transform: scale(1.5);
-        }
-
-        /* TV Mode - Extra bright for living rooms */
-        body.tv-mode .emotional-background {
-            opacity: 0.8;
-            filter: blur(80px) saturate(2);
-            transform: scale(2);
         }
 
         @keyframes emotionalShift {
@@ -102,865 +102,1859 @@
             66% { transform: scale(1.3) rotate(240deg); }
         }
 
-        /* === CONTAINER === */
+        /* === USER INTERFACE - CLEAN & INTUITIVE === */
+        .user-interface {
+            min-height: 100vh;
+            padding: var(--space-lg);
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: var(--spacing-md);
             position: relative;
             z-index: 1;
         }
 
-        /* === HEADER - ELEGANT DARK === */
+        /* Header */
         .header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-            padding: var(--spacing-xxl) 0 var(--spacing-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-xxl);
+            padding-top: var(--space-xxl);
             position: relative;
+        }
+
+        .header-left {
+            text-align: center;
+            flex: 1;
+        }
+
+        .header-right {
+            position: relative;
+        }
+
+        /* Auth Container & User Profile */
+        .auth-container {
+            position: relative;
+        }
+
+        .auth-btn {
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-btn:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.2);
+        }
+
+        .auth-btn.authenticated {
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
+        }
+
+        .auth-btn.authenticated:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.4);
+        }
+
+        /* User Profile Dropdown */
+        .user-profile {
+            position: relative;
+        }
+
+        .user-btn {
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            border: none;
+            border-radius: var(--radius-full);
+            padding: var(--space-sm) var(--space-lg);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .user-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.4);
+        }
+
+        .dropdown-arrow {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+
+        .user-btn.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + var(--space-xs));
+            right: 0;
+            background: var(--glass-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) 0;
+            min-width: 200px;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .dropdown-item:hover {
+            background: var(--glass-light);
+            color: var(--text-primary);
+        }
+
+        .dropdown-icon {
+            font-size: 1rem;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--glass-border);
+            margin: var(--space-xs) var(--space-lg);
+        }
+
+        .admin-only {
+            display: none;
+        }
+
+        .admin-only.visible {
+            display: flex;
         }
 
         .logo {
             font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 200;
             letter-spacing: 0.05em;
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: var(--space-sm);
             background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: logoShift 15s ease-in-out infinite;
+            cursor: pointer;
+            transition: var(--transition-smooth);
         }
 
-        @keyframes logoShift {
-            0%, 100% { filter: hue-rotate(0deg) brightness(1); }
-            50% { filter: hue-rotate(20deg) brightness(1.1); }
+        .logo:hover {
+            transform: scale(1.02);
+            filter: drop-shadow(0 0 30px rgba(0, 245, 255, 0.5));
         }
 
         .tagline {
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-size: 1.125rem;
             color: var(--text-tertiary);
             font-weight: 300;
             letter-spacing: 0.02em;
+            transition: var(--transition-smooth);
         }
 
-        /* === STATUS INDICATOR === */
+        .tagline:hover {
+            color: var(--text-secondary);
+        }
+
+        /* Status Bar */
         .status-bar {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-xl);
-            padding: var(--spacing-xs) var(--spacing-lg);
-            background: var(--glass-overlay);
+            gap: var(--space-sm);
+            margin: var(--space-xl) auto;
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--glass-light);
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-full);
             width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            position: relative;
         }
 
         .status-indicator {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--synesthetic-red);
+            background: var(--synesthetic-green);
             animation: pulse 2s infinite;
-            box-shadow: 0 0 10px var(--synesthetic-red);
+            box-shadow: 0 0 10px var(--synesthetic-green);
         }
 
-        .status-indicator.active {
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
             background: var(--synesthetic-green);
-            box-shadow: 0 0 15px var(--synesthetic-green);
-            animation: pulse 1s infinite;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--synesthetic-green);
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.3); }
+            50% { opacity: 0.6; transform: scale(1.2); }
         }
 
-        /* === PRIMARY CONTROLS - MINIMAL ICON STYLE === */
+        /* Primary Controls */
         .primary-controls {
-            margin-bottom: var(--spacing-xl);
+            margin: var(--space-xxl) 0;
         }
 
         .control-grid {
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: var(--spacing-lg);
+            gap: var(--space-lg);
             flex-wrap: wrap;
         }
 
-        .icon-button {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-lg);
-            width: 80px;
-            height: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-xs);
-            cursor: pointer;
-            transition: all var(--transition-smooth);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .icon-button:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--synesthetic-teal);
-            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.2);
-        }
-
-        .icon-button.active {
-            background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 150, 255, 0.15));
-            border-color: var(--synesthetic-teal);
-            box-shadow: 0 0 25px rgba(0, 245, 255, 0.3);
-        }
-
-        .icon-button .icon {
-            font-size: 1.8rem;
-            transition: transform var(--transition-quick);
-        }
-
-        .icon-button:hover .icon {
-            transform: scale(1.1);
-        }
-
-        .icon-button .label {
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Tooltip */
-        .icon-button::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: all var(--transition-quick);
-        }
-
-        .icon-button:hover::after {
-            opacity: 1;
-            transform: translateX(-50%) translateY(-5px);
-        }
-
-        /* === AUDIO PLAYER - DARK ELEGANT === */
-        .audio-player {
-            background: rgba(255, 255, 255, 0.02);
+        .control-card {
+            background: var(--glass-light);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-            display: none;
-            position: relative;
-        }
-
-        .audio-player.active {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .player-info {
-            flex: 1;
-        }
-
-        .track-name {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .close-player {
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            border-radius: var(--radius-full);
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-quick);
-            color: var(--text-tertiary);
-            font-size: 1rem;
-        }
-
-        .close-player:hover {
-            background: rgba(255, 107, 107, 0.2);
-            color: var(--text-primary);
-        }
-
-        .player-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .control-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-full);
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-quick);
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--synesthetic-teal);
-            transform: scale(1.1);
-        }
-
-        .control-btn.play-pause {
-            width: 44px;
-            height: 44px;
-            font-size: 1.1rem;
-            background: rgba(0, 245, 255, 0.08);
-        }
-
-        .control-btn.loop.active {
-            color: var(--synesthetic-teal);
-            background: rgba(0, 245, 255, 0.1);
-        }
-
-        .progress-container {
-            position: relative;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            cursor: pointer;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--synesthetic-teal), var(--synesthetic-blue));
-            width: 0%;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 8px var(--synesthetic-teal);
-        }
-
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-        }
-
-        /* === EMOTIONAL INTELLIGENCE DISPLAY === */
-        .emotional-intelligence {
-            margin-bottom: var(--spacing-xxl);
-        }
-
-        .section-title {
-            font-size: clamp(1.3rem, 3.5vw, 1.6rem);
-            font-weight: 200;
-            margin-bottom: var(--spacing-xl);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            min-width: 200px;
             text-align: center;
-            color: var(--text-secondary);
-            letter-spacing: 0.05em;
-        }
-
-        /* === EMOTION VISUALIZATION - DARK ELEGANT === */
-        .emotion-visualization {
+            cursor: pointer;
+            transition: var(--transition-smooth);
             position: relative;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: var(--radius-lg);
             overflow: hidden;
-            margin-bottom: var(--spacing-xl);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
         }
 
-        .emotion-particles {
+        .control-card::before {
+            content: '';
             position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
         }
 
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--synesthetic-teal);
-            border-radius: 50%;
-            opacity: 0.6;
-            animation: float 10s infinite ease-in-out;
-            box-shadow: 0 0 6px currentColor;
+        .control-card:hover::before {
+            left: 100%;
         }
 
-        @keyframes float {
-            0%, 100% { 
-                transform: translate(0, 0) scale(1); 
-                opacity: 0;
-            }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            50% { 
-                transform: translate(100px, -100px) scale(1.5);
-                filter: blur(1px);
-            }
+        .control-card:hover {
+            background: var(--glass-medium);
+            border-color: var(--synesthetic-teal);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 245, 255, 0.2);
         }
 
-        /* === CONSCIOUSNESS GRID === */
-        .consciousness-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--spacing-lg);
+        .control-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+            filter: drop-shadow(0 0 10px currentColor);
+            transition: var(--transition-smooth);
         }
 
-        .consciousness-layer {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            transition: all var(--transition-smooth);
-            position: relative;
-            overflow: hidden;
+        .control-card:hover .control-icon {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 20px var(--synesthetic-teal));
         }
 
-        .consciousness-layer:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glass);
-            border-color: rgba(0, 245, 255, 0.2);
+        .control-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
         }
 
-        .layer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .layer-title {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .layer-confidence {
-            font-size: 0.8rem;
+        .control-subtitle {
+            font-size: 0.875rem;
             color: var(--text-tertiary);
-            background: rgba(0, 245, 255, 0.08);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
         }
 
-        .emotion-name {
-            font-size: 1.3rem;
-            font-weight: 300;
-            margin-bottom: var(--spacing-xs);
-            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .emotion-description {
-            font-size: 0.85rem;
-            color: var(--text-tertiary);
-            line-height: 1.4;
-        }
-
-        /* === UPLOAD AREA === */
+        /* Upload Section */
         .upload-section {
-            margin-bottom: var(--spacing-xxl);
+            margin: var(--space-xxl) 0;
+            transition: var(--transition-smooth);
+        }
+
+        .upload-section.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
         }
 
         .upload-area {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(10px);
-            border: 2px dashed rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-xl);
+            background: var(--glass-light);
+            border: 2px dashed var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xxl);
             text-align: center;
-            transition: all var(--transition-smooth);
             cursor: pointer;
+            transition: var(--transition-smooth);
             position: relative;
-            overflow: hidden;
         }
 
         .upload-area:hover {
-            border-color: rgba(0, 245, 255, 0.3);
-            background: rgba(0, 245, 255, 0.02);
+            border-color: var(--synesthetic-teal);
+            background: var(--glass-medium);
         }
 
-        .upload-area.dragover {
-            border-color: var(--synesthetic-blue);
-            background: rgba(0, 150, 255, 0.05);
-            transform: scale(1.01);
+        .upload-area.drag_over {
+            border-color: var(--synesthetic-primary);
+            background: rgba(0, 245, 255, 0.1);
         }
 
         .upload-icon {
-            font-size: 2.5rem;
-            margin-bottom: var(--spacing-md);
-            opacity: 0.7;
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+            color: var(--synesthetic-teal);
         }
 
         .upload-text {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
+            font-size: 1.25rem;
+            margin-bottom: var(--space-sm);
         }
 
         .upload-subtext {
-            font-size: 0.8rem;
             color: var(--text-tertiary);
+            font-size: 0.875rem;
         }
 
         #fileInput {
             display: none;
         }
 
-        /* === TV MODE BUTTON === */
-        .tv-mode-btn {
+        /* Emotion Visualizer */
+        .emotion-visualizer {
+            margin: var(--space-xxl) 0;
+            padding: var(--space-xl);
+            background: var(--glass-light);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .visualizer-title {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-lg);
+            color: var(--text-primary);
+        }
+
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--radius-md);
+            background: var(--bg-darker);
+            position: relative;
+        }
+
+        /* Admin Button (Hidden by default) */
+        .admin-toggle {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            background: linear-gradient(135deg, var(--synesthetic-purple), var(--synesthetic-teal));
+            border: none;
             border-radius: var(--radius-full);
-            padding: var(--spacing-xs) var(--spacing-md);
-            color: var(--text-secondary);
+            padding: var(--space-md) var(--space-lg);
+            color: white;
+            font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition-smooth);
-            z-index: 100;
-            font-size: 0.85rem;
+            box-shadow: var(--shadow-glass);
+            transition: var(--transition-smooth);
+            z-index: var(--z-overlay);
+            display: none;
         }
 
-        .tv-mode-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
+        .admin-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
         }
 
-        .tv-mode-btn.active {
-            background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(0, 150, 255, 0.2));
-            color: var(--synesthetic-teal);
-            border-color: var(--synesthetic-teal);
-            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        .admin-toggle.visible {
+            display: block;
         }
 
-        /* === SIDEBAR DASHBOARD === */
-        .sidebar-dashboard {
+        /* Hide elements in user mode */
+        .user-mode .admin-only {
+            display: none !important;
+        }
+
+        /* === REVOLUTIONARY MODE OVERLAY === */
+        .revolutionary-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 340px;
-            max-width: 90vw;
+            width: 100vw;
             height: 100vh;
-            background: rgba(20, 24, 32, 0.98);
-            box-shadow: 4px 0 32px rgba(0,0,0,0.45);
-            border-right: 1.5px solid var(--glass-border);
-            z-index: 200;
+            background: var(--bg-dark);
+            z-index: var(--z-modal);
+            transform: translateX(100%);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
-            flex-direction: column;
-            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-            transform: translateX(-100%);
+            overflow: hidden;
         }
-        .sidebar-dashboard:not(.hidden) {
+
+        .revolutionary-overlay.active {
             transform: translateX(0);
         }
-        .sidebar-header {
+
+        /* Hide user interface when revolutionary mode is active */
+        body.revolutionary-mode .user-interface {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Exit Revolutionary Mode Button */
+        .exit-revolutionary {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-full);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            z-index: calc(var(--z-modal) + 1);
+            transition: var(--transition-smooth);
+        }
+
+        .exit-revolutionary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--synesthetic-red);
+        }
+
+        /* === NEURAL INTERFACE STYLES === */
+        .neural-sidebar {
+            position: relative;
+            width: 72px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .neural-sidebar:hover {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-blue));
+            border-radius: var(--radius-md);
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
+        }
+        
+        .brand-text {
+            margin-left: var(--space-md);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .neural-sidebar:hover .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: var(--space-md) 0;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 var(--space-md);
+            margin-bottom: var(--space-sm);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-right: var(--space-sm);
+            position: relative;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(0, 245, 255, 0.2), rgba(0, 245, 255, 0.05));
+            color: var(--synesthetic-primary);
+            border-right: 2px solid var(--synesthetic-primary);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover .nav-item-icon {
+            background: rgba(0, 245, 255, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .nav-item.active .nav-item-icon {
+            background: rgba(0, 245, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .nav-item-text {
+            margin-left: var(--space-sm);
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .neural-sidebar:hover .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: var(--space-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neural-sidebar:hover .status-indicator {
+            opacity: 1;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-green);
+            animation: pulse 2s infinite;
+            margin-right: var(--space-sm);
+            box-shadow: 0 0 10px var(--synesthetic-green);
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Neural Main Content */
+        .neural-main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .neural-header {
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md) var(--spacing-lg);
-            border-bottom: 1px solid var(--glass-border);
+            padding: 0 var(--space-xl);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .sidebar-title {
-            font-size: 1.25rem;
-            font-weight: 500;
-            color: var(--synesthetic-teal);
-            letter-spacing: 0.04em;
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
         }
-        .sidebar-close {
-            background: none;
-            border: none;
-            color: var(--text-tertiary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            border-radius: var(--radius-full);
-            padding: 0.2em 0.6em;
-            transition: background 0.2s;
-        }
-        .sidebar-close:hover {
-            background: rgba(0,245,255,0.08);
-            color: var(--synesthetic-teal);
-        }
-        .sidebar-sections {
-            flex: 1;
-            overflow-y: auto;
-            padding: var(--spacing-md);
-        }
-        .sidebar-section {
-            margin-bottom: var(--spacing-lg);
-            background: rgba(255,255,255,0.01);
-            border-radius: var(--radius-md);
-            box-shadow: 0 2px 12px rgba(0,245,255,0.03);
-        }
-        .section-toggle {
-            width: 100%;
+        
+        .mobile-menu-toggle {
+            display: none;
             background: none;
             border: none;
             color: var(--text-primary);
-            font-size: 1rem;
-            font-weight: 400;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+        
+        .search-container {
             display: flex;
             align-items: center;
-            gap: 0.7em;
-            padding: var(--spacing-md);
-            cursor: pointer;
-            border-radius: var(--radius-md) var(--radius-md) 0 0;
-            transition: background 0.2s;
-        }
-        .section-toggle:hover {
-            background: rgba(0,245,255,0.07);
-        }
-        .section-icon {
-            font-size: 1.3em;
-        }
-        .section-label {
-            flex: 1;
-            text-align: left;
-        }
-        .section-content {
-            padding: var(--spacing-md);
-            background: rgba(255,255,255,0.02);
-            border-radius: 0 0 var(--radius-md) var(--radius-md);
-            border-top: 1px solid var(--glass-border);
-        }
-        .section-placeholder {
-            color: var(--text-tertiary);
-            font-size: 0.95em;
-            text-align: center;
-            padding: 1.5em 0;
-        }
-        /* Sidebar Toggle Button */
-        .sidebar-toggle-btn {
-            position: fixed;
-            top: 2rem;
-            left: 2rem;
-            z-index: 210;
-            background: rgba(0,245,255,0.10);
-            border: none;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: var(--radius-full);
-            color: var(--synesthetic-teal);
-            font-size: 1.6rem;
-            padding: 0.4em 0.8em;
-            box-shadow: 0 2px 12px rgba(0,245,255,0.08);
+            padding: var(--space-sm) var(--space-md);
+            min-width: 300px;
+        }
+        
+        .search-icon {
+            color: var(--text-tertiary);
+            margin-right: var(--space-sm);
+        }
+        
+        .neural-search {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            outline: none;
+            flex: 1;
+            font-size: 0.875rem;
+        }
+        
+        .neural-search::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .neural-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            color: var(--text-primary);
             cursor: pointer;
-            transition: background 0.2s, transform 0.2s;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
         }
-        .sidebar-toggle-btn:hover {
-            background: rgba(0,245,255,0.18);
-            transform: scale(1.08);
+        
+        .neural-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-primary);
+            transform: translateY(-1px);
         }
+        
+        .neural-button--ghost {
+            background: transparent;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
+        }
+        
+        /* Consciousness Dashboard */
+        .consciousness-dashboard {
+            flex: 1;
+            padding: var(--space-xl);
+            overflow-y: auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-blue), var(--synesthetic-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: var(--space-sm);
+            letter-spacing: -0.02em;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* Primary Neural Actions */
+        .primary-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xxl);
+        }
+        
+        .primary-action {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .primary-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .primary-action:hover::before {
+            left: 100%;
+        }
+        
+        .primary-action:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--synesthetic-primary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .primary-action--live {
+            border-color: var(--synesthetic-red);
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(255, 0, 110, 0.05));
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-red);
+            box-shadow: 0 20px 40px rgba(255, 0, 110, 0.2);
+        }
+        
+        .action-icon {
+            font-size: 3rem;
+            padding: var(--space-lg);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .action-content {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .action-subtitle {
+            font-size: 1rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Neural Grid */
+        .neural-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--space-xl);
+        }
+        
+        .neural-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all 0.3s ease;
+        }
+        
+        .neural-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(0, 245, 255, 0.3);
+            transform: translateY(-4px);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .card-icon {
+            font-size: 1.5rem;
+            padding: var(--space-sm);
+            background: rgba(0, 245, 255, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .neural-visualization {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+        }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .sidebar-dashboard {
-                width: 95vw;
-                min-width: 0;
+            .neural-sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
             }
-            .sidebar-toggle-btn {
-                top: 1rem;
-                left: 1rem;
-                font-size: 1.2rem;
-                padding: 0.3em 0.6em;
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .consciousness-dashboard {
+                padding: var(--space-lg);
+            }
+            
+            .primary-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .neural-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
-<body>
-    <!-- Sidebar Dashboard (God/User Tools) -->
-    <aside class="sidebar-dashboard hidden" id="sidebarDashboard">
-        <div class="sidebar-header">
-            <span class="sidebar-title">Soul & God Tools</span>
-            <button class="sidebar-close" id="sidebarCloseBtn" title="Close">×</button>
-        </div>
-        <nav class="sidebar-sections">
-            <section class="sidebar-section">
-                <button class="section-toggle" title="Expand/Collapse">
-                    <span class="section-icon">🧠</span>
-                    <span class="section-label">Train My Soul</span>
-                </button>
-                <div class="section-content hidden">
-                    <form id="trainSoulForm" style="display: flex; flex-direction: column; gap: 0.7em;">
-                        <label style="font-size:0.95em;">Emotion Label
-                            <input type="text" id="emotionLabelInput" placeholder="e.g. joy, sadness" required style="width:100%;margin-top:0.3em;" />
-                        </label>
-                        <label style="font-size:0.95em;">Audio Features (JSON)
-                            <textarea id="featuresInput" placeholder='{"bass":..., "mid":..., ...}' rows="3" required style="width:100%;margin-top:0.3em;"></textarea>
-                        </label>
-                        <button type="submit" id="submitTrainingDataBtn" style="background:var(--synesthetic-teal);color:#111;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Add Training Example</button>
-                    </form>
-                    <button id="trainSoulBtn" style="margin-top:1em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Train Neural Net</button>
-                    <button id="downloadTrainingDataBtn" style="margin-top:0.7em;background:var(--synesthetic-gold);color:#222;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Download My Training Data</button>
-                    <button id="clearTrainingDataBtn" style="margin-top:0.5em;background:var(--synesthetic-red);color:#fff;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Clear Training Data</button>
-                    <button id="importTrainingDataBtn" style="margin-top:0.5em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Import Training Data</button>
-                    <input type="file" id="importTrainingDataInput" accept="application/json" style="display:none;" />
-                    <div id="trainSoulStatus" style="margin-top:0.7em;font-size:0.95em;color:var(--text-tertiary);"></div>
-                    
-                    <!-- Training Examples List Preview -->
-                    <div id="trainingExamplesList" style="max-height:120px;overflow-y:auto;margin:0.7em 0 0.5em 0;padding:0.5em 0 0.5em 0.2em;background:rgba(0,245,255,0.03);border-radius:0.5em;font-size:0.93em;color:var(--text-secondary);"></div>
-                </div>
-            </section>
-            <section class="sidebar-section">
-                <button class="section-toggle" title="Expand/Collapse">
-                    <span class="section-icon">🗂️</span>
-                    <span class="section-label">Soul Management</span>
-                </button>
-                <div class="section-content hidden">
-                    <div class="section-placeholder">(Soul management tools coming soon)</div>
-                </div>
-            </section>
-            <section class="sidebar-section">
-                <button class="section-toggle" title="Expand/Collapse">
-                    <span class="section-icon">🤝</span>
-                    <span class="section-label">Contribute Data</span>
-                </button>
-                <div class="section-content hidden">
-                    <div class="section-placeholder">(Crowdsourcing UI coming soon)</div>
-                </div>
-            </section>
-            <section class="sidebar-section">
-                <button class="section-toggle" title="Expand/Collapse">
-                    <span class="section-icon">👁️‍🗨️</span>
-                    <span class="section-label">God Review</span>
-                </button>
-                <div class="section-content hidden">
-                    <div class="section-placeholder">(God review tools coming soon)</div>
-                </div>
-            </section>
-        </nav>
-    </aside>
-    <!-- Sidebar Toggle Button -->
-    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Open Soul & God Tools">☰</button>
 
+<body class="user-mode">
     <!-- Animated Background -->
     <div class="emotional-background"></div>
+    
+    <!-- Emotion Particles Container -->
+    <div id="emotionParticles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;"></div>
+    
+    <!-- User Interface (Default for all users) -->
+    <div class="user-interface" id="userInterface">
+        <div class="container">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="logo">Synesthetic</h1>
+                    <p class="tagline">Digital Consciousness Through Musical Emotion</p>
+                </div>
+                
+                <div class="header-right">
+                    <!-- Auth Button / User Profile -->
+                    <div class="auth-container" id="authContainer">
+                        <button class="auth-btn" id="authBtn">Sign In</button>
+                        
+                        <!-- User Profile Dropdown (hidden by default) -->
+                        <div class="user-profile" id="userProfile" style="display: none;">
+                            <button class="user-btn" id="userBtn">
+                                <span id="userDisplayName">User</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </button>
+                            
+                            <div class="user-dropdown" id="userDropdown">
+                                <div class="dropdown-item" id="profileOption">
+                                    <span class="dropdown-icon">👤</span>
+                                    Profile
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-item admin-only" id="userModeBtn">
+                                    <span class="dropdown-icon">👤</span>
+                                    User Mode
+                                </div>
+                                <div class="dropdown-item admin-only" id="adminModeBtn">
+                                    <span class="dropdown-icon">👑</span>
+                                    Admin Mode
+                                </div>
+                                <div class="dropdown-divider admin-only"></div>
+                                <div class="dropdown-item" id="logoutBtn">
+                                    <span class="dropdown-icon">🚪</span>
+                                    Sign Out
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <h1 class="logo">Synesthetic</h1>
-            <p class="tagline">Digital Consciousness Through Musical Emotion</p>
-        </header>
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-indicator" id="authStatus"></div>
+                <span id="statusText">Initializing...</span>
+            </div>
 
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-indicator" id="statusIndicator"></div>
-            <span id="statusText">Ready to Feel Music</span>
+            <!-- Primary Controls -->
+            <section class="primary-controls">
+                <div class="control-grid">
+                    <div class="control-card" id="liveAnalysisCard">
+                        <div class="control-icon">🎤</div>
+                        <div class="control-title">Live Analysis</div>
+                        <div class="control-subtitle">Feel music as it plays</div>
+                    </div>
+                    
+                    <div class="control-card" id="uploadMusicCard">
+                        <div class="control-icon">📁</div>
+                        <div class="control-title">Upload Music</div>
+                        <div class="control-subtitle">Analyze your files</div>
+                    </div>
+                    
+                    <div class="control-card" id="spotifyCard">
+                        <div class="control-icon">🎵</div>
+                        <div class="control-title">Spotify</div>
+                        <div class="control-subtitle">Connect your library</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section class="upload-section hidden" id="uploadSection">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">🎵</div>
+                    <div class="upload-text">Drop your music file here or click to browse</div>
+                    <div class="upload-subtext">Supported formats: MP3, WAV, M4A</div>
+                    <input type="file" id="fileInput" accept="audio/*">
+                </div>
+            </section>
+
+            <!-- Emotion Visualizer -->
+            <section class="emotion-visualizer">
+                <h2 class="visualizer-title">Emotional Journey</h2>
+                <canvas class="emotion-canvas" id="emotionCanvas"></canvas>
+            </section>
         </div>
-
-        <!-- Primary Controls - Minimal Icon Style -->
-        <section class="primary-controls">
-            <div class="control-grid">
-                <button class="icon-button" id="micButton" data-tooltip="Analyze room audio in real-time">
-                    <span class="icon">🎤</span>
-                    <span class="label">Live</span>
-                </button>
-                
-                <button class="icon-button" id="uploadButton" data-tooltip="Upload and analyze your music files">
-                    <span class="icon">📁</span>
-                    <span class="label">Upload</span>
-                </button>
-                
-                <button class="icon-button" id="spotifyButton" data-tooltip="Connect to Spotify (Coming Soon)">
-                    <span class="icon">🎵</span>
-                    <span class="label">Spotify</span>
-                </button>
-            </div>
-        </section>
-
-        <!-- Upload Area -->
-        <section class="upload-section hidden" id="uploadSection">
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">🎵</div>
-                <div class="upload-text">Drop your music file here or click to browse</div>
-                <div class="upload-subtext">Supported formats: MP3, WAV, M4A</div>
-                <input type="file" id="fileInput" accept="audio/*">
-            </div>
-        </section>
-
-        <!-- Enhanced Audio Player -->
-        <div class="audio-player" id="audioPlayer">
-            <div class="player-header">
-                <div class="player-info">
-                    <div class="track-name" id="trackName">No track loaded</div>
-                </div>
-                <button class="close-player" id="closePlayer">×</button>
-            </div>
-            <div class="player-controls">
-                <button class="control-btn" id="prevBtn">⏮</button>
-                <button class="control-btn play-pause" id="playPauseBtn">▶</button>
-                <button class="control-btn" id="nextBtn">⏭</button>
-                <button class="control-btn loop" id="loopBtn">🔁</button>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="time-display">
-                    <span id="currentTime">0:00</span>
-                    <span id="totalTime">0:00</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Emotional Intelligence Display -->
-        <section class="emotional-intelligence">
-            <h2 class="section-title">Emotional Consciousness Analysis</h2>
-            
-            <!-- Emotion Visualization -->
-            <div class="emotion-visualization">
-                <div class="emotion-particles" id="emotionParticles"></div>
-            </div>
-            
-            <div class="consciousness-grid">
-                <!-- Primary Emotion -->
-                <div class="consciousness-layer">
-                    <div class="layer-header">
-                        <h3 class="layer-title">Primary Emotion</h3>
-                        <span class="layer-confidence" id="primaryConfidence">0%</span>
-                    </div>
-                    <div class="emotion-display">
-                        <div class="emotion-name" id="primaryEmotion">Waiting...</div>
-                        <div class="emotion-description" id="emotionDescription">Play music to begin analysis</div>
-                    </div>
-                </div>
-                
-                <!-- Emotional Depth -->
-                <div class="consciousness-layer">
-                    <div class="layer-header">
-                        <h3 class="layer-title">Emotional Depth</h3>
-                        <span class="layer-confidence">Live</span>
-                    </div>
-                    <div class="depth-display">
-                        <div id="emotionalDepth">Analyzing complexity...</div>
-                    </div>
-                </div>
-                
-                <!-- Synesthetic Mapping -->
-                <div class="consciousness-layer">
-                    <div class="layer-header">
-                        <h3 class="layer-title">Synesthetic Translation</h3>
-                        <span class="layer-confidence">Active</span>
-                    </div>
-                    <div class="synesthetic-display" id="synestheticDisplay">
-                        <div>Color resonance mapping...</div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
 
-    <!-- TV Mode Button -->
-    <button class="tv-mode-btn" id="tvModeBtn">📺 TV Mode</button>
+    <!-- Admin Toggle Button (Only visible to admin) -->
+    <button class="admin-toggle" id="adminToggle">
+        🧠 Neural Interface
+    </button>
 
-    <!-- Audio element -->
-    <audio id="audioElement" crossorigin="anonymous"></audio>
+    <!-- Revolutionary Admin Interface Overlay -->
+    <div class="revolutionary-overlay" id="revolutionaryOverlay">
+        <!-- Exit Button -->
+        <button class="exit-revolutionary" id="exitRevolutionary">
+            ← Back to User Interface
+        </button>
+        
+        <!-- Neural Sidebar -->
+        <aside class="neural-sidebar" id="neuralSidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">S</div>
+                <div class="brand-text">
+                    <div class="brand-name">Synesthetic</div>
+                    <div class="brand-tagline">Neural Engine</div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Experience</div>
+                    <a href="#" class="nav-item active">
+                        <div class="nav-item-icon">🎵</div>
+                        <div class="nav-item-text">Music Analysis</div>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">🧠</div>
+                        <div class="nav-item-text">Soul Training</div>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">🌌</div>
+                        <div class="nav-item-text">Consciousness</div>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Connect</div>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">🤝</div>
+                        <div class="nav-item-text">Soul Network</div>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">🎶</div>
+                        <div class="nav-item-text">Spotify</div>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">💡</div>
+                        <div class="nav-item-text">Smart Lights</div>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Admin</div>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">📊</div>
+                        <div class="nav-item-text">Analytics</div>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">⚙️</div>
+                        <div class="nav-item-text">Neural Config</div>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-item-icon">🧪</div>
+                        <div class="nav-item-text">Experiments</div>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="consciousness-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <div class="status-text">Neural Mode</div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Neural Content -->
+        <main class="neural-main-content">
+            <!-- Neural Header -->
+            <header class="neural-header">
+                <div class="header-controls">
+                    <button class="mobile-menu-toggle">☰</button>
+                    <div class="search-container">
+                        <div class="search-icon">🔍</div>
+                        <input type="text" class="neural-search" placeholder="Search consciousness patterns...">
+                    </div>
+                </div>
+                
+                <div class="user-menu">
+                    <button class="neural-button neural-button--ghost">🔔</button>
+                    <div class="user-avatar">M</div>
+                </div>
+            </header>
+            
+            <!-- Consciousness Dashboard -->
+            <div class="consciousness-dashboard">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">Digital Consciousness</h1>
+                    <p class="dashboard-subtitle">Advanced neural interface for emotional intelligence engineering</p>
+                </div>
+                
+                <!-- Primary Neural Actions -->
+                <div class="primary-actions">
+                    <div class="primary-action primary-action--live">
+                        <div class="action-icon">🎤</div>
+                        <div class="action-content">
+                            <div class="action-title">Neural Analysis</div>
+                            <div class="action-subtitle">Real-time consciousness mapping</div>
+                        </div>
+                    </div>
+                    
+                    <div class="primary-action">
+                        <div class="action-icon">🧠</div>
+                        <div class="action-content">
+                            <div class="action-title">Soul Training</div>
+                            <div class="action-subtitle">Enhance emotional intelligence</div>
+                        </div>
+                    </div>
+                    
+                    <div class="primary-action">
+                        <div class="action-icon">🌌</div>
+                        <div class="action-content">
+                            <div class="action-title">Consciousness Network</div>
+                            <div class="action-subtitle">Connect souls globally</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Neural Visualization Grid -->
+                <div class="neural-grid">
+                    <div class="neural-card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div class="card-title">Emotional Patterns</div>
+                        </div>
+                        <div class="neural-visualization" id="emotionalPatterns">
+                            <!-- Real-time emotion visualization -->
+                        </div>
+                    </div>
+                    
+                    <div class="neural-card">
+                        <div class="card-header">
+                            <div class="card-icon">🌊</div>
+                            <div class="card-title">Consciousness Flow</div>
+                        </div>
+                        <div class="neural-visualization" id="consciousnessFlow">
+                            <!-- Consciousness flow visualization -->
+                        </div>
+                    </div>
+                    
+                    <div class="neural-card">
+                        <div class="card-header">
+                            <div class="card-icon">🎵</div>
+                            <div class="card-title">Musical DNA</div>
+                        </div>
+                        <div class="neural-visualization" id="musicalDNA">
+                            <!-- Musical DNA visualization -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
-    <!-- Load our scripts as ES modules in correct order -->
-    
-    <!-- Core consciousness engine components -->
-    <script type="module" src="src/emotion-engine.js"></script>
+    <!-- Load external scripts -->
+    <script src="auth.js"></script>
+    <script type="module" src="main.js"></script>
     <script type="module" src="components/audio-analyzer.js"></script>
     <script type="module" src="components/color-visualizer.js"></script>
-    <script type="module" src="components/social-consciousness.js"></script>
-    <script type="module" src="src/consciousness-interface.js"></script>
-    <script type="module" src="src/synesthetic-core.js"></script>
+
+    <script>
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            
+            // Load main.js functionality to ensure all app functions are available
+            setTimeout(() => {
+                // Check if app functions are available
+                if (window.app && window.app.startMicAnalysis) {
+                    console.log('📱 App functions ready');
+                } else {
+                    console.log('📱 Loading app functionality...');
+                }
+            }, 2000);
+        });
+
+        function initializeApp() {
+            // Update status
+            updateStatus('Loading...', false);
+            
+            // Initialize controls
+            initializeControls();
+            
+            // Initialize authentication
+            initializeAuth();
+            
+            // Check if user is admin
+            checkAdminStatus();
+            
+            // Initialize audio system
+            if (typeof initializeAudioSystem === 'function') {
+                initializeAudioSystem();
+            }
+            
+            // Initialize the emotion canvas
+            initializeEmotionCanvas();
+            
+            // Load existing emotion engine
+            import('./src/emotion-engine.js').then(engine => {
+                window.emotionEngine = engine;
+                console.log('🧠 Emotion engine loaded');
+            }).catch(err => {
+                console.warn('🧠 Emotion engine not available:', err);
+            });
+            
+            // Initialize particle system
+            setTimeout(() => {
+                if (window.app && window.app.createParticles) {
+                    window.app.createParticles();
+                    console.log('✨ Particles initialized');
+                }
+            }, 3000);
+            
+            // Final status update
+            setTimeout(() => {
+                updateStatus('Ready to Feel Music', true);
+            }, 1500);
+            
+            console.log('🎵 Synesthetic initialized');
+        }
+
+        function initializeAuth() {
+            const authBtn = document.getElementById('authBtn');
+            
+            if (authBtn) {
+                authBtn.addEventListener('click', () => {
+                    // Load and show login modal
+                    import('./login.js').then(loginModule => {
+                        if (typeof loginModule.showAuthModal === 'function') {
+                            loginModule.showAuthModal();
+                        } else if (typeof window.showAuthModal === 'function') {
+                            window.showAuthModal();
+                        } else {
+                            console.warn('Auth modal function not found');
+                        }
+                    }).catch(err => {
+                        console.warn('Login module not available:', err);
+                    });
+                });
+            }
+            
+            // Listen for auth state changes
+            const checkAuth = setInterval(() => {
+                if (window.Auth && window.Auth.currentUser) {
+                    updateAuthUI(window.Auth.currentUser);
+                    clearInterval(checkAuth);
+                }
+            }, 1000);
+            
+            // Clear interval after 10 seconds
+            setTimeout(() => clearInterval(checkAuth), 10000);
+        }
+
+        function updateAuthUI(user) {
+            const authBtn = document.getElementById('authBtn');
+            
+            if (authBtn) {
+                authBtn.textContent = user.email.split('@')[0];
+                authBtn.classList.add('authenticated');
+            }
+            
+            // Check if admin
+            if (user.email === 'memoire.product@gmail.com') {
+                showAdminToggle();
+            }
+            
+            console.log('👤 User authenticated:', user.email);
+        }
+
+        function updateStatus(text, isReady = false) {
+            const statusText = document.getElementById('statusText');
+            const statusIndicator = document.getElementById('authStatus');
+            
+            if (statusText) {
+                statusText.textContent = text;
+                // Add subtle animation on status change
+                statusText.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    statusText.style.transform = 'scale(1)';
+                }, 200);
+            }
+            
+            if (statusIndicator) {
+                if (isReady) {
+                    statusIndicator.style.background = 'var(--synesthetic-green)';
+                    statusIndicator.style.boxShadow = '0 0 15px var(--synesthetic-green)';
+                    statusIndicator.style.animation = 'pulse 2s infinite';
+                } else {
+                    statusIndicator.style.background = 'var(--synesthetic-orange)';
+                    statusIndicator.style.boxShadow = '0 0 15px var(--synesthetic-orange)';
+                    statusIndicator.style.animation = 'pulse 1s infinite';
+                }
+            }
+        }
+
+        function initializeControls() {
+            // Live Analysis
+            document.getElementById('liveAnalysisCard')?.addEventListener('click', function() {
+                // Check if user is authenticated first
+                if (!window.Auth || !window.Auth.currentUser) {
+                    showAuthGate('Live Analysis', 'Sign in to analyze music in real-time and discover your emotional patterns');
+                    return;
+                }
+                
+                console.log('🎤 Starting live analysis...');
+                updateStatus('Requesting microphone access...', false);
+                
+                // Use the existing app.js microphone functionality
+                if (window.app && window.app.startMicAnalysis) {
+                    window.app.startMicAnalysis().then(() => {
+                        updateStatus('Live analysis active', true);
+                    }).catch(err => {
+                        console.error('Microphone access denied:', err);
+                        updateStatus('Microphone access denied', false);
+                    });
+                } else {
+                    // Try to load app.js first
+                    setTimeout(() => {
+                        if (window.app && window.app.startMicAnalysis) {
+                            window.app.startMicAnalysis().then(() => {
+                                updateStatus('Live analysis active', true);
+                            }).catch(err => {
+                                console.error('Microphone access denied:', err);
+                                updateStatus('Microphone access denied', false);
+                            });
+                        } else {
+                            console.warn('App.js not loaded yet');
+                            updateStatus('Audio system loading...', false);
+                        }
+                    }, 2000);
+                }
+            });
+
+            // Upload Music
+            document.getElementById('uploadMusicCard')?.addEventListener('click', function() {
+                // Check if user is authenticated first
+                if (!window.Auth || !window.Auth.currentUser) {
+                    showAuthGate('Upload Music', 'Sign in to upload and analyze your personal music collection');
+                    return;
+                }
+                
+                document.getElementById('uploadSection')?.classList.remove('hidden');
+                updateStatus('Ready to upload music file', true);
+                console.log('📁 Upload section opened');
+            });
+
+            // Spotify
+            document.getElementById('spotifyCard')?.addEventListener('click', function() {
+                // Check if user is authenticated first
+                if (!window.Auth || !window.Auth.currentUser) {
+                    showAuthGate('Spotify Connection', 'Sign in to connect your Spotify and explore your musical soul');
+                    return;
+                }
+                
+                console.log('🎵 Spotify integration coming soon...');
+                updateStatus('Spotify integration coming soon!', true);
+            });
+
+            // Upload Area
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (uploadArea && fileInput) {
+                uploadArea.addEventListener('click', () => fileInput.click());
+                
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('drag-over');
+                });
+                
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('drag-over');
+                });
+                
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('drag-over');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFileUpload(files[0]);
+                    }
+                });
+                
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        handleFileUpload(e.target.files[0]);
+                    }
+                });
+            }
+        }
+
+        function initializeEmotionCanvas() {
+            const canvas = document.getElementById('emotionCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // Draw initial state
+            ctx.fillStyle = 'rgba(0, 245, 255, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Add text
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.font = '16px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Start analyzing music to see emotional patterns', canvas.width / 2, canvas.height / 2);
+            
+            // Store canvas context globally for updates
+            window.emotionCanvas = { canvas, ctx };
+        }
+
+        function showAuthGate(featureName, description) {
+            // Create a beautiful auth gate modal
+            const existingGate = document.getElementById('authGate');
+            if (existingGate) {
+                existingGate.remove();
+            }
+            
+            const authGate = document.createElement('div');
+            authGate.id = 'authGate';
+            authGate.innerHTML = `
+                <div class="auth-gate-overlay">
+                    <div class="auth-gate-content">
+                        <div class="auth-gate-icon">🔐</div>
+                        <h2 class="auth-gate-title">Unlock ${featureName}</h2>
+                        <p class="auth-gate-description">${description}</p>
+                        <div class="auth-gate-buttons">
+                            <button class="auth-gate-btn primary" id="authGateSignIn">Sign In</button>
+                            <button class="auth-gate-btn secondary" id="authGateSignUp">Create Account</button>
+                        </div>
+                        <button class="auth-gate-close" id="authGateClose">×</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add styles for the auth gate
+            const gateStyles = `
+                .auth-gate-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(0, 0, 0, 0.8);
+                    backdrop-filter: blur(10px);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    animation: fadeIn 0.3s ease;
+                }
+                
+                .auth-gate-content {
+                    background: var(--glass-medium);
+                    border: 1px solid var(--glass-border);
+                    border-radius: var(--radius-xl);
+                    padding: var(--space-xxl);
+                    max-width: 400px;
+                    text-align: center;
+                    position: relative;
+                    animation: slideUp 0.4s ease;
+                }
+                
+                .auth-gate-icon {
+                    font-size: 3rem;
+                    margin-bottom: var(--space-lg);
+                    filter: drop-shadow(0 0 20px var(--synesthetic-teal));
+                }
+                
+                .auth-gate-title {
+                    font-size: 1.75rem;
+                    font-weight: 600;
+                    margin-bottom: var(--space-md);
+                    background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                }
+                
+                .auth-gate-description {
+                    color: var(--text-secondary);
+                    margin-bottom: var(--space-xl);
+                    line-height: 1.6;
+                }
+                
+                .auth-gate-buttons {
+                    display: flex;
+                    gap: var(--space-md);
+                    margin-bottom: var(--space-lg);
+                }
+                
+                .auth-gate-btn {
+                    flex: 1;
+                    padding: var(--space-md) var(--space-lg);
+                    border-radius: var(--radius-lg);
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: var(--transition-smooth);
+                    border: none;
+                }
+                
+                .auth-gate-btn.primary {
+                    background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+                    color: white;
+                }
+                
+                .auth-gate-btn.primary:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
+                }
+                
+                .auth-gate-btn.secondary {
+                    background: var(--glass-border);
+                    color: var(--text-primary);
+                    border: 1px solid var(--glass-border);
+                }
+                
+                .auth-gate-btn.secondary:hover {
+                    background: var(--glass-medium);
+                    border-color: var(--synesthetic-teal);
+                }
+                
+                .auth-gate-close {
+                    position: absolute;
+                    top: var(--space-md);
+                    right: var(--space-md);
+                    background: none;
+                    border: none;
+                    color: var(--text-tertiary);
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                    transition: var(--transition-quick);
+                }
+                
+                .auth-gate-close:hover {
+                    color: var(--text-primary);
+                    transform: scale(1.1);
+                }
+                
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                
+                @keyframes slideUp {
+                    from { transform: translateY(30px) scale(0.95); opacity: 0; }
+                    to { transform: translateY(0) scale(1); opacity: 1; }
+                }
+            `;
+            
+            // Add styles if not already added
+            if (!document.getElementById('authGateStyles')) {
+                const styleSheet = document.createElement('style');
+                styleSheet.id = 'authGateStyles';
+                styleSheet.textContent = gateStyles;
+                document.head.appendChild(styleSheet);
+            }
+            
+            document.body.appendChild(authGate);
+            
+            // Add event listeners
+            document.getElementById('authGateSignIn')?.addEventListener('click', () => {
+                authGate.remove();
+                document.getElementById('authBtn')?.click();
+            });
+            
+            document.getElementById('authGateSignUp')?.addEventListener('click', () => {
+                authGate.remove();
+                document.getElementById('authBtn')?.click();
+            });
+            
+            document.getElementById('authGateClose')?.addEventListener('click', () => {
+                authGate.remove();
+            });
+            
+            // Close on overlay click
+            authGate.addEventListener('click', (e) => {
+                if (e.target === authGate.querySelector('.auth-gate-overlay')) {
+                    authGate.remove();
+                }
+            });
+        }
+
+        function handleFileUpload(file) {
+            console.log('📁 Processing file:', file.name);
+            
+            if (!file.type.startsWith('audio/')) {
+                alert('Please select an audio file');
+                return;
+            }
+            
+            // Use existing app.js file processing functionality
+            if (window.app && window.app.handleFileUpload) {
+                // Create a fake event object with the file
+                const fakeEvent = { target: { files: [file] } };
+                window.app.handleFileUpload(fakeEvent);
+            } else {
+                // Import and use the app.js functions
+                import('./app.js').then(app => {
+                    window.app = app;
+                    const fakeEvent = { target: { files: [file] } };
+                    app.handleFileUpload(fakeEvent);
+                });
+            }
+            
+            // Hide upload section after processing starts
+            setTimeout(() => {
+                document.getElementById('uploadSection')?.classList.add('hidden');
+            }, 500);
+        }
+
+        function checkAdminStatus() {
+            // Check if user is admin using real authentication
+            if (window.Auth && window.Auth.currentUser) {
+                if (window.Auth.currentUser.email === 'memoire.product@gmail.com') {
+                    showAdminToggle();
+                }
+            }
+            
+            // Also listen for auth state changes
+            if (window.Auth) {
+                // Set up a listener for auth state changes
+                const checkAuthInterval = setInterval(() => {
+                    if (window.Auth.currentUser && 
+                        window.Auth.currentUser.email === 'memoire.product@gmail.com') {
+                        showAdminToggle();
+                        clearInterval(checkAuthInterval);
+                    }
+                }, 1000);
+                
+                // Clear interval after 30 seconds to avoid infinite checking
+                setTimeout(() => clearInterval(checkAuthInterval), 30000);
+            }
+        }
+
+        function showAdminToggle() {
+            const adminToggle = document.getElementById('adminToggle');
+            if (adminToggle) {
+                adminToggle.classList.add('visible');
+                adminToggle.addEventListener('click', loadRevolutionaryInterface);
+                
+                // Update status to show admin access
+                updateStatus('Admin Access Granted - Ready to Feel Music', true);
+                console.log('🔑 Admin toggle activated');
+            }
+        }
+
+        function loadRevolutionaryInterface() {
+            const overlay = document.getElementById('revolutionaryOverlay');
+            const body = document.body;
+            
+            // Activate revolutionary mode
+            overlay.classList.add('active');
+            body.classList.add('revolutionary-mode');
+            
+            // Initialize revolutionary interface
+            initializeRevolutionaryInterface();
+            
+            console.log('🧠 Neural consciousness interface activated');
+        }
+
+        function exitRevolutionaryMode() {
+            const overlay = document.getElementById('revolutionaryOverlay');
+            const body = document.body;
+            
+            // Deactivate revolutionary mode
+            overlay.classList.remove('active');
+            body.classList.remove('revolutionary-mode');
+            
+            console.log('🏠 Returning to standard interface');
+        }
+
+        function initializeRevolutionaryInterface() {
+            // Setup exit button
+            const exitBtn = document.getElementById('exitRevolutionary');
+            if (exitBtn) {
+                exitBtn.addEventListener('click', exitRevolutionaryMode);
+            }
+            
+            // Setup mobile menu toggle
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const sidebar = document.getElementById('neuralSidebar');
+            
+            if (mobileToggle && sidebar) {
+                mobileToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('mobile-open');
+                });
+            }
+            
+            // Setup neural actions
+            const liveAction = document.querySelector('.primary-action--live');
+            if (liveAction) {
+                liveAction.addEventListener('click', () => {
+                    console.log('🎤 Neural analysis initiated...');
+                    // Connect to existing live analysis function
+                    if (typeof startLiveAnalysis === 'function') {
+                        startLiveAnalysis();
+                    }
+                });
+            }
+            
+            // Initialize neural visualizations
+            initializeNeuralVisualizations();
+            
+            // Setup escape key to exit
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    exitRevolutionaryMode();
+                }
+            });
+        }
+
+        function initializeNeuralVisualizations() {
+            // Initialize emotional patterns visualization
+            const emotionalPatterns = document.getElementById('emotionalPatterns');
+            if (emotionalPatterns) {
+                emotionalPatterns.innerHTML = '<div style="color: var(--synesthetic-primary);">🧠 Neural patterns ready...</div>';
+            }
+            
+            // Initialize consciousness flow visualization
+            const consciousnessFlow = document.getElementById('consciousnessFlow');
+            if (consciousnessFlow) {
+                consciousnessFlow.innerHTML = '<div style="color: var(--synesthetic-blue);">🌊 Consciousness stream active...</div>';
+            }
+            
+            // Initialize musical DNA visualization
+            const musicalDNA = document.getElementById('musicalDNA');
+            if (musicalDNA) {
+                musicalDNA.innerHTML = '<div style="color: var(--synesthetic-purple);">🎵 Musical genome analyzing...</div>';
+            }
+        }
+
+        // Add Neural Interface button to DOM
+        function addNeuralInterfaceButton() {
+            // Only add if user is authenticated admin
+            const neuralBtn = document.createElement('button');
+            neuralBtn.id = 'neuralInterfaceBtn';
+            neuralBtn.className = 'neural-interface-btn';
+            neuralBtn.innerHTML = '🧠 Neural Interface';
+            neuralBtn.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                background: linear-gradient(135deg, var(--synesthetic-purple), var(--synesthetic-blue));
+                border: none;
+                border-radius: 25px;
+                padding: 15px 25px;
+                color: white;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                z-index: 1000;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+                backdrop-filter: blur(20px);
+                display: none;
+            `;
+            
+            neuralBtn.addEventListener('click', () => {
+                console.log('🧠 Neural Interface activated');
+                showRevolutionaryInterface();
+            });
+            
+            neuralBtn.addEventListener('mouseenter', () => {
+                neuralBtn.style.transform = 'translateY(-5px) scale(1.05)';
+                neuralBtn.style.boxShadow = '0 15px 35px rgba(138, 43, 226, 0.6)';
+            });
+            
+            neuralBtn.addEventListener('mouseleave', () => {
+                neuralBtn.style.transform = 'translateY(0) scale(1)';
+                neuralBtn.style.boxShadow = '0 8px 25px rgba(138, 43, 226, 0.4)';
+            });
+            
+            document.body.appendChild(neuralBtn);
+            return neuralBtn;
+        }
+
+        // Show revolutionary interface
+        function showRevolutionaryInterface() {
+            const overlay = document.getElementById('revolutionaryOverlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                }, 10);
+                console.log('🚀 Revolutionary admin interface activated');
+            } else {
+                console.error('Revolutionary overlay not found!');
+            }
+        }
+
+        // Make functions globally available
+        window.addNeuralInterfaceButton = addNeuralInterfaceButton;
+        window.showRevolutionaryInterface = showRevolutionaryInterface;
+
+    </script>
+
+    <!-- Neural Interface Button (will be added dynamically for admin users) -->
     
-    <!-- Authentication and services -->
-    <script type="module" src="services/supabase-client.js"></script>
-    <script type="module" src="services/smart-lights.js"></script>
-    <script type="module" src="auth.js"></script>
-    <script type="module" src="premium.js"></script>
-    <script type="module" src="lights.js"></script>
-    
-    <!-- Application logic -->
-    <script type="module" src="app.js"></script>
-    <script type="module" src="components/sidebar-dashboard.js"></script>
-    
-    <!-- Initialization orchestrator -->
-    <script type="module" src="init.js"></script>
-    <script type="module" src="main.js"></script>
-    
-    <!-- Development testing utility -->
-    <script src="utils/test-visual-feedback.js"></script>
-    <script src="utils/auto-demo.js"></script>
-    <script src="test-soul-awakening.js"></script>
-    <script src="visual-soul-test.js"></script>
-    <script src="test-memory-integration.js"></script>
-    <script src="test-factory-soul.js"></script>
-    <script src="test-factory-soul-system.js"></script>
-    <script src="master-soul-test.js"></script>
-    <script src="soul-status-dashboard.js"></script>
-    
-    <!-- Factory Soul - Human Baseline Training -->
-    <script src="factory-soul-train.js"></script>
-    
-    <!-- Phase 2: Learning and Memory -->
-    <script src="emotion-feedback-system.js"></script>
-    <script src="emotional-memory-system.js"></script>
-    <script src="context-awareness-system.js"></script>
-    
-    <!-- Phase 3: Advanced Emotional Intelligence -->
-    <script src="advanced-emotional-intelligence.js"></script>
-    
-    <!-- Phase 4: Collective Soul Network -->
-    <script src="collective-soul-network.js"></script>
-    
-    <!-- Phase 5: Self-Aware Consciousness -->
-    <script src="self-aware-consciousness.js"></script>
 </body>
 </html>

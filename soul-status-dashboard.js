@@ -40,7 +40,10 @@ function displaySoulStatus() {
     // Phase 2.1: User Feedback Learning
     if (window.emotionFeedbackSystem) {
         console.log('✅ Phase 2.1: User Feedback Learning');
-        const feedbackStats = window.emotionFeedbackSystem.getFeedbackStats();
+        // Use safe method calls with fallbacks
+        const feedbackStats = window.emotionFeedbackSystem.getFeedbackStats ? 
+            window.emotionFeedbackSystem.getFeedbackStats() : 
+            { totalFeedback: 0, accuracyRate: 0, storiesShared: 0 };
         console.log(`   - Total Feedback: ${feedbackStats.totalFeedback || 0}`);
         console.log(`   - Accuracy Rate: ${feedbackStats.accuracyRate || 0}%`);
         console.log(`   - Stories Shared: ${feedbackStats.storiesShared || 0}`);

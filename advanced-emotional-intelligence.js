@@ -48,7 +48,8 @@ class AdvancedEmotionalIntelligence {
             
         // Get emotional memory
         const memoryData = window.emotionalMemorySystem ? {
-            recentJourney: window.emotionalMemorySystem.getRecentEmotionalJourney(10),
+            recentJourney: window.emotionalMemorySystem.getEmotionalJourney ? 
+                window.emotionalMemorySystem.getEmotionalJourney() : [],
             emotionalDNA: window.emotionalMemorySystem.emotionalDNA
         } : null;
 
@@ -465,6 +466,100 @@ class AdvancedEmotionalIntelligence {
     setupEmotionalPrediction() {}
     setupComplexEmotionHandling() {}
     setupEmpathySystem() {}
+    
+    /**
+     * Learn emotional triggers from user's emotional history
+     */
+    learnEmotionalTriggers(emotionalHistory) {
+        const triggers = {
+            audioFeatures: {},
+            timeOfDay: {},
+            contextual: {},
+            patterns: []
+        };
+
+        // Analyze audio feature triggers
+        emotionalHistory.forEach(experience => {
+            const emotion = experience.emotion?.primary || experience.emotion;
+            const features = experience.audioFeatures;
+            
+            if (emotion && features) {
+                if (!triggers.audioFeatures[emotion]) {
+                    triggers.audioFeatures[emotion] = {
+                        avgEnergy: 0,
+                        avgTempo: 0,
+                        avgSpectralCentroid: 0,
+                        count: 0
+                    };
+                }
+                
+                const trigger = triggers.audioFeatures[emotion];
+                trigger.avgEnergy = (trigger.avgEnergy * trigger.count + (features.energy || 0.5)) / (trigger.count + 1);
+                trigger.avgTempo = (trigger.avgTempo * trigger.count + (features.tempo || 120)) / (trigger.count + 1);
+                trigger.avgSpectralCentroid = (trigger.avgSpectralCentroid * trigger.count + (features.spectralCentroid || 1000)) / (trigger.count + 1);
+                trigger.count++;
+            }
+        });
+
+        // Analyze time-based triggers
+        emotionalHistory.forEach(experience => {
+            const emotion = experience.emotion?.primary || experience.emotion;
+            const hour = new Date(experience.timestamp).getHours();
+            const timeSlot = hour < 6 ? 'night' : hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+            
+            if (!triggers.timeOfDay[timeSlot]) triggers.timeOfDay[timeSlot] = {};
+            if (!triggers.timeOfDay[timeSlot][emotion]) triggers.timeOfDay[timeSlot][emotion] = 0;
+            triggers.timeOfDay[timeSlot][emotion]++;
+        });
+
+        return triggers;
+    }
+
+    /**
+     * Learn emotional preferences from user feedback
+     */
+    learnEmotionalPreferences(userFeedback) {
+        const preferences = {
+            favoriteEmotions: {},
+            correctionPatterns: {},
+            feedbackStyle: 'neutral'
+        };
+
+        if (!userFeedback || userFeedback.length === 0) {
+            return preferences;
+        }
+
+        // Analyze correction patterns
+        userFeedback.forEach(feedback => {
+            const detected = feedback.detectedEmotion;
+            const corrected = feedback.correctedEmotion;
+            
+            if (detected && corrected && detected !== corrected) {
+                const pattern = `${detected}->${corrected}`;
+                preferences.correctionPatterns[pattern] = (preferences.correctionPatterns[pattern] || 0) + 1;
+            }
+            
+            // Track favorite emotions (what users correct TO)
+            if (corrected) {
+                preferences.favoriteEmotions[corrected] = (preferences.favoriteEmotions[corrected] || 0) + 1;
+            }
+        });
+
+        // Determine feedback style based on correction frequency
+        const totalFeedback = userFeedback.length;
+        const corrections = userFeedback.filter(f => !f.wasCorrect).length;
+        const correctionRate = corrections / totalFeedback;
+        
+        if (correctionRate > 0.5) {
+            preferences.feedbackStyle = 'frequent_corrector';
+        } else if (correctionRate > 0.2) {
+            preferences.feedbackStyle = 'occasional_corrector';
+        } else {
+            preferences.feedbackStyle = 'trusting';
+        }
+
+        return preferences;
+    }
 }
 
 // Initialize Phase 3

@@ -561,6 +561,13 @@ class EmotionFeedbackSystem {
             improvements: total - correct
         };
     }
+
+    /**
+     * Get feedback statistics (alias for getLearningStats for compatibility)
+     */
+    getFeedbackStats() {
+        return this.getLearningStats();
+    }
 }
 
 // Add slideIn animation

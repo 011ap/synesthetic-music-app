@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Synesthetic - Digital Consciousness Engine</title>
+    <meta name="description" content="Revolutionary music emotion analysis with synesthetic experiences. Feel music, share souls.">
+    
+    <!-- Add our custom styles -->
+    <link rel="stylesheet" href="auth-styles.css">
+    
+    <style>
+        /* === CSS VARIABLES FOR EMOTIONAL THEMES === */
+        :root {
+            /* Dark theme - matching your screenshot */
+            --bg-dark: #0f0f14;
+            --bg-darker: #08080c;
+            --glass-overlay: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            
+            /* Synesthetic Color Palette - Vibrant for contrast */
+            --synesthetic-red: #ff006e;
+            --synesthetic-blue: #0096ff;
+            --synesthetic-teal: #00f5ff;
+            --synesthetic-green: #00ff88;
+            --synesthetic-purple: #ff00ff;
+            --synesthetic-gold: #ffd700;
+            --synesthetic-orange: #ff6b00;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+            
+            /* Transitions */
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-quick: all 0.2s ease;
+            
+            /* Glass Effect */
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 40px rgba(0, 245, 255, 0.5);
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 1rem;
+            --radius-lg: 1.5rem;
+            --radius-full: 9999px;
+        }
+
+        /* === RESET AND BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        /* === ANIMATED BACKGROUND - SUBTLE FOR DARK THEME === */
+        .emotional-background {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: -1;
+            opacity: 0.3;
+            background: radial-gradient(circle at 20% 50%, var(--synesthetic-red), transparent 40%),
+                        radial-gradient(circle at 80% 80%, var(--synesthetic-blue), transparent 40%),
+                        radial-gradient(circle at 40% 20%, var(--synesthetic-teal), transparent 40%);
+            filter: blur(120px);
+            animation: emotionalShift 20s ease-in-out infinite;
+            transform: scale(1.5);
+        }
+
+        /* TV Mode - Extra bright for living rooms */
+        body.tv-mode .emotional-background {
+            opacity: 0.8;
+            filter: blur(80px) saturate(2);
+            transform: scale(2);
+        }
+
+        @keyframes emotionalShift {
+            0%, 100% { transform: scale(1.5) rotate(0deg); }
+            33% { transform: scale(2) rotate(120deg); }
+            66% { transform: scale(1.3) rotate(240deg); }
+        }
+
+        /* === CONTAINER === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* === HEADER - ELEGANT DARK === */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xxl) 0 var(--spacing-xl);
+            position: relative;
+        }
+
+        .logo {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 200;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoShift 15s ease-in-out infinite;
+        }
+
+        @keyframes logoShift {
+            0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+            50% { filter: hue-rotate(20deg) brightness(1.1); }
+        }
+
+        .tagline {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--text-tertiary);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        /* === STATUS INDICATOR === */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xs) var(--spacing-lg);
+            background: var(--glass-overlay);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--synesthetic-red);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--synesthetic-red);
+        }
+
+        .status-indicator.active {
+            background: var(--synesthetic-green);
+            box-shadow: 0 0 15px var(--synesthetic-green);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        /* === PRIMARY CONTROLS - MINIMAL ICON STYLE === */
+        .primary-controls {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .control-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .icon-button {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-button:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.2);
+        }
+
+        .icon-button.active {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 150, 255, 0.15));
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 25px rgba(0, 245, 255, 0.3);
+        }
+
+        .icon-button .icon {
+            font-size: 1.8rem;
+            transition: transform var(--transition-quick);
+        }
+
+        .icon-button:hover .icon {
+            transform: scale(1.1);
+        }
+
+        .icon-button .label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Tooltip */
+        .icon-button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--transition-quick);
+        }
+
+        .icon-button:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        /* === AUDIO PLAYER - DARK ELEGANT === */
+        .audio-player {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            display: none;
+            position: relative;
+        }
+
+        .audio-player.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .track-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .close-player {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: var(--radius-full);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-quick);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+
+        .close-player:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--text-primary);
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-full);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-quick);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--synesthetic-teal);
+            transform: scale(1.1);
+        }
+
+        .control-btn.play-pause {
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+            background: rgba(0, 245, 255, 0.08);
+        }
+
+        .control-btn.loop.active {
+            color: var(--synesthetic-teal);
+            background: rgba(0, 245, 255, 0.1);
+        }
+
+        .progress-container {
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px var(--synesthetic-teal);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* === EMOTIONAL INTELLIGENCE DISPLAY === */
+        .emotional-intelligence {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .section-title {
+            font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+            font-weight: 200;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        /* === EMOTION VISUALIZATION - DARK ELEGANT === */
+        .emotion-visualization {
+            position: relative;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .emotion-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--synesthetic-teal);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+            box-shadow: 0 0 6px currentColor;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1); 
+                opacity: 0;
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            50% { 
+                transform: translate(100px, -100px) scale(1.5);
+                filter: blur(1px);
+            }
+        }
+
+        /* === CONSCIOUSNESS GRID === */
+        .consciousness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .consciousness-layer {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .consciousness-layer:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glass);
+            border-color: rgba(0, 245, 255, 0.2);
+        }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .layer-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .layer-confidence {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            background: rgba(0, 245, 255, 0.08);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        .emotion-name {
+            font-size: 1.3rem;
+            font-weight: 300;
+            margin-bottom: var(--spacing-xs);
+            background: linear-gradient(135deg, var(--synesthetic-teal), var(--synesthetic-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .emotion-description {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            line-height: 1.4;
+        }
+
+        /* === UPLOAD AREA === */
+        .upload-section {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .upload-area {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 2px dashed rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: all var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(0, 245, 255, 0.3);
+            background: rgba(0, 245, 255, 0.02);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--synesthetic-blue);
+            background: rgba(0, 150, 255, 0.05);
+            transform: scale(1.01);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.7;
+        }
+
+        .upload-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .upload-subtext {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* === TV MODE BUTTON === */
+        .tv-mode-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            padding: var(--spacing-xs) var(--spacing-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            z-index: 100;
+            font-size: 0.85rem;
+        }
+
+        .tv-mode-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .tv-mode-btn.active {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(0, 150, 255, 0.2));
+            color: var(--synesthetic-teal);
+            border-color: var(--synesthetic-teal);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
+        /* === SIDEBAR DASHBOARD === */
+        .sidebar-dashboard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 340px;
+            max-width: 90vw;
+            height: 100vh;
+            background: rgba(20, 24, 32, 0.98);
+            box-shadow: 4px 0 32px rgba(0,0,0,0.45);
+            border-right: 1.5px solid var(--glass-border);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            transform: translateX(-100%);
+        }
+        .sidebar-dashboard:not(.hidden) {
+            transform: translateX(0);
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--synesthetic-teal);
+            letter-spacing: 0.04em;
+        }
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: var(--radius-full);
+            padding: 0.2em 0.6em;
+            transition: background 0.2s;
+        }
+        .sidebar-close:hover {
+            background: rgba(0,245,255,0.08);
+            color: var(--synesthetic-teal);
+        }
+        .sidebar-sections {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+        }
+        .sidebar-section {
+            margin-bottom: var(--spacing-lg);
+            background: rgba(255,255,255,0.01);
+            border-radius: var(--radius-md);
+            box-shadow: 0 2px 12px rgba(0,245,255,0.03);
+        }
+        .section-toggle {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            transition: background 0.2s;
+        }
+        .section-toggle:hover {
+            background: rgba(0,245,255,0.07);
+        }
+        .section-icon {
+            font-size: 1.3em;
+        }
+        .section-label {
+            flex: 1;
+            text-align: left;
+        }
+        .section-content {
+            padding: var(--spacing-md);
+            background: rgba(255,255,255,0.02);
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            border-top: 1px solid var(--glass-border);
+        }
+        .section-placeholder {
+            color: var(--text-tertiary);
+            font-size: 0.95em;
+            text-align: center;
+            padding: 1.5em 0;
+        }
+        /* Sidebar Toggle Button */
+        .sidebar-toggle-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 210;
+            background: rgba(0,245,255,0.10);
+            border: none;
+            border-radius: var(--radius-full);
+            color: var(--synesthetic-teal);
+            font-size: 1.6rem;
+            padding: 0.4em 0.8em;
+            box-shadow: 0 2px 12px rgba(0,245,255,0.08);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .sidebar-toggle-btn:hover {
+            background: rgba(0,245,255,0.18);
+            transform: scale(1.08);
+        }
+        @media (max-width: 768px) {
+            .sidebar-dashboard {
+                width: 95vw;
+                min-width: 0;
+            }
+            .sidebar-toggle-btn {
+                top: 1rem;
+                left: 1rem;
+                font-size: 1.2rem;
+                padding: 0.3em 0.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Dashboard (God/User Tools) -->
+    <aside class="sidebar-dashboard hidden" id="sidebarDashboard">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Soul & God Tools</span>
+            <button class="sidebar-close" id="sidebarCloseBtn" title="Close">×</button>
+        </div>
+        <nav class="sidebar-sections">
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">🧠</span>
+                    <span class="section-label">Train My Soul</span>
+                </button>
+                <div class="section-content hidden">
+                    <form id="trainSoulForm" style="display: flex; flex-direction: column; gap: 0.7em;">
+                        <label style="font-size:0.95em;">Emotion Label
+                            <input type="text" id="emotionLabelInput" placeholder="e.g. joy, sadness" required style="width:100%;margin-top:0.3em;" />
+                        </label>
+                        <label style="font-size:0.95em;">Audio Features (JSON)
+                            <textarea id="featuresInput" placeholder='{"bass":..., "mid":..., ...}' rows="3" required style="width:100%;margin-top:0.3em;"></textarea>
+                        </label>
+                        <button type="submit" id="submitTrainingDataBtn" style="background:var(--synesthetic-teal);color:#111;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Add Training Example</button>
+                    </form>
+                    <button id="trainSoulBtn" style="margin-top:1em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.6em 1.2em;border-radius:0.7em;font-weight:500;cursor:pointer;">Train Neural Net</button>
+                    <button id="downloadTrainingDataBtn" style="margin-top:0.7em;background:var(--synesthetic-gold);color:#222;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Download My Training Data</button>
+                    <button id="clearTrainingDataBtn" style="margin-top:0.5em;background:var(--synesthetic-red);color:#fff;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Clear Training Data</button>
+                    <button id="importTrainingDataBtn" style="margin-top:0.5em;background:var(--synesthetic-blue);color:#fff;border:none;padding:0.5em 1.1em;border-radius:0.7em;font-weight:500;cursor:pointer;">Import Training Data</button>
+                    <input type="file" id="importTrainingDataInput" accept="application/json" style="display:none;" />
+                    <div id="trainSoulStatus" style="margin-top:0.7em;font-size:0.95em;color:var(--text-tertiary);"></div>
+                    
+                    <!-- Training Examples List Preview -->
+                    <div id="trainingExamplesList" style="max-height:120px;overflow-y:auto;margin:0.7em 0 0.5em 0;padding:0.5em 0 0.5em 0.2em;background:rgba(0,245,255,0.03);border-radius:0.5em;font-size:0.93em;color:var(--text-secondary);"></div>
+                </div>
+            </section>
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">🗂️</span>
+                    <span class="section-label">Soul Management</span>
+                </button>
+                <div class="section-content hidden">
+                    <div class="section-placeholder">(Soul management tools coming soon)</div>
+                </div>
+            </section>
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">🤝</span>
+                    <span class="section-label">Contribute Data</span>
+                </button>
+                <div class="section-content hidden">
+                    <div class="section-placeholder">(Crowdsourcing UI coming soon)</div>
+                </div>
+            </section>
+            <section class="sidebar-section">
+                <button class="section-toggle" title="Expand/Collapse">
+                    <span class="section-icon">👁️‍🗨️</span>
+                    <span class="section-label">God Review</span>
+                </button>
+                <div class="section-content hidden">
+                    <div class="section-placeholder">(God review tools coming soon)</div>
+                </div>
+            </section>
+        </nav>
+    </aside>
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Open Soul & God Tools">☰</button>
+
+    <!-- Animated Background -->
+    <div class="emotional-background"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">Synesthetic</h1>
+            <p class="tagline">Digital Consciousness Through Musical Emotion</p>
+        </header>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">Ready to Feel Music</span>
+        </div>
+
+        <!-- Primary Controls - Minimal Icon Style -->
+        <section class="primary-controls">
+            <div class="control-grid">
+                <button class="icon-button" id="micButton" data-tooltip="Analyze room audio in real-time">
+                    <span class="icon">🎤</span>
+                    <span class="label">Live</span>
+                </button>
+                
+                <button class="icon-button" id="uploadButton" data-tooltip="Upload and analyze your music files">
+                    <span class="icon">📁</span>
+                    <span class="label">Upload</span>
+                </button>
+                
+                <button class="icon-button" id="spotifyButton" data-tooltip="Connect to Spotify (Coming Soon)">
+                    <span class="icon">🎵</span>
+                    <span class="label">Spotify</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Upload Area -->
+        <section class="upload-section hidden" id="uploadSection">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">🎵</div>
+                <div class="upload-text">Drop your music file here or click to browse</div>
+                <div class="upload-subtext">Supported formats: MP3, WAV, M4A</div>
+                <input type="file" id="fileInput" accept="audio/*">
+            </div>
+        </section>
+
+        <!-- Enhanced Audio Player -->
+        <div class="audio-player" id="audioPlayer">
+            <div class="player-header">
+                <div class="player-info">
+                    <div class="track-name" id="trackName">No track loaded</div>
+                </div>
+                <button class="close-player" id="closePlayer">×</button>
+            </div>
+            <div class="player-controls">
+                <button class="control-btn" id="prevBtn">⏮</button>
+                <button class="control-btn play-pause" id="playPauseBtn">▶</button>
+                <button class="control-btn" id="nextBtn">⏭</button>
+                <button class="control-btn loop" id="loopBtn">🔁</button>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emotional Intelligence Display -->
+        <section class="emotional-intelligence">
+            <h2 class="section-title">Emotional Consciousness Analysis</h2>
+            
+            <!-- Emotion Visualization -->
+            <div class="emotion-visualization">
+                <div class="emotion-particles" id="emotionParticles"></div>
+            </div>
+            
+            <div class="consciousness-grid">
+                <!-- Primary Emotion -->
+                <div class="consciousness-layer">
+                    <div class="layer-header">
+                        <h3 class="layer-title">Primary Emotion</h3>
+                        <span class="layer-confidence" id="primaryConfidence">0%</span>
+                    </div>
+                    <div class="emotion-display">
+                        <div class="emotion-name" id="primaryEmotion">Waiting...</div>
+                        <div class="emotion-description" id="emotionDescription">Play music to begin analysis</div>
+                    </div>
+                </div>
+                
+                <!-- Emotional Depth -->
+                <div class="consciousness-layer">
+                    <div class="layer-header">
+                        <h3 class="layer-title">Emotional Depth</h3>
+                        <span class="layer-confidence">Live</span>
+                    </div>
+                    <div class="depth-display">
+                        <div id="emotionalDepth">Analyzing complexity...</div>
+                    </div>
+                </div>
+                
+                <!-- Synesthetic Mapping -->
+                <div class="consciousness-layer">
+                    <div class="layer-header">
+                        <h3 class="layer-title">Synesthetic Translation</h3>
+                        <span class="layer-confidence">Active</span>
+                    </div>
+                    <div class="synesthetic-display" id="synestheticDisplay">
+                        <div>Color resonance mapping...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- TV Mode Button (Creator/Debug feature) -->
+    <button class="tv-mode-btn test-element" id="tvModeBtn">📺 TV Mode</button>
+
+    <!-- Audio element -->
+    <audio id="audioElement" crossorigin="anonymous"></audio>
+
+    <!-- Load our scripts as ES modules in correct order -->
+    
+    <!-- Core consciousness engine components -->
+    <script type="module" src="src/emotion-engine.js"></script>
+    <script type="module" src="components/audio-analyzer.js"></script>
+    <script type="module" src="components/color-visualizer.js"></script>
+    <script type="module" src="components/social-consciousness.js"></script>
+    <script type="module" src="src/consciousness-interface.js"></script>
+    <script type="module" src="src/synesthetic-core.js"></script>
+    
+    <!-- Authentication and services -->
+    <script type="module" src="services/supabase-client.js"></script>
+    <script type="module" src="services/smart-lights.js"></script>
+    <script type="module" src="auth.js"></script>
+    <script type="module" src="premium.js"></script>
+    <script type="module" src="lights.js"></script>
+    
+    <!-- Application logic -->
+    <script type="module" src="app.js"></script>
+    <script type="module" src="components/sidebar-dashboard.js"></script>
+    
+    <!-- Initialization orchestrator -->
+    <script type="module" src="init.js"></script>
+    <script type="module" src="main.js"></script>
+    
+    <!-- Development testing utility -->
+    <script src="utils/test-visual-feedback.js"></script>
+    <script src="utils/auto-demo.js"></script>
+    <script src="test-soul-awakening.js"></script>
+    <script src="visual-soul-test.js"></script>
+    <script src="test-memory-integration.js"></script>
+    <script src="test-factory-soul.js"></script>
+    <script src="test-factory-soul-system.js"></script>
+    <script src="master-soul-test.js"></script>
+    <script src="unified-test-dashboard.js"></script>
+    <script src="soul-status-dashboard.js"></script>
+    
+    <!-- Factory Soul - Human Baseline Training -->
+    <script src="factory-soul-train.js"></script>
+    <script src="neural-factory-soul-trainer.js"></script>
+    <script src="soul-personality-visualizer.js"></script>
+    <script src="personality-theme-engine.js"></script>
+    
+    <!-- Phase 2: Learning and Memory -->
+    <script src="emotion-feedback-system.js"></script>
+    <script src="emotional-memory-system.js"></script>
+    <script src="context-awareness-system.js"></script>
+    
+    <!-- Phase 3: Advanced Emotional Intelligence -->
+    <script src="advanced-emotional-intelligence.js"></script>
+    
+    <!-- Phase 4: Collective Soul Network -->
+    <script src="collective-soul-network.js"></script>
+    
+    <!-- Phase 5: Self-Aware Consciousness -->
+    <script src="self-aware-consciousness.js"></script>
+</body>
+</html>

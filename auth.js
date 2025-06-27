@@ -31,6 +31,34 @@ class AuthManager {
     constructor() {
         this.currentUser = null;
         this.emotionalProfile = null;
+        
+        // Admin configuration
+        this.adminEmails = ['memoire.product@gmail.com'];
+        this.userRole = 'guest'; // 'guest', 'user', 'admin'
+    }
+    
+    /**
+     * Determine user role based on email
+     */
+    determineUserRole(email) {
+        if (this.adminEmails.includes(email.toLowerCase())) {
+            return 'admin';
+        }
+        return 'user';
+    }
+    
+    /**
+     * Check if current user is admin
+     */
+    isAdmin() {
+        return this.userRole === 'admin';
+    }
+    
+    /**
+     * Get current user role
+     */
+    getUserRole() {
+        return this.userRole;
     }
     
     // Sign up new user - Updated to work with automatic profile creation
@@ -48,6 +76,9 @@ class AuthManager {
             });
             
             if (authError) throw authError;
+            
+            // Set user role based on email
+            this.userRole = this.determineUserRole(email);
             
             // Wait for profile to be created by trigger
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -107,6 +138,9 @@ class AuthManager {
             });
             
             if (error) throw error;
+            
+            // Set user role based on email
+            this.userRole = this.determineUserRole(email);
             
             // Get user profile
             const { data: profile } = await supabase
@@ -552,6 +586,156 @@ class AuthManager {
         import('./login.js').then(mod => {
             mod.createUserDashboard();
             mod.updateUIForUser(this.currentUser);
+            
+            // Add admin toggle if user is admin
+            if (this.isAdmin()) {
+                this.addAdminModeToggle();
+            }
+        });
+    }
+    
+    /**
+     * Add admin mode toggle for admin users
+     */
+    addAdminModeToggle() {
+        // Don't create a separate toggle - use the user dropdown instead
+        console.log('🔧 Admin toggle integration with user dropdown');
+        
+        // Add event listeners to dropdown buttons when they exist
+        const setupDropdownListeners = () => {
+            const userModeBtn = document.getElementById('userModeBtn');
+            const adminModeBtn = document.getElementById('adminModeBtn');
+            
+            if (userModeBtn && adminModeBtn) {
+                // Remove any existing listeners
+                userModeBtn.replaceWith(userModeBtn.cloneNode(true));
+                adminModeBtn.replaceWith(adminModeBtn.cloneNode(true));
+                
+                // Get fresh references
+                const newUserModeBtn = document.getElementById('userModeBtn');
+                const newAdminModeBtn = document.getElementById('adminModeBtn');
+                
+                newUserModeBtn.addEventListener('click', () => {
+                    this.switchToUserMode();
+                    // Close dropdown
+                    const dropdown = document.getElementById('userDropdown');
+                    if (dropdown) dropdown.classList.remove('show');
+                });
+                
+                newAdminModeBtn.addEventListener('click', () => {
+                    this.switchToAdminMode();
+                    // Close dropdown
+                    const dropdown = document.getElementById('userDropdown');
+                    if (dropdown) dropdown.classList.remove('show');
+                });
+                
+                // Start in user mode by default
+                this.switchToUserMode();
+                console.log('🔧 Admin toggle buttons connected to dropdown');
+            } else {
+                // Retry after a short delay
+                setTimeout(setupDropdownListeners, 500);
+            }
+        };
+        
+        setupDropdownListeners();
+    }
+    
+    /**
+     * Switch to user mode (clean interface)
+     */
+    switchToUserMode() {
+        // Update dropdown button states
+        const userBtn = document.getElementById('userModeBtn');
+        const adminBtn = document.getElementById('adminModeBtn');
+        
+        if (userBtn && adminBtn) {
+            userBtn.style.cssText = 'background: rgba(255, 215, 0, 0.2); border: none; color: #ffd700; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; width: 100%;';
+            adminBtn.style.cssText = 'background: none; border: none; color: rgba(255, 255, 255, 0.7); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; width: 100%;';
+        }
+        
+        // Hide revolutionary overlay
+        const overlay = document.getElementById('revolutionaryOverlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+            overlay.style.opacity = '0';
+        }
+        
+        // Hide all test/debug elements
+        this.hideTestElements();
+        
+        console.log('👤 Switched to User Mode - Clean interface active');
+    }
+    
+    /**
+     * Switch to admin mode (full access)
+     */
+    switchToAdminMode() {
+        // Update dropdown button states  
+        const userBtn = document.getElementById('userModeBtn');
+        const adminBtn = document.getElementById('adminModeBtn');
+        
+        if (userBtn && adminBtn) {
+            adminBtn.style.cssText = 'background: rgba(255, 215, 0, 0.2); border: none; color: #ffd700; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; width: 100%;';
+            userBtn.style.cssText = 'background: none; border: none; color: rgba(255, 255, 255, 0.7); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; width: 100%;';
+        }
+        
+        // Show revolutionary overlay
+        const overlay = document.getElementById('revolutionaryOverlay');
+        if (overlay) {
+            overlay.style.display = 'block';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+            }, 10);
+        }
+        
+        // Show all test/debug elements
+        this.showTestElements();
+        
+        console.log('👑 Switched to Admin Mode - Full access active');
+    }
+    
+    /**
+     * Hide test/debug elements for clean user experience
+     */
+    hideTestElements() {
+        const testSelectors = [
+            '[id*="test"]',
+            '[id*="Test"]',
+            '[class*="test"]',
+            '#tvModeBtn',
+            '[id*="debug"]',
+            '[id*="Debug"]'
+        ];
+
+        testSelectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                if (el.id !== 'statusText' && el.id !== 'statusIndicator') {
+                    el.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    /**
+     * Show test/debug elements for admin access
+     */
+    showTestElements() {
+        const testSelectors = [
+            '[id*="test"]',
+            '[id*="Test"]',
+            '[class*="test"]',
+            '#tvModeBtn',
+            '[id*="debug"]',
+            '[id*="Debug"]'
+        ];
+
+        testSelectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                el.style.display = '';
+            });
         });
     }
     

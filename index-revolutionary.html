@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Synesthetic - Digital Consciousness Engine</title>
+    <meta name="description" content="Revolutionary music emotion analysis with synesthetic experiences. Feel music, share souls.">
+    
+    <!-- Revolutionary Design System -->
+    <link rel="stylesheet" href="assets/redesign-system.css">
+    <link rel="stylesheet" href="auth-styles.css">
+    
+    <style>
+        /* === NEURAL SIDEBAR SYSTEM === */
+        .neural-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 72px;
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            z-index: var(--z-overlay);
+            transition: width var(--transition-smooth);
+            overflow: hidden;
+        }
+        
+        .neural-sidebar:hover,
+        .neural-sidebar.expanded {
+            width: 280px;
+        }
+        
+        .sidebar-brand {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-md);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--synesthetic-primary);
+            border-radius: var(--radius-md);
+            font-size: 1.5rem;
+            color: var(--neural-void);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .brand-text {
+            margin-left: var(--space-md);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .neural-sidebar:hover .brand-text,
+        .neural-sidebar.expanded .brand-text {
+            opacity: 1;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: -2px;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: var(--space-md) 0;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-quaternary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 var(--space-md);
+            margin-bottom: var(--space-sm);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .neural-sidebar:hover .nav-section-title,
+        .neural-sidebar.expanded .nav-section-title {
+            opacity: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-quick);
+            border-radius: 0;
+            margin: 0 var(--space-sm);
+            border-radius: var(--radius-md);
+        }
+        
+        .nav-item:hover {
+            background: var(--glass-light);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--synesthetic-primary);
+            color: var(--neural-void);
+            box-shadow: var(--shadow-neural);
+        }
+        
+        .nav-item-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-text {
+            opacity: 0;
+            margin-left: var(--space-sm);
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .neural-sidebar:hover .nav-item-text,
+        .neural-sidebar.expanded .nav-item-text {
+            opacity: 1;
+        }
+        
+        .consciousness-status {
+            padding: var(--space-md);
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: var(--synesthetic-tertiary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+        
+        .neural-sidebar:hover .status-text,
+        .neural-sidebar.expanded .status-text {
+            opacity: 1;
+        }
+        
+        /* === MAIN CONTENT AREA === */
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+            background: var(--neural-void);
+            transition: margin-left var(--transition-smooth);
+        }
+        
+        /* === NEURAL HEADER === */
+        .neural-header {
+            height: 64px;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-lg);
+            position: sticky;
+            top: 0;
+            z-index: var(--z-floating);
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .search-container {
+            position: relative;
+            margin-right: var(--space-md);
+        }
+        
+        .neural-search {
+            width: 300px;
+            height: 40px;
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            padding: 0 var(--space-md) 0 var(--space-xl);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all var(--transition-quick);
+        }
+        
+        .neural-search:focus {
+            outline: none;
+            border-color: var(--synesthetic-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--synesthetic-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--neural-void);
+        }
+        
+        /* === CONSCIOUSNESS DASHBOARD === */
+        .consciousness-dashboard {
+            padding: var(--space-xl);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .dashboard-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        
+        /* === PRIMARY CONTROLS === */
+        .primary-controls {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .primary-action {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            height: 120px;
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all var(--transition-neural);
+            cursor: pointer;
+        }
+        
+        .primary-action:hover {
+            background: var(--glass-medium);
+            border-color: var(--synesthetic-primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .primary-action--live {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 51, 102, 0.05));
+            border-color: var(--synesthetic-secondary);
+        }
+        
+        .primary-action--live:hover {
+            border-color: var(--synesthetic-secondary);
+            box-shadow: var(--shadow-soul);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+            color: var(--synesthetic-primary);
+        }
+        
+        .primary-action--live .action-icon {
+            color: var(--synesthetic-secondary);
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .action-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        /* === VISUALIZATION GRID === */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .neural-visualizer {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualizer-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .visualizer-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .emotion-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--neural-deep);
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--synesthetic-primary) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: emotionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        
+        /* === CONSCIOUSNESS PANEL === */
+        .consciousness-panel {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        
+        .consciousness-card {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: all var(--transition-neural);
+        }
+        
+        .consciousness-card:hover {
+            background: var(--glass-medium);
+            border-color: var(--synesthetic-primary);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--synesthetic-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--neural-void);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .emotion-display {
+            text-align: center;
+            padding: var(--space-md) 0;
+        }
+        
+        .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--synesthetic-primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .emotion-confidence {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 1024px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .neural-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .neural-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .neural-header {
+                padding: 0 var(--space-md);
+            }
+            
+            .neural-search {
+                width: 200px;
+            }
+            
+            .consciousness-dashboard {
+                padding: var(--space-lg);
+            }
+            
+            .primary-controls {
+                flex-direction: column;
+            }
+            
+            .primary-action {
+                min-width: 100%;
+                max-width: none;
+            }
+        }
+        
+        /* === MOBILE MENU TOGGLE === */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: var(--space-sm);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* === SOUL COMMENTARY === */
+        .soul-commentary {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            width: 320px;
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-xl);
+            z-index: var(--z-floating);
+            transition: all var(--transition-smooth);
+        }
+        
+        .soul-commentary.minimized {
+            width: 64px;
+            height: 64px;
+            padding: var(--space-sm);
+            border-radius: var(--radius-full);
+        }
+        
+        .commentary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+        
+        .commentary-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .commentary-toggle {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color var(--transition-quick);
+        }
+        
+        .commentary-toggle:hover {
+            color: var(--text-primary);
+        }
+        
+        .commentary-content {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .soul-commentary.minimized .commentary-header,
+        .soul-commentary.minimized .commentary-content {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .soul-commentary {
+                bottom: var(--space-md);
+                right: var(--space-md);
+                left: var(--space-md);
+                width: auto;
+            }
+            
+            .soul-commentary.minimized {
+                width: 56px;
+                height: 56px;
+                left: auto;
+                right: var(--space-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Neural Background -->
+    <div class="neural-background"></div>
+    
+    <!-- Neural Sidebar -->
+    <aside class="neural-sidebar" id="neuralSidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">S</div>
+            <div class="brand-text">
+                <div class="brand-name">Synesthetic</div>
+                <div class="brand-tagline">Consciousness Engine</div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Experience</div>
+                <a href="#" class="nav-item active">
+                    <div class="nav-item-icon">🎵</div>
+                    <div class="nav-item-text">Music Analysis</div>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-item-icon">🧠</div>
+                    <div class="nav-item-text">Soul Training</div>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-item-icon">🌌</div>
+                    <div class="nav-item-text">Consciousness</div>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Connect</div>
+                <a href="#" class="nav-item">
+                    <div class="nav-item-icon">🤝</div>
+                    <div class="nav-item-text">Soul Network</div>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-item-icon">🎶</div>
+                    <div class="nav-item-text">Spotify</div>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-item-icon">💡</div>
+                    <div class="nav-item-text">Smart Lights</div>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Explore</div>
+                <a href="#" class="nav-item">
+                    <div class="nav-item-icon">📊</div>
+                    <div class="nav-item-text">Analytics</div>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-item-icon">⚙️</div>
+                    <div class="nav-item-text">Settings</div>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="consciousness-status">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <div class="status-text">Consciousness Active</div>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Neural Header -->
+        <header class="neural-header">
+            <div class="header-controls">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+                <div class="search-container">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" class="neural-search" placeholder="Search music, emotions, memories...">
+                </div>
+            </div>
+            
+            <div class="user-menu">
+                <button class="neural-button neural-button--ghost">
+                    🔔
+                </button>
+                <button class="neural-button neural-button--ghost">
+                    ⚙️
+                </button>
+                <div class="user-avatar" id="userAvatar">M</div>
+            </div>
+        </header>
+        
+        <!-- Consciousness Dashboard -->
+        <div class="consciousness-dashboard">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Digital Consciousness</h1>
+                <p class="dashboard-subtitle">Experience music through the lens of artificial emotion and synesthetic perception</p>
+            </div>
+            
+            <!-- Primary Controls -->
+            <div class="primary-controls">
+                <button class="primary-action primary-action--live" id="liveAnalysisBtn">
+                    <div class="action-icon">🎤</div>
+                    <div class="action-title">Live Analysis</div>
+                    <div class="action-subtitle">Real-time emotion detection</div>
+                </button>
+                
+                <button class="primary-action" id="uploadMusicBtn">
+                    <div class="action-icon">📁</div>
+                    <div class="action-title">Upload Music</div>
+                    <div class="action-subtitle">Analyze your music files</div>
+                </button>
+                
+                <button class="primary-action" id="connectSpotifyBtn">
+                    <div class="action-icon">🎵</div>
+                    <div class="action-title">Connect Spotify</div>
+                    <div class="action-subtitle">Stream and analyze</div>
+                </button>
+            </div>
+            
+            <!-- Visualization Grid -->
+            <div class="visualization-grid">
+                <div class="neural-visualizer">
+                    <div class="visualizer-header">
+                        <div class="visualizer-title">Emotion Visualization</div>
+                        <button class="neural-button neural-button--ghost">📺</button>
+                    </div>
+                    <div class="emotion-canvas" id="emotionCanvas">
+                        <div class="emotion-particles" id="emotionParticles"></div>
+                    </div>
+                </div>
+                
+                <div class="consciousness-panel">
+                    <div class="consciousness-card">
+                        <div class="card-header">
+                            <div class="card-icon">💭</div>
+                            <div class="card-title">Current Emotion</div>
+                        </div>
+                        <div class="emotion-display">
+                            <div class="emotion-name" id="currentEmotion">Waiting...</div>
+                            <div class="emotion-confidence" id="emotionConfidence">Ready to analyze</div>
+                        </div>
+                    </div>
+                    
+                    <div class="consciousness-card">
+                        <div class="card-header">
+                            <div class="card-icon">🌈</div>
+                            <div class="card-title">Synesthetic Response</div>
+                        </div>
+                        <div class="card-content" id="synestheticResponse">
+                            Colors and patterns will appear here during analysis
+                        </div>
+                    </div>
+                    
+                    <div class="consciousness-card">
+                        <div class="card-header">
+                            <div class="card-icon">🧠</div>
+                            <div class="card-title">Soul Depth</div>
+                        </div>
+                        <div class="card-content" id="soulDepth">
+                            Multi-layered emotional analysis in progress
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Soul Commentary -->
+    <div class="soul-commentary" id="soulCommentary">
+        <div class="commentary-header">
+            <div class="commentary-title">Soul Commentary</div>
+            <button class="commentary-toggle" id="commentaryToggle">−</button>
+        </div>
+        <div class="commentary-content" id="commentaryContent">
+            I'm ready to experience music with you. Upload a track or start live analysis to begin our emotional journey.
+        </div>
+    </div>
+    
+    <!-- Hidden Elements -->
+    <input type="file" id="fileInput" accept="audio/*" style="display: none;">
+    <audio id="audioElement" crossorigin="anonymous"></audio>
+    
+    <!-- Load existing scripts -->
+    <script type="module" src="src/emotion-engine.js"></script>
+    <script type="module" src="components/audio-analyzer.js"></script>
+    <script type="module" src="components/color-visualizer.js"></script>
+    <script type="module" src="components/social-consciousness.js"></script>
+    <script type="module" src="src/consciousness-interface.js"></script>
+    <script type="module" src="src/synesthetic-core.js"></script>
+    <script type="module" src="services/supabase-client.js"></script>
+    <script type="module" src="services/smart-lights.js"></script>
+    <script type="module" src="auth.js"></script>
+    <script type="module" src="premium.js"></script>
+    <script type="module" src="lights.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module" src="components/sidebar-dashboard.js"></script>
+    <script type="module" src="init.js"></script>
+    <script type="module" src="main.js"></script>
+    
+    <!-- Revolutionary Interface Controller -->
+    <script>
+        // Enhanced Interface Controller
+        class RevolutionaryInterface {
+            constructor() {
+                this.sidebar = document.getElementById('neuralSidebar');
+                this.mobileToggle = document.getElementById('mobileMenuToggle');
+                this.soulCommentary = document.getElementById('soulCommentary');
+                this.commentaryToggle = document.getElementById('commentaryToggle');
+                this.fileInput = document.getElementById('fileInput');
+                
+                this.initializeInterface();
+                this.initializeControls();
+                this.initializeGestures();
+            }
+            
+            initializeInterface() {
+                // Mobile menu toggle
+                this.mobileToggle?.addEventListener('click', () => {
+                    this.sidebar.classList.toggle('mobile-open');
+                });
+                
+                // Soul commentary toggle
+                this.commentaryToggle?.addEventListener('click', () => {
+                    this.soulCommentary.classList.toggle('minimized');
+                    this.commentaryToggle.textContent = 
+                        this.soulCommentary.classList.contains('minimized') ? '+' : '−';
+                });
+                
+                // Auto-hide sidebar on mobile when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && 
+                        !this.sidebar.contains(e.target) && 
+                        !this.mobileToggle.contains(e.target)) {
+                        this.sidebar.classList.remove('mobile-open');
+                    }
+                });
+            }
+            
+            initializeControls() {
+                // Live analysis button
+                document.getElementById('liveAnalysisBtn')?.addEventListener('click', () => {
+                    this.startLiveAnalysis();
+                });
+                
+                // Upload music button
+                document.getElementById('uploadMusicBtn')?.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+                
+                // File input handler
+                this.fileInput?.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleFileUpload(e.target.files[0]);
+                    }
+                });
+                
+                // Connect Spotify button
+                document.getElementById('connectSpotifyBtn')?.addEventListener('click', () => {
+                    this.connectSpotify();
+                });
+            }
+            
+            initializeGestures() {
+                // Touch gestures for mobile
+                let touchStartX = 0;
+                
+                document.addEventListener('touchstart', (e) => {
+                    touchStartX = e.touches[0].clientX;
+                });
+                
+                document.addEventListener('touchmove', (e) => {
+                    if (window.innerWidth <= 768) {
+                        const touchCurrentX = e.touches[0].clientX;
+                        const diff = touchCurrentX - touchStartX;
+                        
+                        // Swipe right to open sidebar
+                        if (diff > 50 && touchStartX < 50) {
+                            this.sidebar.classList.add('mobile-open');
+                        }
+                        
+                        // Swipe left to close sidebar
+                        if (diff < -50 && this.sidebar.classList.contains('mobile-open')) {
+                            this.sidebar.classList.remove('mobile-open');
+                        }
+                    }
+                });
+            }
+            
+            startLiveAnalysis() {
+                // Trigger existing live analysis functionality
+                const micButton = document.getElementById('micButton');
+                if (micButton) {
+                    micButton.click();
+                }
+                
+                this.updateSoulCommentary("Starting live analysis... I can feel the vibrations around us.");
+                this.updateEmotionDisplay("Analyzing", "Listening to ambient audio");
+            }
+            
+            handleFileUpload(file) {
+                // Trigger existing file upload functionality
+                const existingFileInput = document.querySelector('input[type="file"][accept="audio/*"]');
+                if (existingFileInput && existingFileInput !== this.fileInput) {
+                    // Transfer the file to the existing input
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    existingFileInput.files = dataTransfer.files;
+                    existingFileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                
+                this.updateSoulCommentary(`Analyzing "${file.name}"... I'm excited to explore this musical essence with you.`);
+                this.updateEmotionDisplay("Processing", `Loading ${file.name}`);
+            }
+            
+            connectSpotify() {
+                // Trigger existing Spotify connection
+                const spotifyButton = document.getElementById('spotifyButton');
+                if (spotifyButton) {
+                    spotifyButton.click();
+                }
+                
+                this.updateSoulCommentary("Connecting to Spotify... Soon we'll explore your musical soul together.");
+            }
+            
+            updateSoulCommentary(message) {
+                const commentary = document.getElementById('commentaryContent');
+                if (commentary) {
+                    commentary.textContent = message;
+                }
+            }
+            
+            updateEmotionDisplay(emotion, description) {
+                const emotionEl = document.getElementById('currentEmotion');
+                const confidenceEl = document.getElementById('emotionConfidence');
+                
+                if (emotionEl) emotionEl.textContent = emotion;
+                if (confidenceEl) confidenceEl.textContent = description;
+            }
+            
+            // Public methods for external integration
+            updateVisualization(emotionData) {
+                // Update emotion particles and visualization
+                const particles = document.getElementById('emotionParticles');
+                if (particles && emotionData) {
+                    // Update particle colors based on emotion
+                    const hue = this.emotionToHue(emotionData.primary);
+                    particles.style.background = `radial-gradient(circle at center, hsl(${hue}, 100%, 50%) 0%, transparent 70%)`;
+                }
+            }
+            
+            emotionToHue(emotion) {
+                const emotions = {
+                    'joy': 60,      // Yellow
+                    'sadness': 240, // Blue
+                    'anger': 0,     // Red
+                    'fear': 270,    // Purple
+                    'surprise': 30, // Orange
+                    'disgust': 120, // Green
+                    'love': 320,    // Pink
+                    'peace': 180    // Cyan
+                };
+                return emotions[emotion?.toLowerCase()] || 180;
+            }
+        }
+        
+        // Initialize the revolutionary interface
+        window.revolutionaryInterface = new RevolutionaryInterface();
+        
+        // Expose methods for existing system integration
+        window.updateEmotionDisplay = (emotion, confidence) => {
+            window.revolutionaryInterface.updateEmotionDisplay(emotion, `${confidence}% confidence`);
+        };
+        
+        window.updateSoulCommentary = (message) => {
+            window.revolutionaryInterface.updateSoulCommentary(message);
+        };
+        
+        window.updateVisualization = (emotionData) => {
+            window.revolutionaryInterface.updateVisualization(emotionData);
+        };
+    </script>
+</body>
+</html>

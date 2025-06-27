@@ -943,6 +943,11 @@ function setupWindowApp() {
         stopMicAnalysis,
         toggleTVMode,
         loadTVMode,
+        
+        // Initialize soul personality visualizer
+        personalityVisualizer: null,
+        themeEngine: null,
+        
         // Add startFileAnalysis as a proxy to audioAnalyzer
         startFileAnalysis: async (audioUrl, fileName) => {
             if (window.audioAnalyzer && window.audioAnalyzer.startFileAnalysis) {
@@ -953,7 +958,35 @@ function setupWindowApp() {
             }
         }
     };
-    console.log('[App] window.app initialized successfully');
+    
+    // Initialize personality visualizer when emotion engine is ready
+    setTimeout(() => {
+        if (window.SoulPersonalityVisualizer && window.app.emotionEngine) {
+            window.app.personalityVisualizer = new SoulPersonalityVisualizer(window.app.emotionEngine);
+            console.log('🎭 Soul Personality Visualizer initialized');
+            
+            // Initialize theme engine with personality visualizer
+            if (window.PersonalityThemeEngine) {
+                window.app.themeEngine = new PersonalityThemeEngine(window.app.personalityVisualizer);
+                console.log('🎨 Personality Theme Engine initialized');
+            }
+        } else {
+            console.log('⏳ Waiting for emotion engine to initialize personality visualizer...');
+            // Try again in a bit
+            setTimeout(() => {
+                if (window.SoulPersonalityVisualizer && window.app.emotionEngine) {
+                    window.app.personalityVisualizer = new SoulPersonalityVisualizer(window.app.emotionEngine);
+                    console.log('🎭 Soul Personality Visualizer initialized (delayed)');
+                    
+                    // Initialize theme engine
+                    if (window.PersonalityThemeEngine) {
+                        window.app.themeEngine = new PersonalityThemeEngine(window.app.personalityVisualizer);
+                        console.log('🎨 Personality Theme Engine initialized (delayed)');
+                    }
+                }
+            }, 3000);
+        }
+    }, 1000);
 }
 
 // Setup window.app when DOM is ready

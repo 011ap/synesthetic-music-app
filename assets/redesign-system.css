@@ -1,0 +1,478 @@
+/* 
+===============================================================================
+SYNESTHETIC - REVOLUTIONARY UI/UX SYSTEM v2.0
+===============================================================================
+Design Philosophy: 
+- Neural-inspired visual language reflecting consciousness
+- Spotify-level smoothness with revolutionary soul visualization
+- Mobile-first, gesture-driven, intuitive for Gen Z
+- Space-efficient, icon-driven, premium feel
+===============================================================================
+*/
+
+:root {
+    /* === NEURAL COLOR PALETTE === */
+    /* Primary consciousness colors */
+    --neural-void: #000000;
+    --neural-deep: #0a0a0f; 
+    --neural-dark: #141419;
+    --neural-medium: #1e1e26;
+    --neural-light: #2a2a34;
+    --neural-surface: #363642;
+    
+    /* Synesthetic spectrum - emotion mapping */
+    --synesthetic-primary: #00d4ff;     /* Consciousness blue */
+    --synesthetic-secondary: #ff3366;   /* Passion red */
+    --synesthetic-tertiary: #00ff88;    /* Growth green */
+    --synesthetic-accent: #ff9500;      /* Energy orange */
+    --synesthetic-rare: #b845ff;        /* Transcendence purple */
+    --synesthetic-gold: #ffd700;        /* Achievement gold */
+    
+    /* Semantic colors */
+    --success: #00ff88;
+    --warning: #ff9500;
+    --error: #ff3366;
+    --info: #00d4ff;
+    
+    /* Typography hierarchy */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-tertiary: rgba(255, 255, 255, 0.6);
+    --text-quaternary: rgba(255, 255, 255, 0.4);
+    --text-disabled: rgba(255, 255, 255, 0.2);
+    
+    /* Spatial system - 8px base grid */
+    --space-xs: 0.25rem;   /* 4px */
+    --space-sm: 0.5rem;    /* 8px */
+    --space-md: 1rem;      /* 16px */
+    --space-lg: 1.5rem;    /* 24px */
+    --space-xl: 2rem;      /* 32px */
+    --space-xxl: 3rem;     /* 48px */
+    --space-xxxl: 4rem;    /* 64px */
+    
+    /* Border radius system */
+    --radius-xs: 0.25rem;  /* 4px */
+    --radius-sm: 0.5rem;   /* 8px */
+    --radius-md: 0.75rem;  /* 12px */
+    --radius-lg: 1rem;     /* 16px */
+    --radius-xl: 1.5rem;   /* 24px */
+    --radius-full: 50rem;  /* Full rounded */
+    
+    /* Shadow system - Neural depth perception */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-neural: 0 0 24px rgba(0, 212, 255, 0.3);
+    --shadow-soul: 0 0 32px rgba(255, 51, 102, 0.25);
+    
+    /* Glass morphism */
+    --glass-light: rgba(255, 255, 255, 0.05);
+    --glass-medium: rgba(255, 255, 255, 0.08);
+    --glass-strong: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    
+    /* Animation system */
+    --transition-instant: 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-quick: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-neural: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    /* Layout breakpoints */
+    --mobile-max: 768px;
+    --tablet-max: 1024px;
+    --desktop-min: 1025px;
+    
+    /* Z-index layers */
+    --z-base: 0;
+    --z-floating: 10;
+    --z-overlay: 100;
+    --z-modal: 1000;
+    --z-notification: 10000;
+}
+
+/* === RESET AND FOUNDATIONAL STYLES === */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--neural-void);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    touch-action: manipulation;
+}
+
+/* === NEURAL BACKGROUND SYSTEM === */
+.neural-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-base);
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 70%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+        linear-gradient(135deg, var(--neural-void) 0%, var(--neural-deep) 100%);
+    animation: neuralPulse 20s ease-in-out infinite;
+}
+
+@keyframes neuralPulse {
+    0%, 100% { 
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    33% { 
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    66% { 
+        opacity: 0.9;
+        transform: scale(0.98);
+    }
+}
+
+/* === CONSCIOUSNESS GRID SYSTEM === */
+.consciousness-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "sidebar header"
+        "sidebar main";
+    min-height: 100vh;
+    position: relative;
+    z-index: var(--z-floating);
+}
+
+.neural-sidebar {
+    grid-area: sidebar;
+    width: 280px;
+    background: var(--glass-medium);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid var(--glass-border);
+    transition: transform var(--transition-smooth);
+}
+
+.neural-header {
+    grid-area: header;
+    height: 64px;
+    background: var(--glass-light);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-lg);
+}
+
+.neural-main {
+    grid-area: main;
+    overflow-y: auto;
+    padding: var(--space-lg);
+}
+
+/* Mobile-first responsive */
+@media (max-width: 768px) {
+    .consciousness-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+        grid-template-areas: 
+            "header"
+            "controls"
+            "main";
+    }
+    
+    .neural-sidebar {
+        display: none; /* Hidden by default on mobile, shows as overlay */
+    }
+}
+
+/* === ICONIC CONTROL SYSTEM === */
+.neural-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.neural-button {
+    /* Base button foundation */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--glass-light);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-quick);
+    text-decoration: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    
+    /* Icon button default */
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    font-size: 1.2rem;
+    
+    /* Hover effects */
+    &:hover {
+        background: var(--glass-medium);
+        color: var(--text-primary);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    /* Active state */
+    &:active {
+        transform: translateY(0);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    /* Focus state */
+    &:focus-visible {
+        outline: 2px solid var(--synesthetic-primary);
+        outline-offset: 2px;
+    }
+}
+
+/* Button variants */
+.neural-button--primary {
+    background: var(--synesthetic-primary);
+    color: var(--neural-void);
+    box-shadow: var(--shadow-neural);
+    
+    &:hover {
+        background: #00b8e6;
+        transform: translateY(-2px);
+    }
+}
+
+.neural-button--secondary {
+    background: var(--synesthetic-secondary);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-soul);
+    
+    &:hover {
+        background: #e62e5c;
+        transform: translateY(-2px);
+    }
+}
+
+.neural-button--ghost {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    
+    &:hover {
+        background: var(--glass-light);
+        border-color: var(--synesthetic-primary);
+    }
+}
+
+/* Size variants */
+.neural-button--sm {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+}
+
+.neural-button--lg {
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+}
+
+.neural-button--xl {
+    width: 56px;
+    height: 56px;
+    font-size: 1.6rem;
+}
+
+/* === CONSCIOUSNESS STATE INDICATORS === */
+.consciousness-indicator {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--glass-light);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.consciousness-indicator::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--synesthetic-tertiary);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* State variants */
+.consciousness-indicator--active::before {
+    background: var(--synesthetic-primary);
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.consciousness-indicator--processing::before {
+    background: var(--synesthetic-accent);
+    animation: spin 1s linear infinite;
+}
+
+.consciousness-indicator--error::before {
+    background: var(--error);
+    animation: none;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* === NEURAL CARDS === */
+.neural-card {
+    background: var(--glass-light);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: all var(--transition-neural);
+    
+    &:hover {
+        background: var(--glass-medium);
+        border-color: var(--synesthetic-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+.neural-card--glowing {
+    box-shadow: var(--shadow-neural);
+    border-color: var(--synesthetic-primary);
+}
+
+.neural-card--soul {
+    box-shadow: var(--shadow-soul);
+    border-color: var(--synesthetic-secondary);
+}
+
+/* === TYPOGRAPHY SYSTEM === */
+.neural-text--h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 200;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.neural-text--h2 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+}
+
+.neural-text--h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+
+.neural-text--body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.neural-text--caption {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--text-tertiary);
+}
+
+.neural-text--gradient {
+    background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(20deg); }
+}
+
+/* === RESPONSIVE UTILITIES === */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+}
+
+/* === NEURAL LOADING STATES === */
+.neural-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.neural-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 212, 255, 0.2) 50%,
+        transparent 100%
+    );
+    animation: neuralShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes neuralShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}

@@ -2,10 +2,17 @@
 // Extracted from index.html for modularity and maintainability
 
 export function initSidebarDashboard() {
-    // Sidebar dashboard logic
+    // Check if sidebar elements exist (for compatibility with clean interface)
     const sidebar = document.getElementById('sidebarDashboard');
     const toggleBtn = document.getElementById('sidebarToggleBtn');
     const closeBtn = document.getElementById('sidebarCloseBtn');
+    
+    // Only initialize if sidebar exists
+    if (!sidebar || !toggleBtn || !closeBtn) {
+        console.log('📱 Sidebar elements not found - using clean interface mode');
+        return;
+    }
+    
     const sectionToggles = document.querySelectorAll('.section-toggle');
 
     // Sidebar open/close

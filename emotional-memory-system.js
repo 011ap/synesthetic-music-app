@@ -683,6 +683,79 @@ class EmotionalMemorySystem {
             dnaTraits: this.emotionalDNA?.uniqueTraits || []
         };
     }
+
+    /**
+     * Get recent emotional journey (last N experiences)
+     */
+    getRecentEmotionalJourney(count = 10) {
+        const recentExperiences = this.emotionalJourney
+            .slice(-count)
+            .map(exp => ({
+                emotion: exp.emotion,
+                timestamp: exp.timestamp,
+                confidence: exp.confidence,
+                intensity: exp.intensity,
+                context: exp.context,
+                audioFeatures: exp.audioFeatures
+            }));
+        
+        return {
+            experiences: recentExperiences,
+            emotionalTrend: this.calculateEmotionalTrend(recentExperiences),
+            dominantEmotions: this.findDominantEmotions(recentExperiences),
+            averageIntensity: this.calculateAverageIntensity(recentExperiences)
+        };
+    }
+
+    /**
+     * Calculate emotional trend from recent experiences
+     */
+    calculateEmotionalTrend(experiences) {
+        if (experiences.length < 2) return 'stable';
+        
+        const intensities = experiences.map(exp => exp.intensity || 0.5);
+        const firstHalf = intensities.slice(0, Math.floor(intensities.length / 2));
+        const secondHalf = intensities.slice(Math.floor(intensities.length / 2));
+        
+        const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+        const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+        
+        const threshold = 0.1;
+        if (secondAvg > firstAvg + threshold) return 'rising';
+        if (secondAvg < firstAvg - threshold) return 'declining';
+        return 'stable';
+    }
+
+    /**
+     * Find dominant emotions in a set of experiences
+     */
+    findDominantEmotions(experiences) {
+        const emotionCounts = {};
+        experiences.forEach(exp => {
+            const emotion = exp.emotion?.primary || exp.emotion;
+            if (emotion && typeof emotion === 'string') {
+                emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+            }
+        });
+        
+        return Object.entries(emotionCounts)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 3)
+            .map(([emotion, count]) => ({ emotion, count }));
+    }
+
+    /**
+     * Calculate average intensity from experiences
+     */
+    calculateAverageIntensity(experiences) {
+        if (experiences.length === 0) return 0.5;
+        
+        const intensities = experiences
+            .map(exp => exp.intensity || 0.5)
+            .filter(intensity => typeof intensity === 'number');
+            
+        return intensities.reduce((a, b) => a + b, 0) / intensities.length;
+    }
 }
 
 // Initialize the emotional memory system
