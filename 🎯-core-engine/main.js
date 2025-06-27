@@ -1,6 +1,6 @@
 import * as app from './app.js';
 import { createParticles, toggleTVMode, loadTVMode } from './app.js';
-import { initSidebarDashboard } from './components/sidebar-dashboard.js';
+import { initSidebarDashboard } from '../components/sidebar-dashboard.js';
 
 // Only initialize sidebar/dashboard here if elements exist. Auth UI is handled by auth.js for stability.
 document.addEventListener('DOMContentLoaded', () => {

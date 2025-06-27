@@ -254,6 +254,11 @@ function switchTab(tab) {
 }
 window.switchTab = switchTab;
 
+// Make showAuthModal available globally
+window.showAuthModal = showAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.updateUIForGuest = updateUIForGuest;
+
 // Show auth error
 function showAuthError(message) {
     const errorDiv = document.getElementById('authError');
@@ -545,6 +550,7 @@ function hideNeuralInterfaceButton() {
 export { 
     createUserDashboard, 
     updateUIForUser, 
+    updateUIForGuest,
     createAuthModal,
     showAuthModal,
     closeAuthModal,

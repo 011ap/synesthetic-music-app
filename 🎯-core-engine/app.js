@@ -711,7 +711,7 @@ export async function handleFileUpload(event) {
       await window.audioAnalyzer.startFileAnalysis(audioUrl, file.name);
     } else {
       console.warn('[Upload] Audio analyzer not available, importing...');
-      const audioAnalyzer = await import('./components/audio-analyzer.js');
+      const audioAnalyzer = await import('../components/audio-analyzer.js');
       if (audioAnalyzer.startFileAnalysis) {
         await audioAnalyzer.startFileAnalysis(audioUrl, file.name);
       } else {

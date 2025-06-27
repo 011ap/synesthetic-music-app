@@ -17,6 +17,7 @@
             --bg-darker: #08080c;
             --glass-light: rgba(255, 255, 255, 0.05);
             --glass-medium: rgba(255, 255, 255, 0.08);
+            --glass-dark: rgba(0, 0, 0, 0.6);
             --glass-border: rgba(255, 255, 255, 0.12);
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.8);
@@ -1309,8 +1310,8 @@
     </div>
 
     <!-- Load external scripts -->
-    <script src="auth.js"></script>
-    <script type="module" src="main.js"></script>
+    <script src="🎨-user-interface/auth.js"></script>
+    <script type="module" src="🎯-core-engine/main.js"></script>
     <script type="module" src="components/audio-analyzer.js"></script>
     <script type="module" src="components/color-visualizer.js"></script>
 
@@ -1379,26 +1380,43 @@
             const authBtn = document.getElementById('authBtn');
             
             if (authBtn) {
-                authBtn.addEventListener('click', () => {
-                    // Load and show login modal
-                    import('./login.js').then(loginModule => {
-                        if (typeof loginModule.showAuthModal === 'function') {
-                            loginModule.showAuthModal();
-                        } else if (typeof window.showAuthModal === 'function') {
-                            window.showAuthModal();
-                        } else {
-                            console.warn('Auth modal function not found');
-                        }
-                    }).catch(err => {
-                        console.warn('Login module not available:', err);
-                    });
+                // Remove any existing listeners
+                authBtn.replaceWith(authBtn.cloneNode(true));
+                const newAuthBtn = document.getElementById('authBtn');
+                
+                newAuthBtn.addEventListener('click', () => {
+                    console.log('🔐 Auth button clicked');
+                    
+                    // Try multiple ways to show the auth modal
+                    if (typeof window.showAuthModal === 'function') {
+                        window.showAuthModal();
+                    } else {
+                        // Import and call the function
+                        import('./🎨-user-interface/login.js').then(loginModule => {
+                            if (typeof loginModule.showAuthModal === 'function') {
+                                loginModule.showAuthModal();
+                            } else {
+                                console.warn('Auth modal function not found in module');
+                                // Fallback: create modal if needed
+                                if (typeof loginModule.createAuthModal === 'function') {
+                                    loginModule.createAuthModal();
+                                    setTimeout(() => {
+                                        if (typeof window.showAuthModal === 'function') {
+                                            window.showAuthModal();
+                                        }
+                                    }, 100);
+                                }
+                            }
+                        }).catch(err => {
+                            console.warn('Login module not available:', err);
+                        });
+                    }
                 });
             }
             
             // Listen for auth state changes
             const checkAuth = setInterval(() => {
-                if (window.Auth && window.Auth.currentUser) {
-                    updateAuthUI(window.Auth.currentUser);
+                if (window.authManager && window.authManager.currentUser) {
                     clearInterval(checkAuth);
                 }
             }, 1000);
@@ -1453,7 +1471,7 @@
             // Live Analysis
             document.getElementById('liveAnalysisCard')?.addEventListener('click', function() {
                 // Check if user is authenticated first
-                if (!window.Auth || !window.Auth.currentUser) {
+                if (!window.authManager || !window.authManager.currentUser) {
                     showAuthGate('Live Analysis', 'Sign in to analyze music in real-time and discover your emotional patterns');
                     return;
                 }
@@ -1490,7 +1508,7 @@
             // Upload Music
             document.getElementById('uploadMusicCard')?.addEventListener('click', function() {
                 // Check if user is authenticated first
-                if (!window.Auth || !window.Auth.currentUser) {
+                if (!window.authManager || !window.authManager.currentUser) {
                     showAuthGate('Upload Music', 'Sign in to upload and analyze your personal music collection');
                     return;
                 }
@@ -1503,7 +1521,7 @@
             // Spotify
             document.getElementById('spotifyCard')?.addEventListener('click', function() {
                 // Check if user is authenticated first
-                if (!window.Auth || !window.Auth.currentUser) {
+                if (!window.authManager || !window.authManager.currentUser) {
                     showAuthGate('Spotify Connection', 'Sign in to connect your Spotify and explore your musical soul');
                     return;
                 }
