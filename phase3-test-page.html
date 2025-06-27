@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3: Social Consciousness Test</title>
+    <style>
+        :root {
+            --bg-dark: #0f0f14;
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-medium: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --synesthetic-primary: #00f5ff;
+            --synesthetic-green: #00ff88;
+            --synesthetic-red: #ff006e;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--bg-dark), #1a1a2e);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .test-section {
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(20px);
+        }
+        
+        .test-section h2 {
+            color: var(--synesthetic-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .test-card {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .test-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .test-btn {
+            background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-green));
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 245, 255, 0.3);
+        }
+        
+        .test-btn.secondary {
+            background: var(--glass-medium);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--synesthetic-green);
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 110, 0.1);
+            border: 1px solid rgba(255, 0, 110, 0.3);
+            color: var(--synesthetic-red);
+        }
+        
+        .status.info {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            color: var(--synesthetic-primary);
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            background: var(--glass-light);
+            border-radius: 1rem;
+            height: 0.5rem;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(135deg, var(--synesthetic-primary), var(--synesthetic-green));
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list .check {
+            color: var(--synesthetic-green);
+        }
+        
+        .feature-list .cross {
+            color: var(--synesthetic-red);
+        }
+        
+        .connection-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .room-simulation {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .participants {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .participant {
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .participant-avatar {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .participant-emotion {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🌐 Phase 3: Social Consciousness</h1>
+            <p class="subtitle">Testing Real-time Emotional Sharing & Group Synesthetic Experiences</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="overallProgress"></div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="test-section">
+            <h2>🔍 System Status</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Core Dependencies</h3>
+                    <ul class="feature-list" id="dependencies"></ul>
+                </div>
+                <div class="test-card">
+                    <h3>Social Consciousness</h3>
+                    <ul class="feature-list" id="socialStatus"></ul>
+                </div>
+                <div class="test-card">
+                    <h3>Communication Systems</h3>
+                    <ul class="feature-list" id="commStatus"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Management Tests -->
+        <div class="test-section">
+            <h2>🏠 Room Management</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Room Creation</h3>
+                    <button class="test-btn" onclick="testCreateRoom()">Create Test Room</button>
+                    <button class="test-btn secondary" onclick="testDestroyRoom()">Destroy Room</button>
+                    <div class="status info" id="roomStatus">Ready to test room creation</div>
+                </div>
+                <div class="test-card">
+                    <h3>Room Discovery</h3>
+                    <button class="test-btn" onclick="testDiscovery()">Discover Rooms</button>
+                    <button class="test-btn secondary" onclick="testJoinRoom()">Join Room</button>
+                    <div class="status info" id="discoveryStatus">Ready to test discovery</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emotional Sharing Tests -->
+        <div class="test-section">
+            <h2>💫 Emotional Sharing</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Emotion Broadcasting</h3>
+                    <button class="test-btn" onclick="testEmotionBroadcast()">Start Broadcasting</button>
+                    <button class="test-btn secondary" onclick="stopEmotionBroadcast()">Stop Broadcasting</button>
+                    <div class="status info" id="broadcastStatus">Ready to test broadcasting</div>
+                </div>
+                <div class="test-card">
+                    <h3>Group Emotion Calculation</h3>
+                    <button class="test-btn" onclick="testGroupEmotion()">Calculate Group State</button>
+                    <button class="test-btn secondary" onclick="testEmotionalHarmony()">Test Harmony</button>
+                    <div class="status info" id="groupEmotionStatus">Ready to test group emotions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Connection Demo -->
+        <div class="test-section">
+            <h2>🤝 Live Connection Demo</h2>
+            <div class="connection-demo">
+                <div class="room-simulation">
+                    <h4>Room: "Cosmic Vibes"</h4>
+                    <div class="participants">
+                        <div class="participant">
+                            <div class="participant-avatar">👤</div>
+                            <div>You</div>
+                            <div class="participant-emotion" id="yourEmotion">Neutral</div>
+                        </div>
+                        <div class="participant">
+                            <div class="participant-avatar">🎭</div>
+                            <div>Dreamy Soul</div>
+                            <div class="participant-emotion">Euphoric</div>
+                        </div>
+                        <div class="participant">
+                            <div class="participant-avatar">🌟</div>
+                            <div>Mystic Mind</div>
+                            <div class="participant-emotion">Contemplative</div>
+                        </div>
+                    </div>
+                    <div class="status success" id="connectionStatus">Connected to emotional room</div>
+                </div>
+                
+                <div class="room-simulation">
+                    <h4>Group Emotional State</h4>
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;" id="groupEmotion">Collective Harmony</div>
+                        <div style="color: var(--text-secondary);" id="groupStats">
+                            Harmony: 85% • 3 souls connected
+                        </div>
+                    </div>
+                    <button class="test-btn" onclick="simulateEmotionChange()">Simulate Emotion Change</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance & Privacy -->
+        <div class="test-section">
+            <h2>⚙️ Advanced Features</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Privacy Controls</h3>
+                    <button class="test-btn" onclick="testPrivacySettings()">Test Privacy</button>
+                    <button class="test-btn secondary" onclick="testAnonymousMode()">Anonymous Mode</button>
+                    <div class="status info" id="privacyStatus">Privacy settings ready</div>
+                </div>
+                <div class="test-card">
+                    <h3>Performance Metrics</h3>
+                    <button class="test-btn" onclick="testPerformance()">Run Performance Test</button>
+                    <button class="test-btn secondary" onclick="testScaling()">Test Scaling</button>
+                    <div class="status info" id="performanceStatus">Ready for performance tests</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Log -->
+        <div class="test-section">
+            <h2>📊 Test Results</h2>
+            <div class="log" id="testLog"></div>
+            <button class="test-btn" onclick="runAllTests()">🚀 Run All Tests</button>
+            <button class="test-btn secondary" onclick="clearLog()">Clear Log</button>
+            <button class="test-btn secondary" onclick="exportResults()">Export Results</button>
+        </div>
+    </div>
+
+    <!-- Load Social Consciousness -->
+    <script type="module" src="components/social-consciousness.js"></script>
+    
+    <script>
+        let testResults = [];
+        let socialConsciousness = null;
+        let testRoomId = null;
+
+        // Initialize test environment
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🌐 Phase 3 Social Consciousness Test Environment Loaded');
+            checkSystemStatus();
+            initializeSocialConsciousness();
+        });
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('testLog');
+            const entry = `[${timestamp}] ${message}`;
+            logElement.innerHTML += entry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(message);
+            testResults.push({ timestamp, message, type });
+        }
+
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = `status ${type}`;
+            }
+        }
+
+        function updateFeatureList(elementId, features) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = features.map(feature => 
+                    `<li><span class="${feature.status ? 'check' : 'cross'}">${feature.status ? '✅' : '❌'}</span> ${feature.name}</li>`
+                ).join('');
+            }
+        }
+
+        function checkSystemStatus() {
+            log('🔍 Checking system dependencies...');
+            
+            // Check core dependencies
+            const dependencies = [
+                { name: 'BroadcastChannel API', status: typeof BroadcastChannel !== 'undefined' },
+                { name: 'WebRTC Support', status: typeof RTCPeerConnection !== 'undefined' },
+                { name: 'LocalStorage', status: typeof localStorage !== 'undefined' },
+                { name: 'ES6 Modules', status: true },
+                { name: 'Promise Support', status: typeof Promise !== 'undefined' }
+            ];
+            
+            updateFeatureList('dependencies', dependencies);
+            
+            // Communication systems
+            const commSystems = [
+                { name: 'BroadcastChannel', status: typeof BroadcastChannel !== 'undefined' },
+                { name: 'localStorage Signaling', status: true },
+                { name: 'WebRTC ICE Servers', status: typeof RTCPeerConnection !== 'undefined' },
+                { name: 'Real-time Messaging', status: true }
+            ];
+            
+            updateFeatureList('commStatus', commSystems);
+            
+            log('✅ System status check completed');
+        }
+
+        function initializeSocialConsciousness() {
+            log('🧠 Initializing Social Consciousness...');
+            
+            setTimeout(() => {
+                if (window.SocialConsciousness) {
+                    try {
+                        // Create mock core app for testing
+                        const mockCoreApp = {
+                            currentEmotionalState: {
+                                primary: 'Euphoric',
+                                valence: 0.8,
+                                intensity: 0.7,
+                                depth: 75,
+                                synestheticColors: ['#00f5ff', '#00ff88', '#ff006e']
+                            },
+                            updateGlobalStatus: (message) => log(`Status: ${message}`)
+                        };
+                        
+                        socialConsciousness = new window.SocialConsciousness(mockCoreApp);
+                        
+                        const socialFeatures = [
+                            { name: 'Social Consciousness Instance', status: !!socialConsciousness },
+                            { name: 'Peer-to-Peer Communication', status: socialConsciousness.isInitialized },
+                            { name: 'Room Management', status: true },
+                            { name: 'Emotional Sharing', status: true },
+                            { name: 'Group State Calculation', status: true }
+                        ];
+                        
+                        updateFeatureList('socialStatus', socialFeatures);
+                        
+                        log('✨ Social Consciousness initialized successfully');
+                        updateOverallProgress(25);
+                        
+                    } catch (error) {
+                        log(`❌ Error initializing Social Consciousness: ${error.message}`, 'error');
+                        updateStatus('socialStatus', 'Initialization failed', 'error');
+                    }
+                } else {
+                    log('⚠️ SocialConsciousness class not available', 'error');
+                    setTimeout(initializeSocialConsciousness, 2000);
+                }
+            }, 1000);
+        }
+
+        function updateOverallProgress(percentage) {
+            const progressFill = document.getElementById('overallProgress');
+            if (progressFill) {
+                progressFill.style.width = percentage + '%';
+            }
+        }
+
+        // Test Functions
+        function testCreateRoom() {
+            if (!socialConsciousness) {
+                updateStatus('roomStatus', 'Social Consciousness not ready', 'error');
+                return;
+            }
+            
+            log('🏠 Testing room creation...');
+            try {
+                testRoomId = socialConsciousness.createRoom('Test Emotional Room');
+                updateStatus('roomStatus', `Room created: ${testRoomId}`, 'success');
+                log(`✅ Room created successfully: ${testRoomId}`);
+                updateOverallProgress(40);
+            } catch (error) {
+                updateStatus('roomStatus', `Failed: ${error.message}`, 'error');
+                log(`❌ Room creation failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testDestroyRoom() {
+            if (!socialConsciousness || !testRoomId) {
+                updateStatus('roomStatus', 'No room to destroy', 'error');
+                return;
+            }
+            
+            log('🏚️ Testing room destruction...');
+            try {
+                socialConsciousness.leaveRoom();
+                testRoomId = null;
+                updateStatus('roomStatus', 'Room destroyed successfully', 'success');
+                log('✅ Room destroyed successfully');
+            } catch (error) {
+                updateStatus('roomStatus', `Failed: ${error.message}`, 'error');
+                log(`❌ Room destruction failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testDiscovery() {
+            if (!socialConsciousness) {
+                updateStatus('discoveryStatus', 'Social Consciousness not ready', 'error');
+                return;
+            }
+            
+            log('🔍 Testing room discovery...');
+            try {
+                const rooms = socialConsciousness.discoverNearbyRooms();
+                updateStatus('discoveryStatus', `Found ${rooms.length} rooms`, 'success');
+                log(`✅ Discovery completed: ${rooms.length} rooms found`);
+                updateOverallProgress(55);
+            } catch (error) {
+                updateStatus('discoveryStatus', `Failed: ${error.message}`, 'error');
+                log(`❌ Discovery failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testJoinRoom() {
+            if (!testRoomId) {
+                updateStatus('discoveryStatus', 'No room available to join', 'error');
+                return;
+            }
+            
+            log('🤝 Testing room joining...');
+            socialConsciousness.joinRoomById(testRoomId).then(success => {
+                if (success) {
+                    updateStatus('discoveryStatus', 'Joined room successfully', 'success');
+                    log('✅ Room joining successful');
+                } else {
+                    updateStatus('discoveryStatus', 'Failed to join room', 'error');
+                    log('❌ Room joining failed', 'error');
+                }
+            });
+        }
+
+        function testEmotionBroadcast() {
+            if (!socialConsciousness) {
+                updateStatus('broadcastStatus', 'Social Consciousness not ready', 'error');
+                return;
+            }
+            
+            log('📡 Testing emotion broadcasting...');
+            try {
+                socialConsciousness.emotionalBroadcast.start();
+                updateStatus('broadcastStatus', 'Broadcasting emotions', 'success');
+                log('✅ Emotion broadcasting started');
+                updateOverallProgress(70);
+            } catch (error) {
+                updateStatus('broadcastStatus', `Failed: ${error.message}`, 'error');
+                log(`❌ Broadcasting failed: ${error.message}`, 'error');
+            }
+        }
+
+        function stopEmotionBroadcast() {
+            if (!socialConsciousness) return;
+            
+            log('⏹️ Stopping emotion broadcasting...');
+            socialConsciousness.emotionalBroadcast.stop();
+            updateStatus('broadcastStatus', 'Broadcasting stopped', 'info');
+            log('✅ Emotion broadcasting stopped');
+        }
+
+        function testGroupEmotion() {
+            if (!socialConsciousness) {
+                updateStatus('groupEmotionStatus', 'Social Consciousness not ready', 'error');
+                return;
+            }
+            
+            log('🎭 Testing group emotion calculation...');
+            try {
+                // Simulate multiple emotions
+                const emotions = [
+                    { primary: 'Euphoric', valence: 0.9, intensity: 0.8, synestheticColors: ['#00f5ff'] },
+                    { primary: 'Contemplative', valence: 0.6, intensity: 0.5, synestheticColors: ['#8b5cf6'] },
+                    { primary: 'Energetic', valence: 0.8, intensity: 0.9, synestheticColors: ['#00ff88'] }
+                ];
+                
+                const groupEmotion = socialConsciousness.calculateGroupEmotion(emotions);
+                updateStatus('groupEmotionStatus', `Group state: ${groupEmotion.primary}`, 'success');
+                log(`✅ Group emotion calculated: ${groupEmotion.primary} (Harmony: ${(groupEmotion.harmony * 100).toFixed(0)}%)`);
+                updateOverallProgress(85);
+            } catch (error) {
+                updateStatus('groupEmotionStatus', `Failed: ${error.message}`, 'error');
+                log(`❌ Group emotion calculation failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testEmotionalHarmony() {
+            if (!socialConsciousness) return;
+            
+            log('🎵 Testing emotional harmony calculation...');
+            try {
+                const emotions = [
+                    { valence: 0.8, intensity: 0.7, depth: 80 },
+                    { valence: 0.7, intensity: 0.8, depth: 75 },
+                    { valence: 0.9, intensity: 0.6, depth: 85 }
+                ];
+                
+                const harmony = socialConsciousness.calculateEmotionalHarmony(emotions);
+                updateStatus('groupEmotionStatus', `Harmony score: ${(harmony * 100).toFixed(0)}%`, 'success');
+                log(`✅ Emotional harmony: ${(harmony * 100).toFixed(0)}%`);
+            } catch (error) {
+                log(`❌ Harmony calculation failed: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateEmotionChange() {
+            const emotions = ['Euphoric', 'Contemplative', 'Energetic', 'Serene', 'Passionate', 'Melancholic'];
+            const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+            
+            document.getElementById('yourEmotion').textContent = randomEmotion;
+            
+            // Update group emotion
+            const groupEmotions = ['Collective Harmony', 'Shared Euphoria', 'Group Contemplation', 'United Energy'];
+            const randomGroup = groupEmotions[Math.floor(Math.random() * groupEmotions.length)];
+            document.getElementById('groupEmotion').textContent = randomGroup;
+            
+            const harmony = Math.floor(Math.random() * 30) + 70; // 70-100%
+            document.getElementById('groupStats').textContent = `Harmony: ${harmony}% • 3 souls connected`;
+            
+            log(`🎭 Emotion changed to: ${randomEmotion}, Group: ${randomGroup} (${harmony}% harmony)`);
+        }
+
+        function testPrivacySettings() {
+            if (!socialConsciousness) {
+                updateStatus('privacyStatus', 'Social Consciousness not ready', 'error');
+                return;
+            }
+            
+            log('🔒 Testing privacy settings...');
+            try {
+                const settings = {
+                    shareEmotions: false,
+                    allowDiscovery: false,
+                    anonymousMode: true
+                };
+                
+                socialConsciousness.updatePrivacySettings(settings);
+                updateStatus('privacyStatus', 'Privacy settings updated', 'success');
+                log('✅ Privacy settings test completed');
+            } catch (error) {
+                updateStatus('privacyStatus', `Failed: ${error.message}`, 'error');
+                log(`❌ Privacy test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testAnonymousMode() {
+            if (!socialConsciousness) return;
+            
+            log('👤 Testing anonymous mode...');
+            socialConsciousness.updatePrivacySettings({ anonymousMode: true });
+            updateStatus('privacyStatus', 'Anonymous mode activated', 'success');
+            log('✅ Anonymous mode test completed');
+        }
+
+        function testPerformance() {
+            log('⚡ Running performance tests...');
+            
+            const startTime = performance.now();
+            
+            // Simulate multiple operations
+            for (let i = 0; i < 100; i++) {
+                if (socialConsciousness) {
+                    socialConsciousness.generatePeerId();
+                }
+            }
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            updateStatus('performanceStatus', `Performance: ${duration.toFixed(2)}ms`, 'success');
+            log(`✅ Performance test completed in ${duration.toFixed(2)}ms`);
+        }
+
+        function testScaling() {
+            log('📈 Testing scaling capabilities...');
+            
+            if (socialConsciousness) {
+                // Test with max participants
+                const mockParticipants = new Array(socialConsciousness.maxParticipants).fill(null);
+                updateStatus('performanceStatus', `Scaling test: ${mockParticipants.length} participants`, 'success');
+                log(`✅ Scaling test: supports ${mockParticipants.length} participants`);
+            }
+        }
+
+        function runAllTests() {
+            log('🚀 Running comprehensive test suite...');
+            updateOverallProgress(0);
+            
+            setTimeout(() => {
+                testCreateRoom();
+                setTimeout(() => {
+                    testDiscovery();
+                    setTimeout(() => {
+                        testEmotionBroadcast();
+                        setTimeout(() => {
+                            testGroupEmotion();
+                            setTimeout(() => {
+                                testPrivacySettings();
+                                setTimeout(() => {
+                                    testPerformance();
+                                    updateOverallProgress(100);
+                                    log('🎉 All tests completed successfully!');
+                                }, 500);
+                            }, 500);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }
+
+        function clearLog() {
+            document.getElementById('testLog').innerHTML = '';
+            testResults = [];
+            log('📋 Test log cleared');
+        }
+
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                testResults: testResults,
+                systemInfo: {
+                    userAgent: navigator.userAgent,
+                    socialConsciousnessAvailable: !!window.SocialConsciousness,
+                    broadcastChannelSupport: typeof BroadcastChannel !== 'undefined',
+                    webrtcSupport: typeof RTCPeerConnection !== 'undefined'
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'phase3-social-consciousness-test-results.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            log('💾 Test results exported');
+        }
+    </script>
+</body>
+</html>

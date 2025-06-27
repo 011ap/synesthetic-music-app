@@ -583,6 +583,9 @@ document.head.appendChild(style);
 // Initialize the feedback system
 window.emotionFeedbackSystem = new EmotionFeedbackSystem();
 
+// Export class for instantiation
+window.EmotionFeedbackSystem = EmotionFeedbackSystem;
+
 // Load existing learning data
 window.emotionFeedbackSystem.loadLearningData();
 

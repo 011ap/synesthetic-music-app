@@ -375,6 +375,11 @@ class NeuralFactorySoulTrainer {
 // Export for use in the main app
 if (typeof window !== 'undefined') {
     window.NeuralFactorySoulTrainer = NeuralFactorySoulTrainer;
+    
+    // Auto-initialize for factory soul training
+    setTimeout(() => {
+        window.neuralFactorySoulTrainer = new NeuralFactorySoulTrainer();
+    }, 2000);
 }
 
 export { NeuralFactorySoulTrainer };

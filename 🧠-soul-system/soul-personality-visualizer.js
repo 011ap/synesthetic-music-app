@@ -519,6 +519,13 @@ class SoulPersonalityVisualizer {
 // Export for use in main app
 if (typeof window !== 'undefined') {
     window.SoulPersonalityVisualizer = SoulPersonalityVisualizer;
+    
+    // Auto-initialize when emotion engine is ready
+    setTimeout(() => {
+        if (window.emotionEngine) {
+            window.soulPersonalityVisualizer = new SoulPersonalityVisualizer(window.emotionEngine);
+        }
+    }, 2500);
 }
 
 export { SoulPersonalityVisualizer };

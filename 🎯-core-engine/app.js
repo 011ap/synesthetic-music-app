@@ -30,24 +30,52 @@ export function updateSynestheticDisplay(emotion, features) {
         console.warn('[Visualizer] #synestheticDisplay not found!');
         return;
     }
+    
     console.log('[Visualizer] updateSynestheticDisplay', {emotion, features});
     const colorIntensity = Math.round(features.energy * 100);
     const isTVMode = document.body.classList.contains('tv-mode');
     const colors = isTVMode ? emotion.colorsVibrant : emotion.colors;
+    
+    // Update the main synesthetic display
     display.innerHTML = `
-        <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center;">
+        <div class="synesthetic-colors">
             ${colors.map(color => `
-                <div style="width: 40px; height: 40px; background: ${color}; 
-                           border-radius: 8px; opacity: ${features.energy};
+                <div class="synesthetic-color" style="background: ${color}; 
+                           opacity: ${features.energy};
                            box-shadow: 0 0 20px ${color}; transition: all 0.3s;"></div>
             `).join('')}
         </div>
-        <div style="font-size: 0.9rem;">
-            <div>Primary: ${colors[0]}</div>
-            <div>Intensity: ${colorIntensity}%</div>
-            <div>Resonance: ${emotion.key}</div>
+        <div style="text-align: center; color: var(--text-secondary);">
+            <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">Primary: <span style="color: ${colors[0]};">${colors[0]}</span></div>
+            <div style="font-size: 0.9rem;">Intensity: ${colorIntensity}% • Resonance: ${emotion.key}</div>
         </div>
     `;
+    
+    // Update the emotional readout values
+    const currentEmotionEl = document.getElementById('currentEmotion');
+    const intensityEl = document.getElementById('emotionalIntensity');
+    const depthEl = document.getElementById('emotionalDepth');
+    
+    if (currentEmotionEl) {
+        currentEmotionEl.textContent = emotion.primary || 'Unknown';
+        currentEmotionEl.style.color = colors[0] || 'var(--synesthetic-primary)';
+    }
+    
+    if (intensityEl) {
+        intensityEl.textContent = `${colorIntensity}%`;
+        intensityEl.style.color = colorIntensity > 70 ? 'var(--synesthetic-red)' : 
+                                 colorIntensity > 40 ? 'var(--synesthetic-orange)' : 
+                                 'var(--synesthetic-green)';
+    }
+    
+    if (depthEl) {
+        const depth = calculateEmotionalDepth(features);
+        depthEl.textContent = depth.level;
+        depthEl.style.color = depth.level === 'Profound' ? 'var(--synesthetic-purple)' :
+                             depth.level === 'Deep' ? 'var(--synesthetic-blue)' :
+                             depth.level === 'Moderate' ? 'var(--synesthetic-teal)' :
+                             'var(--synesthetic-green)';
+    }
 }
 
 export function updateParticles(emotion, features) {

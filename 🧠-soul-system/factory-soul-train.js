@@ -354,6 +354,7 @@ class FactorySoulTrain {
 // Export for use in the main app
 if (typeof window !== 'undefined') {
     window.FactorySoulTrain = FactorySoulTrain;
+    console.log('🏭 FactorySoulTrain class available globally');
 }
 
 export { FactorySoulTrain };

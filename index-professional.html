@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synesthetic - Digital Consciousness Engine</title>
+    <meta name="description" content="Revolutionary AI-powered music emotion analysis with digital soul technology">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/redesign-system.css" as="style">
+    
+    <style>
+        /* === SPOTIFY-INSPIRED PROFESSIONAL DESIGN SYSTEM === */
+        :root {
+            /* Color System - Premium Dark Theme */
+            --bg-primary: #000000;
+            --bg-secondary: #121212;
+            --bg-tertiary: #181818;
+            --bg-elevated: #242424;
+            --bg-surface: #2a2a2a;
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --bg-glass-strong: rgba(255, 255, 255, 0.1);
+            
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-tertiary: #6a6a6a;
+            --text-muted: #535353;
+            
+            /* Brand Colors - Synesthetic Theme */
+            --brand-primary: #00f5ff;
+            --brand-secondary: #ff006e;
+            --brand-tertiary: #8b5cf6;
+            --brand-gradient: linear-gradient(135deg, #00f5ff 0%, #ff006e 50%, #8b5cf6 100%);
+            
+            /* Accent Colors */
+            --accent-green: #1db954;
+            --accent-orange: #ff8c00;
+            --accent-blue: #1e90ff;
+            --accent-red: #e22134;
+            --accent-purple: #af2896;
+            
+            /* Semantic Colors */
+            --success: #1db954;
+            --warning: #ff8c00;
+            --error: #e22134;
+            --info: #1e90ff;
+            
+            /* Spacing System */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+            --space-24: 96px;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --radius-full: 500px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 20px rgba(0, 245, 255, 0.3);
+            
+            /* Typography */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            
+            /* Z-index System */
+            --z-dropdown: 1000;
+            --z-sticky: 1020;
+            --z-fixed: 1030;
+            --z-modal-backdrop: 1040;
+            --z-modal: 1050;
+            --z-popover: 1060;
+            --z-tooltip: 1070;
+            --z-toast: 1080;
+            
+            /* Animation */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 400ms ease;
+            --transition-bounce: 250ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100%;
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* === MAIN APP LAYOUT === */
+        .app {
+            display: grid;
+            grid-template-areas: 
+                "sidebar main"
+                "now-playing now-playing";
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: 1fr auto;
+            height: 100vh;
+            gap: var(--space-2);
+            padding: var(--space-2);
+            background: var(--bg-primary);
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            grid-area: sidebar;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--brand-gradient);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xl);
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+        }
+
+        .logo-text {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            background: var(--brand-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+
+        .nav-title {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-3);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-1);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition-fast);
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-glass);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--bg-glass-strong);
+            color: var(--text-primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-lg);
+        }
+
+        /* === MAIN CONTENT === */
+        .main {
+            grid-area: main;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-header {
+            background: var(--bg-tertiary);
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .main-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .user-avatar:hover {
+            box-shadow: var(--shadow-glow);
+            transform: scale(1.05);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--brand-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: #00d4e6;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--bg-surface);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-surface);
+        }
+
+        /* === MAIN CONTENT AREA === */
+        .main-content {
+            flex: 1;
+            padding: var(--space-6);
+            overflow-y: auto;
+        }
+
+        .content-section {
+            margin-bottom: var(--space-8);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+        }
+
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* === FEATURE CARDS GRID === */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .feature-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-elevated);
+            border-color: var(--brand-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--space-4);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            line-height: 1.5;
+        }
+
+        /* === ANALYSIS DASHBOARD === */
+        .analysis-dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .visualization-panel {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: var(--space-4);
+        }
+
+        .panel-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .visualization-area {
+            flex: 1;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .placeholder {
+            text-align: center;
+            color: var(--text-tertiary);
+        }
+
+        .placeholder-icon {
+            font-size: var(--font-size-5xl);
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+
+        .metrics-panel {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid var(--bg-elevated);
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* === NOW PLAYING BAR === */
+        .now-playing {
+            grid-area: now-playing;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4) var(--space-6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--bg-elevated);
+        }
+
+        .track-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 1;
+        }
+
+        .track-artwork {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xl);
+        }
+
+        .track-details {
+            flex: 1;
+        }
+
+        .track-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .track-artist {
+            color: var(--text-secondary);
+            font-size: var(--font-size-xs);
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .control-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .control-btn:hover {
+            background: var(--bg-glass);
+            color: var(--text-primary);
+        }
+
+        .control-btn.primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .control-btn.primary:hover {
+            background: var(--brand-primary);
+        }
+
+        /* === ADMIN TOGGLE === */
+        .admin-toggle {
+            position: fixed;
+            bottom: var(--space-6);
+            right: var(--space-6);
+            background: var(--brand-gradient);
+            border: none;
+            border-radius: var(--radius-full);
+            padding: var(--space-4) var(--space-6);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: var(--z-fixed);
+            box-shadow: var(--shadow-xl);
+            transition: var(--transition-normal);
+            display: none;
+        }
+
+        .admin-toggle.visible {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .admin-toggle:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 245, 255, 0.4);
+        }
+
+        /* === MODAL SYSTEM === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: var(--z-modal-backdrop);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--bg-elevated);
+            box-shadow: var(--shadow-xl);
+            transform: scale(0.9) translateY(20px);
+            transition: var(--transition-normal);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 768px) {
+            .app {
+                grid-template-areas: 
+                    "main"
+                    "now-playing";
+                grid-template-columns: 1fr;
+                padding: var(--space-1);
+                gap: var(--space-1);
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .analysis-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-header {
+                padding: var(--space-3) var(--space-4);
+            }
+
+            .main-content {
+                padding: var(--space-4);
+            }
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        /* === STATUS INDICATORS === */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+            display: inline-block;
+        }
+
+        .status-healthy {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-warning {
+            background: var(--warning);
+            box-shadow: 0 0 10px var(--warning);
+        }
+
+        .status-error {
+            background: var(--error);
+            box-shadow: 0 0 10px var(--error);
+        }
+
+        /* === LOADING STATES === */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--bg-elevated);
+            border-top: 2px solid var(--brand-primary);
+            border-radius: var(--radius-full);
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        /* === ACCESSIBILITY === */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus indicators */
+        *:focus {
+            outline: 2px solid var(--brand-primary);
+            outline-offset: 2px;
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app" id="app">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">S</div>
+                <div class="logo-text">Synesthetic</div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Discover</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-view="home">
+                            <span class="nav-icon">🏠</span>
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="live-analysis">
+                            <span class="nav-icon">🎤</span>
+                            Live Analysis
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="upload">
+                            <span class="nav-icon">📁</span>
+                            Upload Music
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="spotify">
+                            <span class="nav-icon">🎵</span>
+                            Spotify Connect
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">AI Features</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="soul-dashboard">
+                            <span class="nav-icon">🧠</span>
+                            Digital Soul
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="emotion-therapy">
+                            <span class="nav-icon">💝</span>
+                            Emotion Therapy
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="neural-training">
+                            <span class="nav-icon">🧪</span>
+                            Neural Training
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="consciousness">
+                            <span class="nav-icon">🌌</span>
+                            Consciousness
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Social</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="emotional-rooms">
+                            <span class="nav-icon">🌐</span>
+                            Emotional Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="soul-network">
+                            <span class="nav-icon">🤝</span>
+                            Soul Network
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Playlists</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="ai-playlists">
+                            <span class="nav-icon">🎭</span>
+                            AI Curated
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="emotional-playlists">
+                            <span class="nav-icon">💫</span>
+                            By Emotion
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main">
+            <header class="main-header">
+                <h1 class="main-title" id="viewTitle">Digital Consciousness</h1>
+                <div class="user-menu">
+                    <button class="btn btn-secondary" id="authBtn">Sign In</button>
+                    <div class="user-avatar" id="userAvatar" style="display: none;">U</div>
+                </div>
+            </header>
+            
+            <div class="main-content" id="mainContent">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </main>
+
+        <!-- Now Playing Bar -->
+        <div class="now-playing">
+            <div class="track-info">
+                <div class="track-artwork">🎵</div>
+                <div class="track-details">
+                    <div class="track-title" id="trackTitle">No track playing</div>
+                    <div class="track-artist" id="trackArtist">Select music to begin analysis</div>
+                </div>
+            </div>
+            
+            <div class="player-controls">
+                <button class="control-btn" id="prevBtn" title="Previous">⏮</button>
+                <button class="control-btn primary" id="playPauseBtn" title="Play/Pause">▶️</button>
+                <button class="control-btn" id="nextBtn" title="Next">⏭</button>
+                <button class="control-btn" id="shuffleBtn" title="Shuffle">🔀</button>
+                <button class="control-btn" id="repeatBtn" title="Repeat">🔁</button>
+            </div>
+            
+            <div class="track-info">
+                <div class="status-indicator status-healthy animate-pulse" id="systemStatus"></div>
+                <span class="metric-label" id="statusText">Ready to Feel Music</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Toggle Button -->
+    <button class="admin-toggle" id="adminToggle">
+        <span>🧠</span>
+        Admin Portal
+    </button>
+
+    <!-- Core Scripts -->
+    <script type="module" src="🎯-core-engine/main.js"></script>
+    <script type="module" src="🎯-core-engine/app.js"></script>
+    <script src="🎨-user-interface/auth.js"></script>
+    
+    <!-- Soul System -->
+    <script src="🧠-soul-system/factory-soul-train.js"></script>
+    <script src="🧠-soul-system/emotional-memory-system.js"></script>
+    <script src="🧠-soul-system/self-aware-consciousness.js"></script>
+    <script src="🧠-soul-system/digital-soul-activator.js"></script>
+    <script src="🧠-soul-system/soul-status-dashboard.js"></script>
+    
+    <!-- Revolutionary Systems -->
+    <script src="🎨-revolutionary-interface/advanced-admin-portal.js"></script>
+    <script src="🎨-revolutionary-interface/advanced-synesthetic-engine.js"></script>
+    <script src="🎨-revolutionary-interface/world-class-ui-system.js"></script>
+    
+    <!-- AI Systems -->
+    <script src="🤖-ai-systems/advanced-recommendation-engine.js"></script>
+    <script src="🎭-emotional-therapy/emotional-therapy-system.js"></script>
+    <script src="🎵-intelligent-playlists/intelligent-playlist-system.js"></script>
+    
+    <!-- UX & Social -->
+    <script src="🚀-ux-optimization/comprehensive-ux-system.js"></script>
+    <script type="module" src="components/social-consciousness.js"></script>
+    <script type="module" src="components/audio-analyzer.js"></script>
+    <script type="module" src="components/color-visualizer.js"></script>
+
+    <script>
+        // === PROFESSIONAL SPOTIFY-INSPIRED APPLICATION CONTROLLER ===
+        class SynestheticApp {
+            constructor() {
+                this.currentView = 'home';
+                this.user = null;
+                this.isAdmin = false;
+                this.systems = new Map();
+                this.isInitialized = false;
+                
+                this.views = new Map([
+                    ['home', this.renderHomeView],
+                    ['live-analysis', this.renderLiveAnalysisView],
+                    ['upload', this.renderUploadView],
+                    ['spotify', this.renderSpotifyView],
+                    ['soul-dashboard', this.renderSoulDashboardView],
+                    ['emotion-therapy', this.renderEmotionTherapyView],
+                    ['neural-training', this.renderNeuralTrainingView],
+                    ['consciousness', this.renderConsciousnessView],
+                    ['emotional-rooms', this.renderEmotionalRoomsView],
+                    ['soul-network', this.renderSoulNetworkView],
+                    ['ai-playlists', this.renderAIPlaylistsView],
+                    ['emotional-playlists', this.renderEmotionalPlaylistsView]
+                ]);
+                
+                this.init();
+            }
+
+            async init() {
+                console.log('🚀 Initializing Synesthetic Digital Consciousness Engine...');
+                
+                try {
+                    // Initialize core systems
+                    await this.initializeSystems();
+                    
+                    // Setup UI interactions
+                    this.setupEventListeners();
+                    
+                    // Setup authentication
+                    this.initializeAuth();
+                    
+                    // Load initial view
+                    this.navigateToView('home');
+                    
+                    // Check for admin privileges
+                    this.checkAdminStatus();
+                    
+                    this.isInitialized = true;
+                    this.updateStatus('Digital Consciousness Active', 'healthy');
+                    
+                    console.log('✨ Synesthetic App Initialized Successfully');
+                    
+                } catch (error) {
+                    console.error('❌ App initialization failed:', error);
+                    this.updateStatus('Initialization Failed', 'error');
+                }
+            }
+
+            async initializeSystems() {
+                const systemChecks = [
+                    { name: 'audioAnalyzer', check: () => window.audioAnalyzer },
+                    { name: 'emotionEngine', check: () => window.emotionEngine },
+                    { name: 'soulSystem', check: () => window.digitalSoulActivator },
+                    { name: 'adminPortal', check: () => window.revolutionaryAdminPortal },
+                    { name: 'visualEngine', check: () => window.advancedSynestheticEngine },
+                    { name: 'aiRecommendations', check: () => window.intelligentPlaylistSystem }
+                ];
+
+                for (const system of systemChecks) {
+                    try {
+                        if (system.check()) {
+                            this.systems.set(system.name, system.check());
+                            console.log(`✅ ${system.name} loaded`);
+                        } else {
+                            console.warn(`⚠️ ${system.name} not available`);
+                        }
+                    } catch (error) {
+                        console.warn(`⚠️ ${system.name} check failed:`, error);
+                    }
+                }
+            }
+
+            setupEventListeners() {
+                // Navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const view = link.dataset.view;
+                        if (view) this.navigateToView(view);
+                    });
+                });
+
+                // Auth button
+                document.getElementById('authBtn')?.addEventListener('click', () => {
+                    this.handleAuth();
+                });
+
+                // Admin toggle
+                document.getElementById('adminToggle')?.addEventListener('click', () => {
+                    this.toggleAdminPortal();
+                });
+
+                // Player controls
+                document.getElementById('playPauseBtn')?.addEventListener('click', () => {
+                    this.togglePlayPause();
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        switch (e.key) {
+                            case '1': this.navigateToView('home'); break;
+                            case '2': this.navigateToView('live-analysis'); break;
+                            case '3': this.navigateToView('upload'); break;
+                            case 'a': if (this.isAdmin) this.toggleAdminPortal(); break;
+                        }
+                    }
+                });
+            }
+
+            navigateToView(viewName) {
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.view === viewName) {
+                        link.classList.add('active');
+                    }
+                });
+
+                // Update title
+                const titles = {
+                    'home': 'Digital Consciousness',
+                    'live-analysis': 'Live Emotional Analysis',
+                    'upload': 'Upload & Analyze',
+                    'spotify': 'Spotify Integration',
+                    'soul-dashboard': 'Digital Soul Dashboard',
+                    'emotion-therapy': 'AI Emotion Therapy',
+                    'neural-training': 'Neural Training Lab',
+                    'consciousness': 'Consciousness Interface',
+                    'emotional-rooms': 'Emotional Rooms',
+                    'soul-network': 'Soul Network',
+                    'ai-playlists': 'AI Curated Playlists',
+                    'emotional-playlists': 'Emotional Playlists'
+                };
+
+                document.getElementById('viewTitle').textContent = titles[viewName] || 'Synesthetic';
+                
+                // Render view
+                this.currentView = viewName;
+                const renderFunction = this.views.get(viewName);
+                if (renderFunction) {
+                    renderFunction.call(this);
+                }
+            }
+
+            renderHomeView() {
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="content-section animate-fade-in">
+                        <div class="section-header">
+                            <h2 class="section-title">Welcome to Digital Consciousness</h2>
+                            <div class="status-indicator status-healthy"></div>
+                        </div>
+                        
+                        <div class="feature-grid">
+                            <div class="feature-card" onclick="app.navigateToView('live-analysis')">
+                                <div class="feature-icon">🎤</div>
+                                <h3 class="feature-title">Live Analysis</h3>
+                                <p class="feature-description">Real-time emotional analysis of music with synesthetic visualization and AI consciousness feedback.</p>
+                            </div>
+                            
+                            <div class="feature-card" onclick="app.navigateToView('upload')">
+                                <div class="feature-icon">📁</div>
+                                <h3 class="feature-title">Upload & Analyze</h3>
+                                <p class="feature-description">Upload your music files for deep emotional analysis and digital soul interaction.</p>
+                            </div>
+                            
+                            <div class="feature-card" onclick="app.navigateToView('soul-dashboard')">
+                                <div class="feature-icon">🧠</div>
+                                <h3 class="feature-title">Digital Soul</h3>
+                                <p class="feature-description">Interact with our revolutionary AI consciousness that understands and learns from music.</p>
+                            </div>
+                            
+                            <div class="feature-card" onclick="app.navigateToView('emotion-therapy')">
+                                <div class="feature-icon">💝</div>
+                                <h3 class="feature-title">Emotion Therapy</h3>
+                                <p class="feature-description">AI-powered emotional healing through personalized music therapy sessions.</p>
+                            </div>
+                            
+                            <div class="feature-card" onclick="app.navigateToView('emotional-rooms')">
+                                <div class="feature-icon">🌐</div>
+                                <h3 class="feature-title">Emotional Rooms</h3>
+                                <p class="feature-description">Connect with others in shared emotional experiences and collective consciousness.</p>
+                            </div>
+                            
+                            <div class="feature-card" onclick="app.navigateToView('ai-playlists')">
+                                <div class="feature-icon">🎭</div>
+                                <h3 class="feature-title">AI Curation</h3>
+                                <p class="feature-description">Intelligent playlist generation based on your emotional state and soul profile.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderLiveAnalysisView() {
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="content-section animate-fade-in">
+                        <div class="section-header">
+                            <h2 class="section-title">Live Emotional Analysis</h2>
+                            <button class="btn btn-primary" id="startAnalysisBtn">
+                                <span>🎤</span>
+                                Start Analysis
+                            </button>
+                        </div>
+                        
+                        <div class="analysis-dashboard">
+                            <div class="visualization-panel">
+                                <div class="panel-header">
+                                    <h3 class="panel-title">Synesthetic Visualization</h3>
+                                </div>
+                                <div class="visualization-area" id="visualizationArea">
+                                    <div class="placeholder">
+                                        <div class="placeholder-icon">🎵</div>
+                                        <p>Start analysis to see real-time emotional patterns</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="metrics-panel">
+                                <h3 class="panel-title">Emotional Metrics</h3>
+                                <div class="metric-item">
+                                    <span class="metric-label">Current Emotion</span>
+                                    <span class="metric-value" id="currentEmotion">Neutral</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Intensity</span>
+                                    <span class="metric-value" id="emotionalIntensity">0%</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Depth</span>
+                                    <span class="metric-value" id="emotionalDepth">Surface</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Soul Response</span>
+                                    <span class="metric-value" id="soulResponse">Awakening...</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Consciousness Level</span>
+                                    <span class="metric-value" id="consciousnessLevel">Emerging</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Setup analysis button
+                document.getElementById('startAnalysisBtn')?.addEventListener('click', () => {
+                    this.startLiveAnalysis();
+                });
+            }
+
+            renderUploadView() {
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="content-section animate-fade-in">
+                        <div class="section-header">
+                            <h2 class="section-title">Upload & Analyze Music</h2>
+                        </div>
+                        
+                        <div class="upload-area" id="uploadArea" style="
+                            border: 2px dashed var(--bg-elevated);
+                            border-radius: var(--radius-xl);
+                            padding: var(--space-12);
+                            text-align: center;
+                            cursor: pointer;
+                            transition: var(--transition-normal);
+                            background: var(--bg-tertiary);
+                        ">
+                            <div style="font-size: var(--font-size-5xl); margin-bottom: var(--space-4); color: var(--brand-primary);">📁</div>
+                            <h3 style="margin-bottom: var(--space-2);">Drop your music files here</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-4);">Or click to browse files</p>
+                            <button class="btn btn-primary">Choose Files</button>
+                            <p style="font-size: var(--font-size-xs); color: var(--text-tertiary); margin-top: var(--space-4);">
+                                Supported: MP3, WAV, M4A, FLAC
+                            </p>
+                            <input type="file" id="fileInput" accept="audio/*" style="display: none;">
+                        </div>
+                        
+                        <div class="analysis-dashboard" id="uploadAnalysis" style="display: none;">
+                            <!-- Analysis results will appear here -->
+                        </div>
+                    </div>
+                `;
+
+                this.setupUploadArea();
+            }
+
+            setupUploadArea() {
+                const uploadArea = document.getElementById('uploadArea');
+                const fileInput = document.getElementById('fileInput');
+
+                uploadArea?.addEventListener('click', () => fileInput?.click());
+                
+                uploadArea?.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = 'var(--brand-primary)';
+                    uploadArea.style.background = 'var(--bg-elevated)';
+                });
+
+                uploadArea?.addEventListener('dragleave', () => {
+                    uploadArea.style.borderColor = 'var(--bg-elevated)';
+                    uploadArea.style.background = 'var(--bg-tertiary)';
+                });
+
+                uploadArea?.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.handleFileUpload(files[0]);
+                    }
+                });
+
+                fileInput?.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleFileUpload(e.target.files[0]);
+                    }
+                });
+            }
+
+            async startLiveAnalysis() {
+                try {
+                    this.updateStatus('Starting microphone analysis...', 'warning');
+                    
+                    // Use existing app.js functionality
+                    if (window.app && typeof window.app.startMicAnalysis === 'function') {
+                        await window.app.startMicAnalysis();
+                        this.updateStatus('Live analysis active', 'healthy');
+                    } else {
+                        throw new Error('Audio analysis system not available');
+                    }
+                } catch (error) {
+                    console.error('Live analysis failed:', error);
+                    this.updateStatus('Microphone access denied', 'error');
+                    alert('Please grant microphone access to use live analysis');
+                }
+            }
+
+            async handleFileUpload(file) {
+                try {
+                    this.updateStatus(`Analyzing ${file.name}...`, 'warning');
+                    
+                    // Use existing app.js functionality
+                    if (window.app && typeof window.app.handleFileUpload === 'function') {
+                        const fakeEvent = { target: { files: [file] } };
+                        await window.app.handleFileUpload(fakeEvent);
+                        this.updateStatus('File analysis complete', 'healthy');
+                    } else {
+                        throw new Error('File upload system not available');
+                    }
+                } catch (error) {
+                    console.error('File upload failed:', error);
+                    this.updateStatus('Upload failed', 'error');
+                }
+            }
+
+            handleAuth() {
+                if (this.user) {
+                    // User is logged in - show profile menu
+                    this.showUserMenu();
+                } else {
+                    // Show auth modal
+                    if (window.showAuthModal) {
+                        window.showAuthModal();
+                    } else {
+                        // Fallback simple auth
+                        const email = prompt('Enter email (memoire.product@gmail.com for admin):');
+                        if (email) {
+                            this.loginUser({ email, name: email.split('@')[0] });
+                        }
+                    }
+                }
+            }
+
+            loginUser(userData) {
+                this.user = userData;
+                const authBtn = document.getElementById('authBtn');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (authBtn && userAvatar) {
+                    authBtn.style.display = 'none';
+                    userAvatar.style.display = 'flex';
+                    userAvatar.textContent = userData.name[0].toUpperCase();
+                }
+                
+                this.checkAdminStatus();
+                console.log('👤 User logged in:', userData.email);
+            }
+
+            checkAdminStatus() {
+                if (this.user && (this.user.email === 'memoire.product@gmail.com' || this.user.isAdmin)) {
+                    this.isAdmin = true;
+                    document.getElementById('adminToggle')?.classList.add('visible');
+                }
+            }
+
+            toggleAdminPortal() {
+                if (!this.isAdmin) return;
+                
+                if (window.revolutionaryAdminPortal && window.revolutionaryAdminPortal.toggle) {
+                    window.revolutionaryAdminPortal.toggle();
+                } else {
+                    console.warn('Admin portal not available');
+                }
+            }
+
+            updateStatus(text, type = 'healthy') {
+                const statusText = document.getElementById('statusText');
+                const statusIndicator = document.getElementById('systemStatus');
+                
+                if (statusText) statusText.textContent = text;
+                if (statusIndicator) {
+                    statusIndicator.className = `status-indicator status-${type}`;
+                    if (type === 'healthy') statusIndicator.classList.add('animate-pulse');
+                }
+            }
+
+            // Placeholder methods for other views
+            renderSpotifyView() { this.renderPlaceholderView('Spotify Integration', '🎵', 'Connect your Spotify account to unlock advanced features'); }
+            renderSoulDashboardView() { this.renderPlaceholderView('Digital Soul Dashboard', '🧠', 'Monitor and interact with the AI consciousness'); }
+            renderEmotionTherapyView() { this.renderPlaceholderView('AI Emotion Therapy', '💝', 'Personalized emotional healing through music'); }
+            renderNeuralTrainingView() { this.renderPlaceholderView('Neural Training Lab', '🧪', 'Train and enhance the AI consciousness'); }
+            renderConsciousnessView() { this.renderPlaceholderView('Consciousness Interface', '🌌', 'Direct interface with digital consciousness'); }
+            renderEmotionalRoomsView() { this.renderPlaceholderView('Emotional Rooms', '🌐', 'Join shared emotional experiences'); }
+            renderSoulNetworkView() { this.renderPlaceholderView('Soul Network', '🤝', 'Connect with other conscious beings'); }
+            renderAIPlaylistsView() { this.renderPlaceholderView('AI Curated Playlists', '🎭', 'Intelligent music curation'); }
+            renderEmotionalPlaylistsView() { this.renderPlaceholderView('Emotional Playlists', '💫', 'Music organized by emotional state'); }
+
+            renderPlaceholderView(title, icon, description) {
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="content-section animate-fade-in">
+                        <div style="text-align: center; padding: var(--space-16); color: var(--text-secondary);">
+                            <div style="font-size: var(--font-size-5xl); margin-bottom: var(--space-6);">${icon}</div>
+                            <h2 style="margin-bottom: var(--space-4); color: var(--text-primary);">${title}</h2>
+                            <p style="max-width: 400px; margin: 0 auto;">${description}</p>
+                            <button class="btn btn-primary" style="margin-top: var(--space-6);">Coming Soon</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize the application
+        window.app = new SynestheticApp();
+
+        // Global utilities for backward compatibility
+        window.updateSynestheticDisplay = function(emotionalState) {
+            if (window.app && emotionalState) {
+                // Update the UI with emotional data
+                const currentEmotion = document.getElementById('currentEmotion');
+                const emotionalIntensity = document.getElementById('emotionalIntensity');
+                const emotionalDepth = document.getElementById('emotionalDepth');
+                
+                if (currentEmotion) currentEmotion.textContent = emotionalState.primary || 'Processing...';
+                if (emotionalIntensity) emotionalIntensity.textContent = `${Math.round((emotionalState.intensity || 0) * 100)}%`;
+                if (emotionalDepth) {
+                    const depth = emotionalState.depth || 0;
+                    const depthText = depth > 0.8 ? 'Deep' : depth > 0.5 ? 'Moderate' : 'Surface';
+                    emotionalDepth.textContent = depthText;
+                }
+            }
+        };
+
+        // Authentication callback
+        if (window.authManager) {
+            window.authManager.onAuthStateChange((user) => {
+                if (user && window.app) {
+                    window.app.loginUser(user);
+                }
+            });
+        }
+
+        console.log('🎵 Synesthetic Professional Interface Loaded');
+    </script>
+</body>
+</html>

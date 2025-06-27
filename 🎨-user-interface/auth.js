@@ -583,15 +583,52 @@ class AuthManager {
     // UI Helper functions
     showUserDashboard() {
         // Always update UI for user after login/session check
-        import('./login.js').then(mod => {
-            mod.createUserDashboard();
-            mod.updateUIForUser(this.currentUser);
+        import('./🎨-user-interface/login.js').then(mod => {
+            if (mod.createUserDashboard && typeof mod.createUserDashboard === 'function') {
+                mod.createUserDashboard();
+            }
+            if (mod.updateUIForUser && typeof mod.updateUIForUser === 'function') {
+                mod.updateUIForUser(this.currentUser);
+            }
             
             // Add admin toggle if user is admin
             if (this.isAdmin()) {
                 this.addAdminModeToggle();
             }
+        }).catch(error => {
+            console.error('Error loading login module:', error);
+            // Fallback: just update UI directly
+            this.updateUIDirectly();
         });
+    }
+    
+    /**
+     * Fallback UI update when module import fails
+     */
+    updateUIDirectly() {
+        // Update auth button to show user info
+        const authBtn = document.getElementById('authBtn');
+        const userProfile = document.getElementById('userProfile');
+        
+        if (authBtn && userProfile && this.currentUser) {
+            authBtn.style.display = 'none';
+            userProfile.style.display = 'block';
+            
+            const userDisplayName = document.getElementById('userDisplayName');
+            if (userDisplayName) {
+                userDisplayName.textContent = this.currentUser.username || this.currentUser.email?.split('@')[0] || 'User';
+            }
+            
+            // Show admin options if admin
+            if (this.isAdmin()) {
+                this.addAdminModeToggle();
+                // Show neural interface button
+                const neuralBtn = document.getElementById('adminToggle');
+                if (neuralBtn) {
+                    neuralBtn.style.display = 'block';
+                }
+            }
+        }
     }
     
     /**
@@ -741,7 +778,7 @@ class AuthManager {
     
     hideUserDashboard() {
         // Always update UI for guest after logout
-        import('./login.js').then(mod => {
+        import('./🎨-user-interface/login.js').then(mod => {
             mod.updateUIForGuest();
         });
     }
@@ -809,7 +846,7 @@ initializeSupabase().then(async () => {
     showAuthLoadingOverlay();
     window.authManager = new AuthManager();
     await checkUser();
-    import('./login.js').then(mod => {
+    import('./🎨-user-interface/login.js').then(mod => {
         cleanupAuthUI(); // Remove any lingering UI before creating new
         hideAuthLoadingOverlay();
         if (window.authManager.currentUser) {

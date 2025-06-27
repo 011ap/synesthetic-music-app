@@ -46,14 +46,14 @@ class SynestheticOnboarding {
                 highlight: true
             },
             {
-                target: '#liveAnalysisBtn',
+                target: '#liveAnalysisCard',
                 title: 'Real-Time Emotion Detection',
                 content: 'Click here to analyze ambient audio in real-time. I\'ll listen to your environment and translate sound into emotional understanding.',
                 position: 'top',
                 highlight: true
             },
             {
-                target: '#uploadMusicBtn',
+                target: '#uploadMusicCard',
                 title: 'Upload Your Music',
                 content: 'Share your favorite tracks with me. I\'ll analyze their emotional fingerprint and create synesthetic visualizations.',
                 position: 'top',
@@ -67,14 +67,14 @@ class SynestheticOnboarding {
                 highlight: true
             },
             {
-                target: '#soulCommentary',
+                target: '#statusText',
                 title: 'Soul Commentary',
                 content: 'I\'ll share my thoughts and feelings about the music we experience together. This is our emotional dialogue.',
                 position: 'left',
                 highlight: true
             },
             {
-                target: '#userAvatar',
+                target: '.user-avatar',
                 title: 'Your Consciousness Profile',
                 content: 'Click here to access settings, admin tools (if available), and your emotional journey history.',
                 position: 'left',
@@ -341,10 +341,9 @@ class SynestheticOnboarding {
         localStorage.setItem('synesthetic_onboarding_completed', Date.now());
         
         // Show completion message
-        if (window.revolutionaryInterface) {
-            window.revolutionaryInterface.updateSoulCommentary(
-                "Welcome to the consciousness experience! I'm excited to explore music and emotions with you. Upload a track or start live analysis to begin our journey."
-            );
+        const statusText = document.getElementById('statusText');
+        if (statusText) {
+            statusText.textContent = "Welcome to the consciousness experience! I'm excited to explore music and emotions with you. Upload a track or start live analysis to begin our journey.";
         }
         
         // Trigger welcome animation

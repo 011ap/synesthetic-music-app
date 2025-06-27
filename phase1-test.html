@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1 Verification - Synesthetic</title>
+    <style>
+        body {
+            background: #0f0f14;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #00f5ff, #0096ff);
+            border-radius: 12px;
+            color: black;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #00f5ff;
+            color: black;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,245,255,0.3);
+        }
+        .status {
+            background: rgba(0,0,0,0.3);
+            border-left: 4px solid #00f5ff;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        .mock-ui {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .brand-icon { 
+            width: 60px; 
+            height: 60px; 
+            background: linear-gradient(135deg, #00f5ff, #0096ff); 
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        #liveAnalysisCard, #uploadMusicCard { 
+            width: 180px; 
+            height: 120px; 
+            background: rgba(255,255,255,0.08); 
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #liveAnalysisCard:hover, #uploadMusicCard:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+        #emotionCanvas { 
+            width: 300px; 
+            height: 200px; 
+            background: linear-gradient(135deg, rgba(0,245,255,0.1), rgba(0,150,255,0.1)); 
+            border: 2px solid rgba(0,245,255,0.3);
+            border-radius: 12px;
+        }
+        .user-avatar { 
+            width: 50px; 
+            height: 50px; 
+            background: linear-gradient(135deg, #00f5ff, #8b5cf6); 
+            border-radius: 50%; 
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #statusText {
+            color: #00f5ff;
+            font-size: 16px;
+            padding: 10px;
+            background: rgba(0,245,255,0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(0,245,255,0.3);
+        }
+        
+        :root {
+            --synesthetic-primary: #00f5ff;
+            --glass-strong: rgba(0, 0, 0, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
+            --neural-void: #000000;
+            --glass-light: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Phase 1 Verification</h1>
+        <p>Testing Synesthetic Onboarding System Integration</p>
+    </div>
+    
+    <div class="test-section">
+        <h3>🧪 System Status</h3>
+        <div class="status" id="systemStatus">
+            Initializing verification tests...
+        </div>
+        <div id="statusText">Ready to verify onboarding system...</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🎮 Test Controls</h3>
+        <button class="btn" onclick="runFullTest()">Run Full Verification</button>
+        <button class="btn" onclick="clearStorageAndTest()">Clear Storage & Test</button>
+        <button class="btn" onclick="triggerOnboarding()">Force Trigger Onboarding</button>
+        <button class="btn" onclick="checkElements()">Check Target Elements</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>🎨 Mock UI Elements (Onboarding Targets)</h3>
+        <div class="mock-ui">
+            <div class="brand-icon">🎵</div>
+            <div id="liveAnalysisCard">
+                <div style="font-weight: bold; margin-bottom: 8px;">🎤 Live Analysis</div>
+                <div style="font-size: 14px; opacity: 0.8;">Feel music as it plays</div>
+            </div>
+            <div id="uploadMusicCard">
+                <div style="font-weight: bold; margin-bottom: 8px;">📁 Upload Music</div>
+                <div style="font-size: 14px; opacity: 0.8;">Analyze your files</div>
+            </div>
+            <canvas id="emotionCanvas"></canvas>
+            <div class="user-avatar">M</div>
+        </div>
+    </div>
+    
+    <!-- Load the onboarding system -->
+    <script src="🎨-user-interface/onboarding-system.js"></script>
+    <script src="phase1-verification.js"></script>
+    
+    <script>
+        function updateStatus(message) {
+            document.getElementById('systemStatus').innerHTML = message;
+            console.log(message);
+        }
+        
+        function runFullTest() {
+            updateStatus('🚀 Running full Phase 1 verification...');
+            if (window.runPhase1Verification) {
+                window.runPhase1Verification();
+            } else {
+                updateStatus('❌ Verification script not loaded');
+            }
+        }
+        
+        function clearStorageAndTest() {
+            localStorage.removeItem('synesthetic_visited');
+            localStorage.removeItem('synesthetic_onboarding_completed');
+            updateStatus('🧹 Storage cleared! Reloading page to trigger first-visit experience...');
+            setTimeout(() => location.reload(), 1000);
+        }
+        
+        function triggerOnboarding() {
+            if (window.triggerOnboardingTest) {
+                updateStatus('🎯 Forcing onboarding trigger...');
+                window.triggerOnboardingTest();
+            } else {
+                updateStatus('❌ Onboarding test function not available');
+            }
+        }
+        
+        function checkElements() {
+            const targets = ['.brand-icon', '#liveAnalysisCard', '#uploadMusicCard', '#emotionCanvas', '#statusText', '.user-avatar'];
+            let results = '🔍 Element Check Results:<br>';
+            
+            targets.forEach(target => {
+                const element = document.querySelector(target);
+                const status = element ? '✅ FOUND' : '❌ MISSING';
+                results += `${target}: ${status}<br>`;
+            });
+            
+            updateStatus(results);
+        }
+        
+        // Auto-run basic check on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                updateStatus('✅ Phase 1 verification page loaded successfully!<br>🎯 Ready to test onboarding system integration.');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

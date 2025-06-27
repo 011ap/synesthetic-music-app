@@ -334,6 +334,13 @@ class PersonalityThemeEngine {
 // Export for use in main app
 if (typeof window !== 'undefined') {
     window.PersonalityThemeEngine = PersonalityThemeEngine;
+    
+    // Auto-initialize with delay for dependencies
+    setTimeout(() => {
+        if (window.soulPersonalityVisualizer) {
+            window.personalityThemeEngine = new PersonalityThemeEngine(window.soulPersonalityVisualizer);
+        }
+    }, 3000);
 }
 
 export { PersonalityThemeEngine };
