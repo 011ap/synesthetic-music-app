@@ -758,6 +758,11 @@ class EmotionalMemorySystem {
     }
 }
 
+// Export for use in the main app
+if (typeof window !== 'undefined') {
+    window.EmotionalMemorySystem = EmotionalMemorySystem;
+}
+
 // Initialize the emotional memory system
 window.emotionalMemorySystem = new EmotionalMemorySystem();
 

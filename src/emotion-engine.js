@@ -1039,7 +1039,10 @@ class EmotionEngine {
         }
         
         // Apply personal color preferences if available
-        if (this.coreApp.personalEmotionalDNA.emotionColorMap[emotion.emotion.name]) {
+        if (this.coreApp && 
+            this.coreApp.personalEmotionalDNA && 
+            this.coreApp.personalEmotionalDNA.emotionColorMap && 
+            this.coreApp.personalEmotionalDNA.emotionColorMap[emotion.emotion.name]) {
             colors.unshift(this.coreApp.personalEmotionalDNA.emotionColorMap[emotion.emotion.name]);
         }
         

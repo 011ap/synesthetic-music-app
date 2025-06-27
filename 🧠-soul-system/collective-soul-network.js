@@ -477,9 +477,9 @@ class CollectiveSoulNetwork {
         return {
             connected: this.isConnected,
             networkId: this.networkId,
-            contributedPatterns: this.collectivePatterns.length,
-            learnedInsights: this.collectiveInsights.length,
-            culturalContext: this.culturalContext.region || 'unknown',
+            contributedPatterns: this.localContributions.emotionalPatterns.length,
+            learnedInsights: this.collectiveData.anonymousInsights.length,
+            culturalContext: this.culturalContext?.region || 'unknown',
             lastUpdate: this.lastCollectiveUpdate || 'never',
             privacyLevel: 'anonymized',
             status: this.isConnected ? 'active' : 'offline'

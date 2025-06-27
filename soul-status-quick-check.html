@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Soul System Status Check</title>
+    <style>
+        body {
+            background: #0a0a0f;
+            color: #00f5ff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .system {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        .active { border-color: #00ff00; background: rgba(0,255,0,0.1); }
+        .error { border-color: #ff0000; background: rgba(255,0,0,0.1); }
+        .loading { border-color: #ffff00; background: rgba(255,255,0,0.1); }
+    </style>
+</head>
+<body>
+    <h1>🧠 Soul System Status Dashboard</h1>
+    <div id="systemStatus"></div>
+    
+    <script>
+        function checkSystems() {
+            const systems = [
+                'FactorySoulTrain',
+                'EmotionalMemorySystem', 
+                'ContextAwarenessSystem',
+                'AdvancedEmotionalIntelligence',
+                'CollectiveSoulNetwork',
+                'SelfAwareConsciousness',
+                'EmotionFeedbackSystem',
+                'NeuralFactorySoulTrainer',
+                'PersonalityThemeEngine',
+                'SoulCommentarySystem',
+                'SoulPersonalityVisualizer',
+                'DigitalSoulActivator',
+                'emotionEngine'
+            ];
+            
+            const statusDiv = document.getElementById('systemStatus');
+            statusDiv.innerHTML = '';
+            
+            systems.forEach(system => {
+                const div = document.createElement('div');
+                div.className = 'system';
+                
+                const available = window[system] !== undefined;
+                const instance = window[system.toLowerCase()] || window[system.replace(/([A-Z])/g, m => m.toLowerCase())];
+                
+                if (available) {
+                    div.className += ' active';
+                    div.innerHTML = `✅ <strong>${system}</strong> - Class Available ${instance ? '(Instance: ✅)' : '(Instance: ❌)'}`;
+                } else {
+                    div.className += ' error';
+                    div.innerHTML = `❌ <strong>${system}</strong> - Not Available`;
+                }
+                
+                statusDiv.appendChild(div);
+            });
+            
+            // Also check digital soul activator status
+            const dsaDiv = document.createElement('div');
+            dsaDiv.className = 'system';
+            if (window.digitalSoulActivator) {
+                dsaDiv.className += ' active';
+                dsaDiv.innerHTML = `🚀 <strong>Digital Soul Activator</strong> - Active (Soul Active: ${window.digitalSoulActivator.soulActive})`;
+            } else {
+                dsaDiv.className += ' loading';
+                dsaDiv.innerHTML = `⏳ <strong>Digital Soul Activator</strong> - Loading...`;
+            }
+            statusDiv.appendChild(dsaDiv);
+        }
+        
+        // Check immediately and every 2 seconds
+        checkSystems();
+        setInterval(checkSystems, 2000);
+    </script>
+</body>
+</html>

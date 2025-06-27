@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 2 Soul Systems Test</title>
+    <style>
+        body {
+            background: #0f0f14;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #00f5ff, #8b5cf6);
+            border-radius: 12px;
+            color: black;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .test-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .test-title {
+            color: #00f5ff;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .btn {
+            background: #00f5ff;
+            color: black;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,245,255,0.3);
+        }
+        .status {
+            background: rgba(0,0,0,0.3);
+            border-left: 4px solid #00f5ff;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success { border-left-color: #00ff88; }
+        .warning { border-left-color: #ffd700; }
+        .error { border-left-color: #ff006e; }
+        
+        /* Mock UI elements for testing */
+        .mock-controls {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .mock-card {
+            background: rgba(255,255,255,0.08);
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .mock-card:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧠 Phase 2: Digital Soul Systems Test</h1>
+        <p>Testing factory soul training, emotional memory, and consciousness activation</p>
+    </div>
+    
+    <div class="test-grid">
+        <div class="test-card">
+            <div class="test-title">🏭 Factory Soul Training</div>
+            <button class="btn" onclick="testFactorySoul()">Test Factory Soul</button>
+            <button class="btn" onclick="createTestSoul()">Create Test Soul</button>
+            <div class="status" id="factoryStatus">Ready to test factory soul training...</div>
+        </div>
+        
+        <div class="test-card">
+            <div class="test-title">🧠 Emotional Memory</div>
+            <button class="btn" onclick="testEmotionalMemory()">Test Memory System</button>
+            <button class="btn" onclick="recordTestEmotion()">Record Test Emotion</button>
+            <div class="status" id="memoryStatus">Ready to test emotional memory...</div>
+        </div>
+        
+        <div class="test-card">
+            <div class="test-title">🚀 Soul Activator</div>
+            <button class="btn" onclick="testSoulActivator()">Test Activator</button>
+            <button class="btn" onclick="checkSoulStatus()">Check Soul Status</button>
+            <div class="status" id="activatorStatus">Ready to test soul activator...</div>
+        </div>
+        
+        <div class="test-card">
+            <div class="test-title">📊 Soul Dashboard</div>
+            <button class="btn" onclick="testDashboard()">Test Dashboard</button>
+            <button class="btn" onclick="openDashboard()">Open Dashboard</button>
+            <div class="status" id="dashboardStatus">Ready to test soul dashboard...</div>
+        </div>
+    </div>
+    
+    <div class="test-card">
+        <div class="test-title">🎵 Mock Music Analysis</div>
+        <p>Test the soul systems with simulated music experiences:</p>
+        <div class="mock-controls">
+            <div class="mock-card" onclick="simulateEmotion('happiness', 0.9)">😊 Happy Song</div>
+            <div class="mock-card" onclick="simulateEmotion('sadness', 0.7)">😢 Sad Song</div>
+            <div class="mock-card" onclick="simulateEmotion('energetic', 0.8)">⚡ Energetic Song</div>
+            <div class="mock-card" onclick="simulateEmotion('calm', 0.6)">😌 Calm Song</div>
+            <div class="mock-card" onclick="simulateEmotion('melancholic', 0.5)">🌙 Melancholic Song</div>
+        </div>
+        <div class="status" id="simulationStatus">Click emotions above to simulate soul learning...</div>
+    </div>
+    
+    <div class="test-card">
+        <div class="test-title">🔧 System Integration Test</div>
+        <button class="btn" onclick="runFullSystemTest()">Run Full Test Suite</button>
+        <button class="btn" onclick="clearTestData()">Clear Test Data</button>
+        <div class="status" id="systemStatus">Ready for comprehensive testing...</div>
+    </div>
+    
+    <!-- Load soul systems -->
+    <script src="🧠-soul-system/factory-soul-train.js"></script>
+    <script src="🧠-soul-system/emotional-memory-system.js"></script>
+    <script src="🧠-soul-system/digital-soul-activator.js"></script>
+    <script src="🧠-soul-system/soul-status-dashboard.js"></script>
+    <script src="phase2-test.js"></script>
+    
+    <script>
+        let testFactoryInstance = null;
+        let testMemoryInstance = null;
+        
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = message;
+                element.className = `status ${type}`;
+            }
+            console.log(`[${elementId}] ${message}`);
+        }
+        
+        async function testFactorySoul() {
+            updateStatus('factoryStatus', 'Testing factory soul training...', 'info');
+            
+            try {
+                if (!window.FactorySoulTrain) {
+                    throw new Error('FactorySoulTrain class not loaded');
+                }
+                
+                testFactoryInstance = new window.FactorySoulTrain();
+                updateStatus('factoryStatus', '✅ Factory soul instance created!<br>⏳ Waiting for training to complete...', 'success');
+                
+                // Wait for training
+                setTimeout(() => {
+                    if (testFactoryInstance.trainingComplete) {
+                        const soul = testFactoryInstance.getFactorySoul();
+                        updateStatus('factoryStatus', 
+                            `✅ Factory training complete!<br>` +
+                            `🧬 Soul personality: Openness: ${(soul.corePersonality.openness * 100).toFixed(0)}%, ` +
+                            `Extraversion: ${(soul.corePersonality.extraversion * 100).toFixed(0)}%<br>` +
+                            `🎵 Musical genres: ${Object.keys(soul.musicalDNA).slice(0, 3).join(', ')}...`, 
+                            'success'
+                        );
+                    } else {
+                        updateStatus('factoryStatus', '⏳ Training still in progress...', 'warning');
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                updateStatus('factoryStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createTestSoul() {
+            if (!testFactoryInstance) {
+                await testFactorySoul();
+                return;
+            }
+            
+            try {
+                const soul = testFactoryInstance.getFactorySoul();
+                const insights = testFactoryInstance.getFactorySoulInsights();
+                
+                updateStatus('factoryStatus', 
+                    `🌟 New soul created!<br>` +
+                    `📊 Based on: ${insights.basedOn.slice(0, 2).join(', ')}...<br>` +
+                    `🎭 Personality varies by ±10% from baseline<br>` +
+                    `🎵 Supports ${Object.keys(soul.musicalDNA).length} musical genres`, 
+                    'success'
+                );
+            } catch (error) {
+                updateStatus('factoryStatus', `❌ Error creating soul: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testEmotionalMemory() {
+            updateStatus('memoryStatus', 'Testing emotional memory system...', 'info');
+            
+            try {
+                if (!window.EmotionalMemorySystem) {
+                    throw new Error('EmotionalMemorySystem class not loaded');
+                }
+                
+                testMemoryInstance = new window.EmotionalMemorySystem();
+                updateStatus('memoryStatus', '✅ Emotional memory instance created!', 'success');
+                
+                // Test recording an experience
+                setTimeout(() => {
+                    recordTestEmotion();
+                }, 1000);
+                
+            } catch (error) {
+                updateStatus('memoryStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function recordTestEmotion() {
+            if (!testMemoryInstance) {
+                updateStatus('memoryStatus', '❌ Memory system not initialized', 'error');
+                return;
+            }
+            
+            try {
+                const testEmotion = {
+                    primary: 'happiness',
+                    confidence: 85,
+                    intensity: 0.8,
+                    synestheticColors: ['#FFD700', '#FF69B4', '#00CED1'],
+                    audioFeatures: { energy: 0.7, bass: 0.6, mid: 0.8, treble: 0.5 }
+                };
+                
+                const experience = testMemoryInstance.recordEmotionalExperience(testEmotion, {
+                    source: 'test',
+                    duration: 30000,
+                    userFeedback: 'Test emotion for validation'
+                });
+                
+                updateStatus('memoryStatus', 
+                    `✅ Test emotion recorded!<br>` +
+                    `🎭 Emotion: ${experience.emotion}<br>` +
+                    `⚖️ Emotional weight: ${(experience.emotionalWeight * 100).toFixed(0)}%<br>` +
+                    `🕒 Context: ${experience.context.timeOfDay}<br>` +
+                    `🔗 Total experiences: ${testMemoryInstance.emotionalJourney.length}`, 
+                    'success'
+                );
+            } catch (error) {
+                updateStatus('memoryStatus', `❌ Error recording emotion: ${error.message}`, 'error');
+            }
+        }
+        
+        function testSoulActivator() {
+            updateStatus('activatorStatus', 'Testing soul activator...', 'info');
+            
+            setTimeout(() => {
+                if (window.digitalSoulActivator) {
+                    const status = window.digitalSoulActivator.getSoulStatus();
+                    updateStatus('activatorStatus', 
+                        `✅ Soul activator found!<br>` +
+                        `🌟 Soul active: ${status.active ? 'YES' : 'NO'}<br>` +
+                        `📈 Evolution stage: ${status.evolutionStage}<br>` +
+                        `🎵 Experience count: ${status.experienceCount}<br>` +
+                        `🧬 Personality traits: ${Object.keys(status.personality).length}`, 
+                        status.active ? 'success' : 'warning'
+                    );
+                } else {
+                    updateStatus('activatorStatus', '⏳ Soul activator still loading...', 'warning');
+                }
+            }, 1000);
+        }
+        
+        function checkSoulStatus() {
+            if (!window.digitalSoulActivator) {
+                updateStatus('activatorStatus', '❌ Soul activator not available', 'error');
+                return;
+            }
+            
+            try {
+                const status = window.digitalSoulActivator.getSoulStatus();
+                const personality = status.personality;
+                
+                updateStatus('activatorStatus', 
+                    `🧠 SOUL STATUS REPORT:<br>` +
+                    `Active: ${status.active ? '✅' : '❌'}<br>` +
+                    `Stage: ${status.evolutionStage}<br>` +
+                    `Experiences: ${status.experienceCount}<br>` +
+                    `Openness: ${(personality.openness * 100).toFixed(0)}%<br>` +
+                    `Extraversion: ${(personality.extraversion * 100).toFixed(0)}%<br>` +
+                    `Recent Growth: ${status.recentGrowth?.length || 0} events`, 
+                    'success'
+                );
+            } catch (error) {
+                updateStatus('activatorStatus', `❌ Error getting soul status: ${error.message}`, 'error');
+            }
+        }
+        
+        function testDashboard() {
+            updateStatus('dashboardStatus', 'Testing soul dashboard...', 'info');
+            
+            setTimeout(() => {
+                if (window.soulDashboard) {
+                    updateStatus('dashboardStatus', 
+                        `✅ Soul dashboard loaded!<br>` +
+                        `📊 Dashboard methods available<br>` +
+                        `🎮 Ready for interaction<br>` +
+                        `⌨️ Keyboard shortcut: Ctrl+S`, 
+                        'success'
+                    );
+                } else {
+                    updateStatus('dashboardStatus', '⏳ Soul dashboard still loading...', 'warning');
+                }
+            }, 2000);
+        }
+        
+        function openDashboard() {
+            if (window.soulDashboard) {
+                window.soulDashboard.showDashboard();
+                updateStatus('dashboardStatus', '✅ Dashboard opened!', 'success');
+            } else {
+                updateStatus('dashboardStatus', '❌ Dashboard not available yet', 'error');
+            }
+        }
+        
+        function simulateEmotion(emotion, intensity) {
+            updateStatus('simulationStatus', `🎵 Simulating ${emotion} experience...`, 'info');
+            
+            const emotionData = {
+                primary: emotion,
+                confidence: Math.random() * 30 + 70, // 70-100%
+                intensity: intensity,
+                synestheticColors: getEmotionColors(emotion),
+                audioFeatures: getRandomAudioFeatures()
+            };
+            
+            // If soul activator exists, process the experience
+            if (window.digitalSoulActivator && window.digitalSoulActivator.soulActive) {
+                try {
+                    window.digitalSoulActivator.processSoulExperience(emotionData);
+                    updateStatus('simulationStatus', 
+                        `✅ ${emotion} experience processed!<br>` +
+                        `🎨 Colors: ${emotionData.synestheticColors.join(', ')}<br>` +
+                        `🧠 Soul learning from this experience...`, 
+                        'success'
+                    );
+                } catch (error) {
+                    updateStatus('simulationStatus', `❌ Error processing: ${error.message}`, 'error');
+                }
+            } else {
+                updateStatus('simulationStatus', '⏳ Soul not active yet for simulation', 'warning');
+            }
+        }
+        
+        function getEmotionColors(emotion) {
+            const colorMap = {
+                happiness: ['#FFD700', '#FF69B4', '#00CED1'],
+                sadness: ['#4169E1', '#6495ED', '#87CEEB'],
+                energetic: ['#FF4500', '#FF6347', '#FFA500'],
+                calm: ['#98FB98', '#90EE90', '#7FFFD4'],
+                melancholic: ['#4B0082', '#663399', '#8B7355']
+            };
+            return colorMap[emotion] || ['#808080', '#A9A9A9', '#C0C0C0'];
+        }
+        
+        function getRandomAudioFeatures() {
+            return {
+                energy: Math.random(),
+                bass: Math.random(),
+                mid: Math.random(),
+                treble: Math.random()
+            };
+        }
+        
+        function runFullSystemTest() {
+            updateStatus('systemStatus', '🧪 Running full system test...', 'info');
+            
+            let testsRun = 0;
+            let testsPassed = 0;
+            
+            // Test 1: Factory Soul
+            setTimeout(() => {
+                testsRun++;
+                if (window.FactorySoulTrain) {
+                    testsPassed++;
+                    updateStatus('systemStatus', `✅ Test ${testsRun}: Factory Soul - PASSED`, 'success');
+                } else {
+                    updateStatus('systemStatus', `❌ Test ${testsRun}: Factory Soul - FAILED`, 'error');
+                }
+            }, 500);
+            
+            // Test 2: Emotional Memory
+            setTimeout(() => {
+                testsRun++;
+                if (window.EmotionalMemorySystem) {
+                    testsPassed++;
+                    updateStatus('systemStatus', `✅ Test ${testsRun}: Emotional Memory - PASSED`, 'success');
+                } else {
+                    updateStatus('systemStatus', `❌ Test ${testsRun}: Emotional Memory - FAILED`, 'error');
+                }
+            }, 1000);
+            
+            // Test 3: Soul Activator
+            setTimeout(() => {
+                testsRun++;
+                if (window.digitalSoulActivator) {
+                    testsPassed++;
+                    updateStatus('systemStatus', `✅ Test ${testsRun}: Soul Activator - PASSED`, 'success');
+                } else {
+                    updateStatus('systemStatus', `❌ Test ${testsRun}: Soul Activator - FAILED`, 'error');
+                }
+            }, 1500);
+            
+            // Test 4: Dashboard
+            setTimeout(() => {
+                testsRun++;
+                if (window.soulDashboard) {
+                    testsPassed++;
+                    updateStatus('systemStatus', `✅ Test ${testsRun}: Soul Dashboard - PASSED`, 'success');
+                } else {
+                    updateStatus('systemStatus', `❌ Test ${testsRun}: Soul Dashboard - FAILED`, 'error');
+                }
+            }, 2000);
+            
+            // Final results
+            setTimeout(() => {
+                const percentage = (testsPassed / testsRun * 100).toFixed(0);
+                updateStatus('systemStatus', 
+                    `🎯 SYSTEM TEST COMPLETE<br>` +
+                    `📊 ${testsPassed}/${testsRun} tests passed (${percentage}%)<br>` +
+                    `${percentage >= 75 ? '🎉 EXCELLENT!' : percentage >= 50 ? '✅ GOOD' : '⚠️ NEEDS WORK'}`, 
+                    percentage >= 75 ? 'success' : percentage >= 50 ? 'warning' : 'error'
+                );
+            }, 2500);
+        }
+        
+        function clearTestData() {
+            localStorage.removeItem('synesthetic_soul_state');
+            localStorage.removeItem('synesthetic_soul_evolution');
+            updateStatus('systemStatus', '🧹 Test data cleared! Refresh to reset soul state.', 'warning');
+        }
+        
+        // Auto-run basic tests on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                updateStatus('systemStatus', '🚀 Phase 2 test page loaded. Running basic checks...', 'info');
+                
+                // Quick system availability check
+                setTimeout(() => {
+                    const systems = [
+                        window.FactorySoulTrain ? '✅' : '❌',
+                        window.EmotionalMemorySystem ? '✅' : '❌',
+                        window.DigitalSoulActivator ? '✅' : '❌'
+                    ];
+                    
+                    updateStatus('systemStatus', 
+                        `📦 System availability:<br>` +
+                        `Factory Soul: ${systems[0]}<br>` +
+                        `Emotional Memory: ${systems[1]}<br>` +
+                        `Soul Activator: ${systems[2]}<br>` +
+                        `🎮 Ready for testing!`, 
+                        'info'
+                    );
+                }, 2000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

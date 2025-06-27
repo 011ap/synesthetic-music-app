@@ -374,4 +374,7 @@ document.head.appendChild(style);
 // Initialize the soul commentary system
 window.soulCommentary = new SoulCommentarySystem();
 
+// Export class for instantiation
+window.SoulCommentarySystem = SoulCommentarySystem;
+
 console.log('🧠 Real-time Soul Commentary System ready!');
